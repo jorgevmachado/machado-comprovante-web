@@ -1,14 +1,14 @@
 'use server';
-import { Token, HttpClient } from '@machado-repo/shared';
+import { HttpClient } from '@machado-repo/shared';
 
-import { setAuthCookie } from '@/app/modules/auth/session';
+import { TUser } from '@/app/modules/auth/types';
+import { redirect } from 'next/navigation';
 
 export async function registerAction(data: Record<string, string>): Promise<{ status: string; message: string; }> {
   try {
     const client = await HttpClient.post<TUser>({
       path: '/auth/register',
-      config: { body: data } ,
-      baseUrl: process.env.API_BASE_URL,
+      config: { body: data }
     });
 
     if(client.isFailure) {
@@ -25,8 +25,4 @@ export async function registerAction(data: Record<string, string>): Promise<{ st
     };
   }
   redirect('/join');
-  return {
-    status: 'success',
-    message: 'auth.register.messages.success',
-  };
 }

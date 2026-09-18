@@ -1,10 +1,11 @@
 'use client';
-import React, { useMemo, useState, useCallback, useEffect } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
-import { Button, Text, Lang, Form, useAlert, type FormProps, type FormValidation } from '@machado-repo/ui';
-
-import { setAuthCookie } from '../session';
+import {
+  Button ,Text ,Lang ,Form ,useAlert ,type FormProps ,type FormValidation ,
+  DatePicker,
+} from '@machado-repo/ui';
 
 import {
   loginAction ,
@@ -13,12 +14,12 @@ import {
 
 type AuthMode = 'register' | 'login';
 
-const FORM: Record<string, FormProps> = {
+const FORM: Record<AuthMode, FormProps> = {
   login: {
     fields: [
       { type: 'text', name: 'mode', value: 'login', hidden: true },
-      { type: 'email'},
-      { type: 'password'},
+      { type: 'email', value: ''},
+      { type: 'password', value: ''},
     ],
     actions: {
       submit: {
@@ -36,12 +37,11 @@ const FORM: Record<string, FormProps> = {
   register: {
     fields: [
       { type: 'text', name: 'mode', value: 'register', hidden: true },
-      { type: 'fullname' },
-      { type: 'text', name: 'username', label: 'auth.form.username.label', placeholder: 'auth.form.username.placeholder'},
-      { type: 'email' },
-      { type: 'description', presentation: { rows: 5, minLength: 10, maxLength: 200, showCharacterCount: true }},
-      { type: 'password'},
-      { type: 'password_confirmation'},
+      { type: 'fullname', value: '' },
+      { type: 'text', value: '', name: 'username', label: 'auth.form.username.label', placeholder: 'auth.form.username.placeholder'},
+      { type: 'email', value: '' },
+      { type: 'password', value: ''},
+      { type: 'password_confirmation', value: ''},
     ],
     actions: {
       submit: {
@@ -56,7 +56,6 @@ const FORM: Record<string, FormProps> = {
         { name: 'fullname', span: 2 },
         { name: 'username', span: 1 },
         { name: 'email', span: 1 },
-        { name: 'description', span: 2 },
         { name: 'password', span: 1 },
         { name: 'password_confirmation', span: 1 },
       ]
@@ -96,27 +95,24 @@ export default function JoinPage() {
   }, [mode]);
 
   const handleOnSuccess = useCallback(async (data: Record<string, string>) => {
-    console.log('# => handeOnSuccess => data => ', data)
-    const result = {
-      variant: 'success',
-      message: '',
-      position: 'top-right',
-    }
     if(mode === 'register') {
       const { status, message } = await registerAction(data);
-      result.message = message;
-      result.variant = status === 'success' ? 'success' : 'error';
-      showAlert(result);
+      showAlert({
+        variant: status === 'success' ? 'success' : 'error',
+        message: message,
+        position: 'top-right',
+      });
     }
 
     if(mode === 'login') {
       const { status, message } = await loginAction(data);
-      console.log('# => message => ', message);
-      result.message = message;
-      result.variant = status === 'success' ? 'success' : 'error';
-      showAlert(result);
+      showAlert({
+        variant: status === 'success' ? 'success' : 'error',
+        message: message,
+        position: 'top-right',
+      });
     }
-  }, []);
+  }, [mode, showAlert]);
 
   const handleOnError = useCallback((validation: FormValidation) => {
     showAlert({
@@ -124,16 +120,11 @@ export default function JoinPage() {
       message: validation.errorMessage ?? 'auth.form.validation.error',
       position: 'top-right',
     })
-  }, []);
+  }, [showAlert]);
 
-  const formProps: FormProps = useMemo(() => {
-    const props = FORM[mode];
-    return {
-      ...props,
-      onSuccess: handleOnSuccess,
-      onError: handleOnError,
-    }
-  }, [mode, handleOnSuccess, handleOnError]);
+  const formProps = useMemo(() => {
+    return  FORM[mode];
+  }, [mode]);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
@@ -144,7 +135,14 @@ export default function JoinPage() {
         <Text size="sm" color="text-gray-500" className="mb-6">
           <Lang langKey={`auth.${mode}.subtitle`} />
         </Text>
-        <Form {...formProps} className="space-y-4" />
+        <DatePicker/>
+        <Form
+          fields={ formProps.fields }
+          onError={handleOnError}
+          onSuccess={handleOnSuccess}
+          className="space-y-4"
+          initialValues={ formProps.initialValues }
+        />
         <Text size="sm" color="text-gray-500" className="text-center">
           <Lang langKey={`auth.${mode}.link.title`} />
           <Button appearance="outlineBorderless" onClick={handleModeChange}>

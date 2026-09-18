@@ -1,3 +1,4 @@
+export * from './date.vo';
 export * from './description.vo';
 export * from './email.vo';
 export * from './fullname.vo';

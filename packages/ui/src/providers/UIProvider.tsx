@@ -2,7 +2,10 @@
 import React ,{ useMemo } from 'react';
 
 import { I18nProvider, type TLocalesFiles, mergeLocaleFiles } from '@machado-repo/i18n';
-import { AlertProvider, BreadcrumbProvider, filterLocales, formLocales } from '../components';
+import {
+  AlertProvider ,BreadcrumbProvider ,
+  datePickerLocales ,filterLocales ,formLocales,
+} from '../components';
 
 type UiProviderProps = {
   locales?: TLocalesFiles;
@@ -18,6 +21,7 @@ export default function UIProvider({
     const listLocales: Array<TLocalesFiles> = [];
     listLocales.push(filterLocales);
     listLocales.push(formLocales);
+    listLocales.push(datePickerLocales);
     if (locales) {
       listLocales.push(locales);
     }

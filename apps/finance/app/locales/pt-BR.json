@@ -41,6 +41,10 @@
       "username": {
         "label": "Nome de usuário",
         "placeholder": "Insira seu nome de usuário"
+      },
+      "date_birth": {
+        "label": "Data de Nascimento",
+        "placeholder": "Insira sua data de nascimento"
       }
     }
   }

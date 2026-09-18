@@ -1,0 +1,72 @@
+{
+  "date_picker": {
+    "months": {
+      "january": "Enero",
+      "february": "Febrero",
+      "march": "Marzo",
+      "april": "Abril",
+      "may": "Mayo",
+      "june": "Junio",
+      "july": "Julio",
+      "august": "Agosto",
+      "september": "Septiembre",
+      "october": "Octubre",
+      "november": "Noviembre",
+      "december": "Diciembre"
+    },
+    "days": {
+      "sunday": "Domingo",
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miércoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sábado"
+    },
+    "short_days": {
+      "sun": "Dom",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb"
+    },
+    "short_months": {
+      "jan": "Ene",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Abr",
+      "may": "May",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Ago",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dic"
+    },
+    "today": "Hoy",
+    "clear": "Borrar",
+    "select_date": "Seleccionar Fecha",
+    "select_time": "Seleccionar Hora",
+    "select_datetime": "Seleccionar Fecha y Hora",
+    "prev_month": "Mes Anterior",
+    "next_month": "Mes Siguiente",
+    "prev_year": "Año Anterior",
+    "next_year": "Año Siguiente",
+    "prev_decade": "Década Anterior",
+    "next_decade": "Década Siguiente",
+    "prev_century": "Siglo Anterior",
+    "next_century": "Siglo Siguiente",
+    "year": "Año",
+    "month": "Mes",
+    "day": "Día",
+    "hour": "Hora",
+    "minute": "Minuto",
+    "second": "Segundo",
+    "am": "AM",
+    "pm": "PM",
+    "invalid_date": "Fecha Inválida"
+  }
+}
