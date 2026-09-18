@@ -1,0 +1,42 @@
+{
+  "name": "@machado-repo/icons",
+  "version": "0.0.0",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "license": "MIT",
+  "scripts": {
+    "dev": "echo 'Add dev script here'",
+    "build": "tsc",
+    "test": "jest --config jest.config.ts --coverage",
+    "test:watch": "jest --watchAll",
+    "lint": "eslint src --max-warnings 0"
+  },
+  "devDependencies": {
+    "@machado-repo/eslint-config": "*",
+    "@machado-repo/jest-config": "*",
+    "@machado-repo/theme": "*",
+    "@machado-repo/typescript-config": "*",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.1.0",
+    "eslint": "^9.39.1",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.4.1",
+    "ts-jest": "^29.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "5.9.2"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-icons": "^5.7.0"
+  }
+}

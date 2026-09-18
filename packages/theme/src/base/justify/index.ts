@@ -1,0 +1,1 @@
+export { OJustify, type TJustify, JUSTIFY_CLASS_MAP } from './justify';

@@ -1,0 +1,34 @@
+{
+  "name": "finance",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "next": "16.2.12",
+    "react": "^19",
+    "react-dom": "^19",
+    "@machado-repo/ui": "*",
+    "@machado-repo/shared": "*"
+  },
+  "devDependencies": {
+    "@machado-repo/eslint-config": "*",
+    "@machado-repo/jest-config": "*",
+    "@machado-repo/tailwind-config": "*",
+    "@machado-repo/typescript-config": "*",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9.39.1",
+    "tailwindcss": "^4.1.5",
+    "@tailwindcss/postcss": "^4.1.5",
+    "typescript": "5.9.2"
+  }
+}

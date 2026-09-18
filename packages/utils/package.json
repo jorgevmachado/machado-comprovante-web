@@ -1,0 +1,28 @@
+{
+  "name": "@machado-repo/utils",
+  "version": "0.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src --max-warnings 0",
+    "test": "jest --config jest.config.ts --coverage",
+    "test:watch": "jest --watchAll"
+  },
+  "devDependencies": {
+    "@machado-repo/i18n": "*",
+    "@machado-repo/jest-config": "*",
+    "@machado-repo/eslint-config": "*",
+    "@machado-repo/typescript-config": "*",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.5"
+  }
+}

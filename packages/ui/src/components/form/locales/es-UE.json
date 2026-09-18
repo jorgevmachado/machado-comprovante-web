@@ -1,0 +1,85 @@
+{
+  "form": {
+    "action": {
+      "save": "Guardar",
+      "close": "Cerrar",
+      "edit": "Editar",
+      "view": "Ver",
+      "upload": "Subir",
+      "create": "Crear",
+      "submit": "Enviar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "active": "Activo",
+      "actions": "Acciones",
+      "inactive": "Inactivo",
+      "submitting": "Enviando"
+    },
+    "validation": {
+      "required": "Este campo es obligatorio",
+      "invalid_type": "Tipo inválido",
+      "email": {
+        "valid": "Email válido",
+        "invalid": "Por favor, introduce un email válido."
+      },
+      "name": {
+        "valid": "Nombre válido",
+        "invalid": {
+          "min_length": "El nombre debe tener al menos {{ min }} caracteres.",
+          "max_length": "El nombre debe tener como máximo {{ max }} caracteres.",
+          "characters": "El nombre contiene caracteres inválidos."
+        }
+      },
+      "fullname": {
+        "valid": "Nombre completo válido",
+        "invalid": {
+          "min_length": "El nombre completo debe tener al menos {{ min }} caracteres.",
+          "max_length": "El nombre completo debe tener como máximo {{ max }} caracteres.",
+          "characters": "El nombre completo contiene caracteres inválidos.",
+          "first_last_required": "Por favor, introduce tanto el nombre como el apellido.",
+          "first_last_too_short": "El nombre y el apellido deben tener al menos {{ min }} caracteres."
+        }
+      },
+      "password": {
+        "valid": "Contraseña válida",
+        "invalid": {
+          "min_length": "Debe tener al menos {{ min }} caracteres.",
+          "least_one_letter": "Debe contener al menos una letra.",
+          "least_one_number": "Debe contener al menos un número.",
+          "least_one_special_character": "Debe contener al menos un carácter especial.",
+          "confirmation_mismatch": "La confirmación de la contraseña no coincide con la contraseña."
+        }
+      },
+      "description": {
+        "valid": "Descripción válida",
+        "invalid": {
+          "min_length": "La descripción debe tener al menos {{ min }} caracteres.",
+          "max_length": "La descripción debe tener como máximo {{ max }} caracteres."
+        }
+      }
+    },
+    "label": {
+      "email": "Email",
+      "name": "Nombre",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "status": "Estatus",
+      "profile": "Perfil",
+      "fullname": "Nombre completo",
+      "password": "Contraseña",
+      "created_at": "Creado el",
+      "updated_at": "Actualizado el",
+      "deleted_at": "Eliminado el",
+      "description": "Descripción",
+      "password_confirmation": "Confirmar contraseña"
+    },
+    "placeholder": {
+      "email": "Introduce tu email",
+      "name": "Introduce tu nombre",
+      "fullname": "Introduce tu nombre completo",
+      "password": "Introduce tu contraseña",
+      "description": "Introduce una descripción",
+      "password_confirmation": "Confirma tu contraseña"
+    }
+  }
+}

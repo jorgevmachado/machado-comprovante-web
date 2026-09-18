@@ -1,0 +1,1 @@
+export { createI18nMessage, translateI18nMessage, parseTranslationMessage, isTranslationValue, TRANSLATION_KEY_PATTERN, TRANSLATION_WITH_PARAMS_PATTERN } from './messages';

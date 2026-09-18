@@ -1,0 +1,47 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "title": "Sistema Financiero",
+    "signOut": "Cerrar sesión",
+    "subtitle": "Portal Financiero",
+    "category": "Categoría",
+    "subcategory": "Subcategoría",
+    "account": "Cuenta"
+  },
+  "auth": {
+    "register": {
+      "title": "Crear una cuenta",
+      "subtitle": "Rellena los detalles a continuación para comenzar.",
+      "submit": "Registrarse",
+      "submitting": "Creando cuenta...",
+      "link": {
+        "title": "¿Ya tienes una cuenta?",
+        "subtitle": "Iniciar sesión"
+      },
+      "messages": {
+        "success": "Cuenta creada con éxito. Por favor, revisa tu correo electrónico para verificar tu cuenta.",
+        "error": "Ocurrió un error al crear la cuenta. Por favor, inténtalo de nuevo."
+      }
+    },
+    "login": {
+      "title": "Iniciar sesión en tu cuenta",
+      "subtitle": "Introduce tus credenciales para acceder a tu cuenta.",
+      "submit": "Iniciar sesión",
+      "submitting": "Iniciando sesión...",
+      "link": {
+        "title": "¿No tienes una cuenta?",
+        "subtitle": "Regístrate"
+      },
+      "messages": {
+        "success": "Inició sesión con éxito.",
+        "error": "Nombre de usuario o contraseña inválidos. Por favor, inténtalo de nuevo."
+      }
+    },
+    "form": {
+      "username": {
+        "label": "Nombre de usuario",
+        "placeholder": "Introduce tu nombre de usuario"
+      }
+    }
+  }
+}

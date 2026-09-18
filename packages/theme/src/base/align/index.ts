@@ -1,0 +1,1 @@
+export { OAlign ,type TAlign ,TEXT_ALIGN_CLASS_MAP } from './align';

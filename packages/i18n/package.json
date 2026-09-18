@@ -1,0 +1,42 @@
+{
+  "name": "@machado-repo/i18n",
+  "version": "0.0.0",
+  "private": true,
+  "sideEffects": true,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --config jest.config.ts --coverage",
+    "test:watch": "jest --watchAll",
+    "lint": "eslint src --max-warnings 0"
+  },
+  "peerDependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "i18next": "^26.3.6",
+    "react-i18next": "^17.0.11"
+  },
+  "devDependencies": {
+    "@machado-repo/eslint-config": "*",
+    "@machado-repo/jest-config": "*",
+    "@machado-repo/typescript-config": "*",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9.39.1",
+    "typescript": "5.9.2"
+  }
+}

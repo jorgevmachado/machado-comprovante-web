@@ -1,0 +1,47 @@
+{
+  "navigation": {
+    "home": "Home",
+    "title": "Finance System",
+    "signOut": "Sign out",
+    "subtitle": "Finance Portal",
+    "category": "Category",
+    "subcategory": "Subcategory",
+    "account": "Account"
+  },
+  "auth": {
+    "register": {
+      "title": "Create an account",
+      "subtitle": "Fill in the details below to get started.",
+      "submit": "Sign up",
+      "submitting": "Creating account...",
+      "link": {
+        "title": "Already have an account?",
+        "subtitle": "Sign in"
+      },
+      "messages": {
+        "success": "Account created successfully. Please check your email to verify your account.",
+        "error": "An error occurred while creating the account. Please try again."
+      }
+    },
+    "login": {
+      "title": "Sign in to your account",
+      "subtitle": "Enter your credentials to access your account.",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "link": {
+        "title": "Don't have an account?",
+        "subtitle": "Sign up"
+      },
+      "messages": {
+        "success": "Signed in successfully.",
+        "error": "Invalid username or password. Please try again."
+      }
+    },
+    "form": {
+      "username": {
+        "label": "Username",
+        "placeholder": "Enter your username"
+      }
+    }
+  }
+}

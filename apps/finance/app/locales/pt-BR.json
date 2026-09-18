@@ -1,0 +1,47 @@
+{
+  "navigation": {
+    "home": "Início",
+    "title": "Sistema Financeiro",
+    "signOut": "Sair",
+    "subtitle": "Portal Financeiro",
+    "category": "Categoria",
+    "subcategory": "Subcategoria",
+    "account": "Conta"
+  },
+  "auth": {
+    "register": {
+      "title": "Criar uma conta",
+      "subtitle": "Preencha os detalhes abaixo para começar.",
+      "submit": "Registrar",
+      "submitting": "Criando conta...",
+      "link": {
+        "title": "Já tem uma conta?",
+        "subtitle": "Iniciar sessão"
+      },
+      "messages": {
+        "success": "Conta criada com sucesso. Por favor, verifique seu e-mail para confirmar sua conta.",
+        "error": "Ocorreu um erro ao criar a conta. Por favor, tente novamente."
+      }
+    },
+    "login": {
+      "title": "Iniciar sessão na sua conta",
+      "subtitle": "Insira suas credenciais para acessar sua conta.",
+      "submit": "Iniciar sessão",
+      "submitting": "Iniciando sessão...",
+      "link": {
+        "title": "Não tem uma conta?",
+        "subtitle": "Registre-se"
+      },
+      "messages": {
+        "success": "Iniciou sessão com sucesso.",
+        "error": "Nome de usuário ou senha inválidos. Por favor, tente novamente."
+      }
+    },
+    "form": {
+      "username": {
+        "label": "Nome de usuário",
+        "placeholder": "Insira seu nome de usuário"
+      }
+    }
+  }
+}

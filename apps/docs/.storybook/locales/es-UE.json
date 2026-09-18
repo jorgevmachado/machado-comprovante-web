@@ -1,0 +1,10 @@
+{
+  "label": {
+    "salary": "Salario",
+    "profile": {
+      "administrator": "Administrador",
+      "editor": "Editor",
+      "viewer": "Espectador"
+    }
+  }
+}

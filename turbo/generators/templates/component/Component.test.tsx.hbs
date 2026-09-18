@@ -1,0 +1,11 @@
+import { render, screen } from '@testing-library/react';
+
+import { {{ pascalCase name }} } from '../../{{ workspace }}';
+
+describe('<{{ pascalCase name }} />', () => {
+  it('should render component {{ pascalCase name }} correctly', () => {
+    render(<{{ pascalCase name }}><h1>{{ pascalCase name }}</h1></{{ pascalCase name }}>);
+    expect(screen.getByText('{{ pascalCase name }} Components')).toBeInTheDocument();
+    expect(screen.getByText('{{ pascalCase name }}')).toBeInTheDocument();
+  });
+});
