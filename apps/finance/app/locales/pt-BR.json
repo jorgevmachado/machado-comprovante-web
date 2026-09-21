@@ -5,8 +5,10 @@
     "signOut": "Sair",
     "subtitle": "Portal Financeiro",
     "category": "Categoria",
+    "payment": "Pagamento",
     "subcategory": "Subcategoria",
-    "account": "Conta"
+    "beneficiary": "Beneficiário",
+    "institution": "Instituição"
   },
   "auth": {
     "register": {

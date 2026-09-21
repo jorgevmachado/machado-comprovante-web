@@ -23,6 +23,12 @@ export type FormFieldDefinition = {
 
 export const FORM_FIELD_DEFINITIONS: Record<TFormFieldType, FormFieldDefinition> = {
   text: { component: 'input', inputType: 'text' },
+  date: {
+    label: 'form.label.date',
+    component: 'input',
+    inputType: 'date',
+    placeholder: 'form.placeholder.date',
+  },
   name: {
     label: 'form.label.name',
     component: 'input',

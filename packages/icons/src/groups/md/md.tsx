@@ -106,7 +106,7 @@ import {
 
 import type { TIconGroupIcons } from '../types';
 
-export const mdGroup: TIconGroupIcons = {
+export const mdGroup: Partial<TIconGroupIcons> = {
     tv: <MdTv />,
     box: undefined,
     law: undefined,

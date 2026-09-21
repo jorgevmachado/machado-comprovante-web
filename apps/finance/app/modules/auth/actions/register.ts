@@ -1,8 +1,7 @@
 'use server';
 import { HttpClient } from '@machado-repo/shared';
 
-import { TUser } from '@/app/modules/auth/types';
-import { redirect } from 'next/navigation';
+import type { TUser } from '@/app/modules/auth/types';
 
 export async function registerAction(data: Record<string, string>): Promise<{ status: string; message: string; }> {
   try {
@@ -24,5 +23,8 @@ export async function registerAction(data: Record<string, string>): Promise<{ st
       message: 'auth.register.messages.error',
     };
   }
-  redirect('/join');
+  return {
+    status: 'success',
+    message: 'auth.register.messages.success',
+  }
 }

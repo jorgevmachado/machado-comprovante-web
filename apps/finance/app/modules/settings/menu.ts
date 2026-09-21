@@ -7,20 +7,18 @@ export const menu: Array<TMenuItem> = [
     label: 'navigation.home' ,
   },
   {
-    href: '/category',
-    icon: 'category',
-    label: 'navigation.category' ,
-    children: [
-      {
-        href: '/category/subcategory',
-        icon: 'subcategory',
-        label: 'navigation.subcategory' ,
-      }
-    ]
+    href: '/payment',
+    icon: 'money',
+    label: 'navigation.payment' ,
   },
   {
-    href: '/account',
-    icon: 'account',
-    label: 'navigation.account' ,
+    href: '/beneficiary',
+    icon: 'hand-holding',
+    label: 'navigation.beneficiary' ,
   },
+  {
+    href: '/institution',
+    icon: 'landmark',
+    label: 'navigation.institution' ,
+  }
 ];

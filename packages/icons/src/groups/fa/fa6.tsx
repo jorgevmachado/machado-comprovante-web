@@ -98,12 +98,12 @@ import {
     FaUserTie,
     FaVolumeOff,
     FaWallet,
-    FaWarehouse,
+    FaWarehouse
 } from 'react-icons/fa6';
 
 import type { TIconGroupIcons } from '../types';
 
-export const fa6Group: TIconGroupIcons = {
+export const fa6Group: Partial<TIconGroupIcons> = {
     tv: <FaTv/>,
     box: undefined,
     law: undefined,
@@ -224,6 +224,7 @@ export const fa6Group: TIconGroupIcons = {
     fingerprint: <FaFingerprint/>,
     'unfold-more': undefined,
     'arrow-right': <FaArrowRight/>,
+    'hand-holding': undefined,
     'battery-full': <FaBatteryFull/>,
     'star-filled': <FaStar/>,
     'chevron-up': undefined,

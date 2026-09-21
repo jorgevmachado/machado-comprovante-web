@@ -40,6 +40,16 @@ describe('Http Url', () => {
 
       expect(formattedUrl).toBe('https://example.com/api/v1/resource');
     });
+
+    test('should format url with query params with undefined values', () => {
+      const url = 'https://example.com';
+      const path = 'api/v1/resource';
+      const params = { page: '1', limit: undefined };
+
+      const formattedUrl = HttpUrl.format(url, path, params);
+
+      expect(formattedUrl).toBe('https://example.com/api/v1/resource?page=1');
+    });
   });
 
   describe('isValid', () => {

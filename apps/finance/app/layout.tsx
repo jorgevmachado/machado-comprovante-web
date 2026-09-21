@@ -8,10 +8,11 @@ import ptBR from './locales/pt-BR.json';
 
 import "./globals.css";
 
-import { UIProvider } from '@machado-repo/ui';
+import { UIProvider, UserProvider } from '@machado-repo/ui';
 import Settings from './modules/settings';
 import { getServerSession } from './modules/auth/session';
 import { getAuthenticatedUserBootstrap } from './modules/auth/server';
+import { redirect } from 'next/navigation';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,12 +36,14 @@ export default async function RootLayout({
 }>) {
 
   const session = await getServerSession();
-  console.log('# => RootLayout => try => session => ', session)
-  const { initialUser, tokenExpiresAt } = await getAuthenticatedUserBootstrap(
+  const { initialUser } = await getAuthenticatedUserBootstrap(
     session.isAuthenticated,
     session.token
   );
-  console.log('# => RootLayout => try => initialUser => ', initialUser)
+
+  if( session.isAuthenticated && !initialUser) {
+    redirect('/auth/logout');
+  }
 
   const isAuthenticated = session.isAuthenticated && Boolean(initialUser);
 
@@ -51,9 +54,11 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <UIProvider locales={{ "en-US": enUS, "es-UE": esUE, "pt-BR": ptBR }}>
+          <UserProvider user={initialUser}>
             <Settings isAuthenticated={isAuthenticated}>
               {children}
             </Settings>
+          </UserProvider>
         </UIProvider>
       </body>
     </html>

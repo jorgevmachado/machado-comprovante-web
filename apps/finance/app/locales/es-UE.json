@@ -6,7 +6,9 @@
     "subtitle": "Portal Financiero",
     "category": "Categoría",
     "subcategory": "Subcategoría",
-    "account": "Cuenta"
+    "payment": "Pago",
+    "beneficiary": "Beneficiario",
+    "institution": "Institución"
   },
   "auth": {
     "register": {

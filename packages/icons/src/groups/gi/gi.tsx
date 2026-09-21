@@ -74,7 +74,7 @@ import {
 
 import type { TIconGroupIcons } from '../types';
 
-export const giGroup: TIconGroupIcons = {
+export const giGroup: Partial<TIconGroupIcons> = {
     tv: <GiTv />,
     box: undefined,
     law: undefined,

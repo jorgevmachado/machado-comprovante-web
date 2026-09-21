@@ -69,7 +69,7 @@ export class HttpUrl {
       return undefined;
     }
 
-    return new URLSearchParams(value as Record<string, string>).toString();
+    return HttpUrl.queryString(value);
   }
 
   public static format(value: string, path: string, params?: Record<string, unknown>): string {

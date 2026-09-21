@@ -59,6 +59,7 @@
       }
     },
     "label": {
+      "date": "Data",
       "email": "Email",
       "name": "Nome",
       "active": "Ativo",
@@ -74,6 +75,7 @@
       "password_confirmation": "Confirmar senha"
     },
     "placeholder": {
+      "date": "Insira uma data",
       "email": "Insira seu email",
       "name": "Insira seu nome",
       "fullname": "Insira seu nome completo",

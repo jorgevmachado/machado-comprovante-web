@@ -80,6 +80,18 @@ jest.mock('../../src/components', () => ({
   },
 }));
 
+jest.mock('../../src/providers/ui-context', () => ({
+  UIContextProvider: ({
+    children,
+  }: {
+    children: React.ReactNode;
+  }) => (
+    <div data-testid="ui-context-provider">
+      {children}
+    </div>
+  ),
+}));
+
 describe('UIProvider', () => {
 
   beforeEach(() => {

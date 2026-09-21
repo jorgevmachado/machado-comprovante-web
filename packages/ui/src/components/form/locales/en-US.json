@@ -60,6 +60,7 @@
       }
     },
     "label": {
+      "date": "Date",
       "email": "Email",
       "name": "Name",
       "active": "Active",
@@ -75,6 +76,7 @@
       "password_confirmation": "Confirm Password"
     },
     "placeholder": {
+      "date": "Enter a date",
       "email": "Enter your email",
       "name": "Enter your name",
       "fullname": "Enter your full name",

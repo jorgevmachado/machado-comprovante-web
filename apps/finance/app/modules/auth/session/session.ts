@@ -22,7 +22,7 @@ export const setAuthCookie = async (token: string, auth_cookie: string = AUTH_CO
 
   cookieStore.set(auth_cookie, token,{
     httpOnly: true ,
-    secure: process.env.NODE_ENV === 'production' ,
+    secure: false ,
     sameSite: 'lax' ,
     maxAge: AUTH_TOKEN_MAX_AGE_IN_SECONDS ,
   });
@@ -31,8 +31,17 @@ export const setAuthCookie = async (token: string, auth_cookie: string = AUTH_CO
 export const getServerSession = async (auth_cookie: string = AUTH_COOKIE_NAME): Promise<SessionResult> => {
   try {
     const cookieStore = await cookies();
+
     const token = cookieStore.get(auth_cookie)?.value;
+
+    if(!token) {
+      return {
+        isAuthenticated: false,
+      }
+    }
+
     const result = Token.tryCreate(token);
+
     return {
       token: result.instance.value,
       isAuthenticated: result.isOk,

@@ -91,6 +91,7 @@ describe('FORM_FIELD_DEFINITIONS', () => {
   it('defines all supported form field types', () => {
     expect(Object.keys(FORM_FIELD_DEFINITIONS)).toEqual([
       'text',
+      'date',
       'name',
       'email',
       'phone',

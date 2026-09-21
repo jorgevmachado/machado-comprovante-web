@@ -2,7 +2,7 @@ export { default as Alert, ALERT_POSITIONS, AlertProvider, type TAlert, type TAl
 export { default as Autocomplete } from './autocomplete';
 export { default as Breadcrumb, BreadcrumbProvider, type TBreadcrumbItem, useBreadcrumb } from './breadcrumb';
 export { default as Button } from './button';
-export { default as DatePicker, datePickerLocales,type DatePickerProps } from './date-picker';
+export { default as FileUpload } from './file-upload';
 export {
   filterLocales,
   default as Filters,
