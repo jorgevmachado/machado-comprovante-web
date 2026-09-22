@@ -12,7 +12,7 @@ export enum EReceiptFieldStatus {
   AMBIGUOUS = 'AMBIGUOUS',
 }
 
-type TReceiptDataField<T> = {
+export type TReceiptDataField<T> = {
   value?: T;
   status: EReceiptFieldStatus;
 }
@@ -41,15 +41,21 @@ export type TReceiptData = {
   destination_institution: TReceiptDataField<string>;
 }
 
-export type TReceiptUpload = {
+export type TReceipt = {
   id: string;
+  file_name: string;
+  file_type: string;
+  file_size: string;
+  extracted_data?: TReceiptData;
+  processing_status: EReceiptProcessingStatus;
+}
+
+export type TReceiptUpload = Omit<TReceipt, 'file_name'| 'file_type'| 'extracted_data'> & {
   data?: TReceiptData;
   errors: Array<TReceiptDataError>;
   file_name?: string;
   file_type?: string;
-  file_size: number;
   error_message?: string;
-  processing_status: EReceiptProcessingStatus;
 }
 
 export type TReceiptBatch = {
@@ -80,3 +86,4 @@ export type TReceiptConfirm = {
   source_institution: string;
   destination_institution?: string;
 }
+

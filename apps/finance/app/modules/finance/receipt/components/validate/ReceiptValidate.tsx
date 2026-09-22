@@ -1,12 +1,22 @@
+import { useCallback ,useEffect ,useMemo ,useState } from 'react';
+
+import { HttpClient ,Money } from '@machado-repo/shared';
+
+import { Table ,useAlert ,Text ,useModal ,Form } from '@machado-repo/ui';
+
 import {
   TReceiptBatch ,
   TReceiptConfirm ,
   EReceiptProcessingStatus ,
 } from '@/app/modules/finance/receipt';
-import { useCallback ,useEffect ,useMemo ,useState } from 'react';
-import { Table ,useAlert, Text } from '@machado-repo/ui';
-import { HttpClient ,Money } from '@machado-repo/shared';
+
+
+
 import { TPayment } from '@/app/modules/finance';
+import ModalForm
+  from '@/app/modules/finance/receipt/components/validate/moda-form/ModalForm';
+import ModalShow
+  from '@/app/modules/finance/receipt/components/validate/modal-show/ModalShow';
 
 type ReceiptStatusInfo = { status: EReceiptProcessingStatus; total: number; }
 
@@ -21,7 +31,9 @@ type ReceiptValidateProps = {
 }
 
 export default function ReceiptValidate({ receiptBatch }: ReceiptValidateProps) {
+  const { modal, openModal, closeModal } = useModal();
   const { showAlert } = useAlert();
+
   const initializeReceivedToConfirm = useCallback((receiptBatch: TReceiptBatch) => {
     const result: Array<TReceiptConfirm> = [];
     receiptBatch.items.forEach((item) => {
@@ -111,6 +123,48 @@ export default function ReceiptValidate({ receiptBatch }: ReceiptValidateProps) 
 
   }, [receivedToConfirm, showAlert, updatedReceiptStatusInfo]);
 
+  const handleOpenConfirmReceiptModal = useCallback(async (item: TReceiptConfirm) => {
+    openModal({
+      title: 'finance.receipt.confirm.title',
+      children: 'finance.receipt.confirm.message',
+      footer: {
+        primary: {
+          children: 'finance.receipt.confirm.action',
+          onClick: () => {
+            confirmReceipt(item);
+            closeModal();
+          }
+        },
+        secondary: {
+          children: 'form.action.cancel',
+          onClick: () => closeModal()
+        }
+      }
+    })
+  }, [closeModal, confirmReceipt, openModal]);
+
+  const   updateReceiptToConfirm = useCallback((item: TReceiptConfirm) => {
+    const updatedReceivedToConfirm = [...receivedToConfirm];
+    const currentIndex = updatedReceivedToConfirm.findIndex(receipt => receipt.id === item.id);
+    updatedReceivedToConfirm[currentIndex] = item;
+    setReceivedToConfirm(updatedReceivedToConfirm);
+    closeModal();
+  }, [closeModal, receivedToConfirm]);
+
+  const handleOpenEditModal = (item: TReceiptConfirm) => {
+    openModal({
+      title: 'finance.receipt.edit.title',
+      children: <ModalForm item={item} onSubmit={updateReceiptToConfirm} onCancel={() => closeModal()} />,
+    });
+  }
+
+  const handleOpenShowModal = (item: TReceiptConfirm) => {
+    openModal({
+      title: 'finance.receipt.show.title' ,
+      children: <ModalShow item={item} />,
+    });
+  }
+
   return (
     <div>
       <div className="flex flex-row gap-6">
@@ -136,17 +190,13 @@ export default function ReceiptValidate({ receiptBatch }: ReceiptValidateProps) 
           actions={{
             text: 'form.action.actions' ,
             icons: [
-              {
-                icon: 'edit' ,onClick: (item) => {
-                  console.log('Editar:' ,item);
-                } ,
-              },
-              {
-                icon: 'confirm' ,onClick: confirmReceipt ,
-              }
+              { icon: 'edit' ,onClick: handleOpenEditModal },
+              { icon: 'show' ,onClick: handleOpenShowModal },
+              { icon: 'confirm' ,onClick: handleOpenConfirmReceiptModal }
             ]
           }}
         />
+        {modal}
       </div>
     </div>
   )

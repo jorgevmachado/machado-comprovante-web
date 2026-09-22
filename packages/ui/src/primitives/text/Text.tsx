@@ -3,6 +3,7 @@ import React ,{ useMemo } from 'react';
 import { buildTextTagTheme ,TTag } from '@machado-repo/theme';
 
 import type { TextProps } from './types';
+import { useTranslationResolver } from '../../lang';
 
 const TextBase = <T extends TTag = 'p'>({
   as ,
@@ -77,13 +78,15 @@ const TextBase = <T extends TTag = 'p'>({
     breakStrategy ,
   ]);
 
+  const { resolveChildren: resolveTranslation } = useTranslationResolver();
+
   return React.createElement(
     Component ,
     {
       ...elementProps ,
       className: classNameList ,
     } ,
-    children ,
+    resolveTranslation(children, 3) ,
   );
 };
 

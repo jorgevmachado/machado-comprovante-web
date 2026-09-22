@@ -11,7 +11,7 @@ import PaymentsList
 import { useCallback ,useState } from 'react';
 import { HttpClient } from '@machado-repo/shared';
 import {
-  EReceiptFieldStatus ,EReceiptProcessingStatus ,
+  EReceiptFieldStatus ,EReceiptProcessingStatus ,ReceiptInfo ,
   TReceiptBatch ,
 } from '@/app/modules/finance/receipt';
 import ReceiptValidate from '../../modules/finance/receipt/components/validate';
@@ -329,6 +329,7 @@ export default function HomeRouterPage() {
   const { user } = useUser<TUser>();
   const [files, setFiles] = useState<Array<File>>([]);
   const [receiptBatch, setReceiptBatch] = useState<TReceiptBatch | undefined>(receiptBatchMock);
+  const [refresh, setRefresh] = useState<boolean>(false);
 
   const bachReceipts  = useCallback(async () => {
     if(!files.length) return;
@@ -346,8 +347,9 @@ export default function HomeRouterPage() {
     });
     if(response.isOk){
       setReceiptBatch(response.instance);
+      setRefresh(!refresh);
     }
-  },[files]);
+  },[files, refresh]);
 
   return (
     <main className='min-h-screen px-6 py-10'>
@@ -365,16 +367,14 @@ export default function HomeRouterPage() {
           <PaymentsTotal/>
           <PaymentsMax />
         </div>
-        {
-          (receiptBatch && receiptBatch.items.length) ?  (
-            <ReceiptValidate receiptBatch={receiptBatch} />
-          ) : (
-          <div className="flex flex-col gap-6">
-            <FileUpload multiple onFilesChange={(files) => setFiles(files)} />
-            <Button onClick={bachReceipts}>Enviar</Button>
-          </div>
-          )
-        }
+        <div className="flex flex-col gap-6">
+          <FileUpload multiple onFilesChange={(files) => setFiles(files)} />
+          <Button onClick={bachReceipts}>Enviar</Button>
+        </div>
+        <div>
+          <ReceiptInfo refresh={refresh} onUpdated={setRefresh} />
+        </div>
+        {/*<ReceiptValidate receiptBatch={receiptBatch} />*/}
 
         <div>
           <PaymentsList title="Pagamentos recentes"/>

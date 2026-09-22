@@ -1,10 +1,11 @@
 import React, { useMemo, useCallback, useState } from 'react';
-import { Money ,type MoneyLocale, Mask } from '@machado-repo/shared';
+import { Money ,Mask } from '@machado-repo/shared';
 import { buildInputTheme } from '@machado-repo/theme';
 
 import { Text, Icon } from '../../primitives';
 
-import type { InputProps, InputMask } from './types';
+import type { InputProps } from './types';
+import { useAppTranslation } from '@machado-repo/i18n';
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   mask,
@@ -31,7 +32,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   trailingIcon,
   errorMessage,
   onValueChange,
-  switchLanguage = 'en-US',
+  switchLanguage,
   uppercaseLabel = true,
   helperClassName,
   showClearButton = false,
@@ -40,6 +41,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   inputWrapperClassName,
   ...inputProps
 }, ref) => {
+  const { locale } = useAppTranslation();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const hasValue = typeof value === 'string' && value.length > 0;
   const isMoneyInput = type === 'money';
@@ -78,12 +80,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({
     }
 
     if (isMoneyInput) {
-      return  value !== '' ? Money.tryCreate(value, { locale: switchLanguage as MoneyLocale }).instance.formatted : '';
+      return  value !== '' ? Money.tryCreate(value, { locale: switchLanguage ?? locale }).instance.formatted : '';
     }
 
     return resolvedMask?.format(value) ?? value;
 
-  }, [isMoneyInput, mask, switchLanguage, value]);
+  }, [isMoneyInput, locale, resolvedMask, value, switchLanguage]);
 
   const wrapperClassName = useMemo(() => {
     const classNamesList = buildInputTheme({
@@ -101,7 +103,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({
     const { name, value } = event.target;
     const nextRawValue = value;
     const nextValue = isMoneyInput
-      ? nextRawValue !== '' ? Money.tryCreate(nextRawValue, { locale: switchLanguage as MoneyLocale }).instance.formatted : ''
+      ? nextRawValue !== '' ? Money.tryCreate(nextRawValue, { locale: switchLanguage ?? locale }).instance.formatted : ''
       : resolvedMask?.format(nextRawValue) ?? nextRawValue;
 
     if (nextValue !== nextRawValue) {
@@ -109,8 +111,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({
     }
 
     onChange?.(event);
-    onValueChange?.(nextValue, name, event);;
-  }, [isMoneyInput, resolvedMask, onChange, onValueChange, switchLanguage]);
+    onValueChange?.(nextValue, name, event);
+  }, [isMoneyInput, locale, resolvedMask, onChange, onValueChange, switchLanguage]);
 
   const handleOnBlur = useCallback((event: React.FocusEvent<HTMLInputElement>) => {
     const { name, value } = event.target;

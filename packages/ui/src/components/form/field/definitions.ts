@@ -29,6 +29,10 @@ export const FORM_FIELD_DEFINITIONS: Record<TFormFieldType, FormFieldDefinition>
     inputType: 'date',
     placeholder: 'form.placeholder.date',
   },
+  money: {
+    component: 'input',
+    inputType: 'money',
+  },
   name: {
     label: 'form.label.name',
     component: 'input',

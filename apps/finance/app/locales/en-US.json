@@ -49,5 +49,103 @@
         "placeholder": "Enter your date of birth"
       }
     }
+  },
+  "finance": {
+    "beneficiary": {
+      "name": {
+        "label": "Beneficiary Name",
+        "placeholder": "Enter the beneficiary's name"
+      }
+    },
+    "receipt": {
+      "info": {
+        "title": "Receipt Information"
+      },
+      "failed": "Failed",
+      "received": "Received",
+      "processed": "Processed",
+      "processing": "Processing",
+      "show": {
+        "title": "Receipt Details",
+        "action": "View"
+      },
+      "edit": {
+        "title": "Edit Receipt",
+        "action": "Edit"
+      },
+      "confirm": {
+        "title": "Confirm Receipt",
+        "action": "Confirm",
+        "message": "Are you sure you want to confirm this receipt?",
+        "success": "Receipt confirmed successfully.",
+        "error": "An error occurred while confirming the receipt. Please try again."
+      },
+      "fine": {
+        "label": "Fine",
+        "placeholder": "Enter the fine amount"
+      },
+      "payer": {
+        "label": "Payer",
+        "placeholder": "Enter the payer's name"
+      },
+      "barcode": {
+        "label": "Barcode",
+        "placeholder": "Enter the payment barcode"
+      },
+      "due_date": {
+        "label": "Due Date",
+        "placeholder": "Select the payment due date"
+      },
+      "discount": {
+        "label": "Discount",
+        "placeholder": "Enter the discount amount"
+      },
+      "interest": {
+        "label": "Interest",
+        "placeholder": "Enter the interest amount"
+      },
+      "paid_amount": {
+        "label": "Paid Amount",
+        "placeholder": "Enter the amount paid"
+      },
+      "total_charges": {
+        "label": "Total Charges",
+        "placeholder": "Enter the total charges"
+      },
+      "authentication": {
+        "label": "Authentication",
+        "placeholder": "Enter the authentication"
+      },
+      "transaction_id": {
+        "label": "Transaction ID",
+        "placeholder": "Enter the transaction ID"
+      },
+      "effective_payer": {
+        "label": "Effective Payer",
+        "placeholder": "Enter the effective payer"
+      },
+      "document_amount": {
+        "label": "Document Amount",
+        "placeholder": "Enter the document amount"
+      }
+    },
+    "payment": {
+      "date": {
+        "label": "Payment Date",
+        "placeholder": "Select the payment date"
+      },
+      "amount": {
+        "label": "Amount",
+        "placeholder": "Enter the payment amount"
+      },
+      "source_institution": {
+        "label": "Source Institution",
+        "placeholder": "Select the source institution"
+      },
+      "destination_institution": {
+        "label": "Destination Institution",
+        "placeholder": "Select the destination institution"
+      }
+    }
   }
 }

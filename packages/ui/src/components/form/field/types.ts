@@ -5,7 +5,7 @@ import type { BaseInputProps } from '../../../types';
 import type { InputProps } from '../../input';
 import type { TextareaProps } from '../../textarea';
 
-export type TFormTextFieldType = 'text' | 'name' | 'fullname' | 'date';
+export type TFormTextFieldType = 'text' | 'name' | 'fullname' | 'date' | 'money';
 
 export type TFormTextAreaFieldType = 'description';
 
