@@ -2,6 +2,7 @@
   "form": {
     "action": {
       "save": "Save",
+      "send": "Send",
       "close": "Close",
       "edit": "Edit",
       "view": "View",

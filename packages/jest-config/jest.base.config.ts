@@ -9,7 +9,8 @@ const config: Config = {
     'src/**/*.ts',
     'src/**/*.tsx',
     '!src/**/types/**',
-    '!src/**/types.ts'
+    '!src/**/types.ts',
+    '!src/**/index.ts',
   ],
   // Ignora a pasta build e node_modules nas transformações
   transformIgnorePatterns: ['/node_modules/'],

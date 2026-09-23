@@ -51,6 +51,10 @@
     }
   },
   "finance": {
+    "welcome": {
+      "title": "Hello {{name}} Welcome to the Finance System",
+      "subtitle": "Manage your financial transactions efficiently."
+    },
     "beneficiary": {
       "name": {
         "label": "Beneficiary Name",
@@ -130,6 +134,21 @@
       }
     },
     "payment": {
+      "count": {
+        "title": "Payments Count"
+      },
+      "total": {
+        "title": "Total Payments"
+      },
+      "max": {
+        "title": "Maximum Payment"
+      },
+      "recent": {
+        "title": "Recent Payments"
+      },
+      "info": {
+        "title": "Payments Information"
+      },
       "date": {
         "label": "Payment Date",
         "placeholder": "Select the payment date"

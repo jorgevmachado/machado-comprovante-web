@@ -1,35 +1,19 @@
 'use client';
-import { useEffect ,useState } from 'react';
-import { HttpClient ,Money } from '@machado-repo/shared';
+import { Money } from '@machado-repo/shared';
 
 import { Table ,Text } from '@machado-repo/ui';
 
-import type { TPayment ,TPaymentFilter } from '@/app/modules/finance/payment';
+import type { TPayment } from '@/app/modules/finance/payment';
 
 type PaymentsListProps = {
   title?: string;
-  filters?: TPaymentFilter;
+  payments: Array<TPayment>;
 }
 
 export default function PaymentsList({
-  title,
-  filters
+  title = 'finance.payment.info.title',
+  payments
 }: PaymentsListProps) {
-  const [payments, setPayments] = useState<Array<TPayment>>([]);
-
-  useEffect(() => {
-    const fetchPayments = async () => {
-      const response = await HttpClient.get<Array<TPayment>>({
-        path: '/payment',
-        baseUrl: '/api',
-        config: { params: filters }
-      })
-      if(response.isOk) {
-        setPayments(response.instance);
-      }
-    }
-    fetchPayments();
-  } ,[filters]);
 
   if(payments.length <= 0) {
     return (

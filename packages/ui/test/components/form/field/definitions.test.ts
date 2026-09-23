@@ -44,6 +44,12 @@ describe('FORM_FIELD_DEFINITIONS', () => {
       placeholder: 'form.placeholder.phone',
     });
   });
+  it('defines money field', () => {
+    expect(FORM_FIELD_DEFINITIONS.money).toEqual({
+      component: 'input',
+      inputType: 'money',
+    });
+  });
 
   it('defines fullname field with Fullname value object', () => {
     expect(FORM_FIELD_DEFINITIONS.fullname).toEqual({
@@ -92,6 +98,7 @@ describe('FORM_FIELD_DEFINITIONS', () => {
     expect(Object.keys(FORM_FIELD_DEFINITIONS)).toEqual([
       'text',
       'date',
+      'money',
       'name',
       'email',
       'phone',

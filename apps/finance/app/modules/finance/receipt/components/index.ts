@@ -1,2 +1,2 @@
 export {default as  ReceiptInfo } from './info';
-export {default as  ReceiptValidate } from './validate';
+export {default as  ReceiptBatch } from './receipt-batch';

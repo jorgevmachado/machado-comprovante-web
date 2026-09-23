@@ -1,4 +1,4 @@
-import { createI18nMessage, translateI18nMessage, parseTranslationMessage, isTranslationValue } from '../../src';
+import { createI18nMessage, translateI18nMessage, parseTranslationMessage, isTranslationValue, isTranslationWithUnquotedParams } from '../../src';
 
 describe('i18n message', () => {
   describe('createI18nMessage' ,() => {
@@ -12,22 +12,15 @@ describe('i18n message', () => {
       () => {
         const t = jest.fn((value: string) => value);
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+
         expect(translateI18nMessage(t ,undefined)).toBeUndefined();
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
         expect(translateI18nMessage(t ,'')).toBe('');
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
         expect(translateI18nMessage(t ,'plain message')).toBe('plain message');
         expect(t).not.toHaveBeenCalled();
       });
 
     it('translates prefixed message' ,() => {
       const t = jest.fn((value: string) => `translated:${ value }`);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
       expect(translateI18nMessage(t ,'i18n:pokemon.type.list.title')).
       toBe('translated:pokemon.type.list.title');
       expect(t).toHaveBeenCalledWith('pokemon.type.list.title');
@@ -199,6 +192,27 @@ describe('i18n message', () => {
       expect(isTranslationValue(undefined)).toBe(false);
       expect(isTranslationValue({})).toBe(false);
       expect(isTranslationValue([])).toBe(false);
+    });
+  });
+
+  describe('isTranslationWithUnquotedParams', () => {
+    it('should return true for valid translation values with unquoted params', () => {
+      expect(isTranslationWithUnquotedParams('form.validation.name.invalid.min_length, { min: 2 }')).toBe(true);
+    });
+
+    it('should return false for invalid translation values with unquoted params', () => {
+      expect(isTranslationWithUnquotedParams('')).toBe(false);
+      expect(isTranslationWithUnquotedParams('Invalid translation message')).toBe(false);
+      expect(isTranslationWithUnquotedParams(', { min: 2 }')).toBe(false);
+    });
+
+    it('should return false for non-string values', () => {
+      expect(isTranslationWithUnquotedParams(123)).toBe(false);
+      expect(isTranslationWithUnquotedParams(true)).toBe(false);
+      expect(isTranslationWithUnquotedParams(null)).toBe(false);
+      expect(isTranslationWithUnquotedParams(undefined)).toBe(false);
+      expect(isTranslationWithUnquotedParams({})).toBe(false);
+      expect(isTranslationWithUnquotedParams([])).toBe(false);
     });
   });
 });

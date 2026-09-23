@@ -20,43 +20,27 @@ import ReceiptInfoExtractedData
 
 type ReceiptInfoProps = {
   type?: EReceiptProcessingStatus;
-  refresh: boolean;
-  onUpdated?: (refresh: boolean) => void;
+  receipts: Array<TReceipt>;
+  onCallback?: (status: 'error' | 'success') => void;
 }
-export default function ReceiptInfo({type = EReceiptProcessingStatus.RECEIVED, refresh, onUpdated}: ReceiptInfoProps) {
+export default function ReceiptInfo({
+  type = EReceiptProcessingStatus.RECEIVED,
+  receipts,
+  onCallback
+}: ReceiptInfoProps) {
+
   const { showAlert } = useAlert();
   const { modal, openModal, closeModal } = useModal();
-  const [receipts, setReceipts] = useState<Array<TReceipt>>([]);
-  const [refreshList, setRefreshList] = useState<boolean>(false);
-
-  const fetchData = useCallback(async () => {
-    const response = await HttpClient.get<Array<TReceipt>>({
-      path: '/receipt',
-      baseUrl: '/api',
-    });
-    if(response.isOk) {
-      setReceipts(response.instance);
-    }
-    return response.instance;
-  }, []);
-
-  const refreshData = useCallback(async () => {
-    if(!refreshList) {
-      return;
-    }
-    await fetchData();
-    setRefreshList(false);
-    onUpdated?.(false);
-  }, [fetchData, onUpdated, refreshList]);
+  const [receiptsState, setReceipts] = useState<Array<TReceipt>>(receipts);
 
   const receiptsList = useMemo(() => {
-    if(receipts.length === 0) {
+    if(receiptsState.length === 0) {
       return null;
     }
-    const received = receipts.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.RECEIVED);
-    const processed = receipts.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.PROCESSED);
-    const processing = receipts.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.PROCESSING);
-    const failed = receipts.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.FAILED);
+    const received = receiptsState.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.RECEIVED);
+    const processed = receiptsState.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.PROCESSED);
+    const processing = receiptsState.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.PROCESSING);
+    const failed = receiptsState.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.FAILED);
 
     return {
       [EReceiptProcessingStatus.RECEIVED]: received,
@@ -64,7 +48,7 @@ export default function ReceiptInfo({type = EReceiptProcessingStatus.RECEIVED, r
       [EReceiptProcessingStatus.PROCESSING]: processing,
       [EReceiptProcessingStatus.FAILED]: failed
     };
-  }, [receipts]);
+  }, [receiptsState]);
 
   const list = useMemo(() => {
     if(!receiptsList) {
@@ -74,16 +58,10 @@ export default function ReceiptInfo({type = EReceiptProcessingStatus.RECEIVED, r
   }, [type, receiptsList]);
 
   useEffect(() => {
-    console.log('Fetching list of receipts...');
-    fetchData();
-  } ,[]);
-
-  useEffect(() => {
-    if(refresh) {
-      setRefreshList(refresh);
-      refreshData();
+    if(receiptsState.length === 0 && receipts.length > 0) {
+      setReceipts(receipts);
     }
-  } ,[refreshData, refresh]);
+  } ,[receipts, receiptsState.length]);
 
   const confirmReceipt = useCallback( async (receipt: TReceiptConfirm) => {
     const response = await HttpClient.post<{ payment: TPayment }>({
@@ -92,15 +70,10 @@ export default function ReceiptInfo({type = EReceiptProcessingStatus.RECEIVED, r
       config: { body: receipt }
     })
 
-    if(response.isOk) {
-      showAlert({ message: 'finance.receipt.confirm.success', variant: 'success' });
-      await fetchData();
-      return;
-    }
-
-    showAlert({ message: 'finance.receipt.confirm.error', variant: 'error' });
-
-  }, [showAlert, fetchData]);
+    const variant = response.isOk ? 'success' : 'error';
+    showAlert({ message: `finance.receipt.confirm.${variant}`, variant });
+    onCallback?.(variant);
+  }, [onCallback, showAlert]);
 
   const handleOpenConfirmReceiptModal = useCallback(async (item: TReceiptConfirm) => {
     openModal({
@@ -123,7 +96,7 @@ export default function ReceiptInfo({type = EReceiptProcessingStatus.RECEIVED, r
   }, [closeModal, confirmReceipt, openModal]);
 
   const updateReceiptToConfirm = useCallback((id: string,data: TReceiptData) => {
-    const updatedReceipts = receipts.map(receipt => {
+    const updatedReceipts = receiptsState.map(receipt => {
       if(receipt.id === id) {
         return {
           ...receipt,
@@ -134,7 +107,7 @@ export default function ReceiptInfo({type = EReceiptProcessingStatus.RECEIVED, r
     })
     setReceipts(updatedReceipts);
     closeModal();
-  }, [closeModal, receipts]);
+  }, [closeModal, receiptsState]);
 
   const handleOpenFormModal = (item: TReceiptConfirm) => {
     openModal({
@@ -158,7 +131,7 @@ export default function ReceiptInfo({type = EReceiptProcessingStatus.RECEIVED, r
         <Text size="2xl">{`finance.receipt.${type.toLowerCase()}`}</Text>
       </div>
 
-      {!receipts || receipts.length === 0 && (
+      {!receiptsState || receiptsState.length === 0 && (
         <Text weight="bold" as="h4">finance.receipt.info.no-receipts</Text>
       )}
       {receiptsList && (

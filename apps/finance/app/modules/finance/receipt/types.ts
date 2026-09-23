@@ -41,6 +41,8 @@ export type TReceiptData = {
   destination_institution: TReceiptDataField<string>;
 }
 
+export type TReceiptFilter = {};
+
 export type TReceipt = {
   id: string;
   file_name: string;

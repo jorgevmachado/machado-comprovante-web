@@ -2,6 +2,7 @@
   "form": {
     "action": {
       "save": "Guardar",
+      "send": "Enviar",
       "close": "Cerrar",
       "edit": "Editar",
       "view": "Ver",

@@ -119,7 +119,7 @@ describe('Modal', () => {
 
     fireEvent.click(
       screen.getByRole('button', {
-        name: 'Fechar',
+        name: 'Close modal',
       }),
     );
 

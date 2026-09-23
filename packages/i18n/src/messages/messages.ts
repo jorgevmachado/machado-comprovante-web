@@ -5,6 +5,9 @@ export const TRANSLATION_KEY_PATTERN = /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9_-]+)+$/;
 export const TRANSLATION_WITH_PARAMS_PATTERN =
   /^['"][a-zA-Z0-9]+(?:\.[a-zA-Z0-9_-]+)+['"],\s*\{.*\}$/;
 
+export const TRANSLATION_WITH_UNQUOTED_PARAMS_PATTERN =
+  /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9_-]+)+,\s*\{[\s\S]*\}$/;
+
 type DynamicTFunction = (
   key: string,
   options?: Parameters<TFunction>[1],
@@ -73,4 +76,8 @@ export function isTranslationValue(value: unknown): value is string {
     return false;
   }
   return TRANSLATION_KEY_PATTERN.test(value) || TRANSLATION_WITH_PARAMS_PATTERN.test(value);
+}
+
+export function isTranslationWithUnquotedParams(value: unknown): value is string {
+  return typeof value === 'string' && TRANSLATION_WITH_UNQUOTED_PARAMS_PATTERN.test(value);
 }
