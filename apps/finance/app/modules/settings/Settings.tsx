@@ -1,10 +1,12 @@
 'use client';
-import React, { useEffect, useCallback } from 'react';
-import { usePathname ,useRouter } from 'next/navigation';
+import React, { useCallback } from 'react';
+import { usePathname } from 'next/navigation';
 
 import { Navigation ,Breadcrumb ,useBreadcrumb } from '@machado-repo/ui';
 
 import { logoutAction } from '@/app/modules/auth/actions';
+
+import SettingsNavigation ,{ useNavigation } from './navigation';
 
 import { menu } from './menu';
 
@@ -14,7 +16,7 @@ type SettingsProps = {
 }
 export default function Settings({ children, isAuthenticated = false }: SettingsProps) {
   const pathname = usePathname();
-  const router = useRouter();
+  const router = useNavigation();
 
   const { breadcrumbs } = useBreadcrumb({ pathname });
 
@@ -35,12 +37,13 @@ export default function Settings({ children, isAuthenticated = false }: Settings
       variant="dark"
       subtitle="navigation.subtitle"
       iconLogo="money"
-      pathname="/home"
+      pathname={pathname}
       onItemClick={(item) => router.push(item.href)}
       isAuthenticated={isAuthenticated}
       withLanguageSwitch={true}
     >
       <>
+        <SettingsNavigation/>
         {isAuthenticated && (<Breadcrumb breadcrumbs={breadcrumbs} onItemClick={(href) => router.push(href)}/>)}
         {children}
       </>

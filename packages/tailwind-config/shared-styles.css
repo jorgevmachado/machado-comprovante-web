@@ -54,4 +54,52 @@
         }
     }
 
+    --animate-loading-dot: loading-dot 1.4s ease-in-out infinite;
+
+    @keyframes loading-dot {
+        0%,
+        80%,
+        100% {
+            transform: scale(0.7);
+            opacity: 0.5;
+        }
+
+        40% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    --animate-loading-bar: loading-bar 3s ease-in-out infinite;
+
+    @keyframes loading-bar {
+        0% {
+            transform: translateX(-100%);
+        }
+
+        50% {
+            transform: translateX(150%);
+        }
+
+        100% {
+            transform: translateX(400%);
+        }
+    }
+
+    --animate-loading-progress: loading-progress 2s ease-out forwards;
+
+    @keyframes loading-progress {
+        0% {
+            width: 0%;
+        }
+
+        70% {
+            width: 75%;
+        }
+
+        100% {
+            width: 85%;
+        }
+    }
+
 }

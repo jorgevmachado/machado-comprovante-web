@@ -8,7 +8,7 @@ import ptBR from './locales/pt-BR.json';
 
 import "./globals.css";
 
-import { UIProvider, UserProvider } from '@machado-repo/ui';
+import { LoadingProvider ,UIProvider ,UserProvider } from '@machado-repo/ui';
 import Settings from './modules/settings';
 import { getServerSession } from './modules/auth/session';
 import { getAuthenticatedUserBootstrap } from './modules/auth/server';
@@ -54,11 +54,13 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <UIProvider locales={{ "en-US": enUS, "es-UE": esUE, "pt-BR": ptBR }}>
-          <UserProvider user={initialUser}>
-            <Settings isAuthenticated={isAuthenticated}>
-              {children}
-            </Settings>
-          </UserProvider>
+          <LoadingProvider service={{ variant: 'circle', size: 'lg' }} pageRender={{ variant: 'bar', size: 'md', tone: 'warning', progress: true }}>
+            <UserProvider user={initialUser}>
+              <Settings isAuthenticated={isAuthenticated}>
+                {children}
+              </Settings>
+            </UserProvider>
+          </LoadingProvider>
         </UIProvider>
       </body>
     </html>

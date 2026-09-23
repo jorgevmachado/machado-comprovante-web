@@ -15,6 +15,7 @@ export {
 } from './filters';
 export { default as Form, formLocales,type FormProps, type FormValidation } from './form';
 export { default as Input, type InputProps } from './input';
+export { Loading, type LoadingProps,LoadingProvider, useLoading } from './loading';
 export { default as Modal, type ModalOptions, type ModalProps, useModal } from './modal';
 export { Navbar } from './navbar';
 export { default as Navigation } from './navigation';

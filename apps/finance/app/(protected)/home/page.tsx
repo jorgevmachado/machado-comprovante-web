@@ -1,7 +1,7 @@
 'use client';
 import { useCallback ,useEffect ,useState } from 'react';
 
-import { Teste ,Text ,useUser } from '@machado-repo/ui';
+import { Text ,useLoading ,useUser } from '@machado-repo/ui';
 
 import type { TUser } from '@/app/modules/auth';
 
@@ -20,27 +20,33 @@ import {
 
 export default function HomeRouterPage() {
   const { user } = useUser<TUser>();
+  const { execute } = useLoading();
 
   const [paymentsInfo ,setPaymentsInfo] = useState<PaymentsInfoResponse | undefined>(
     undefined);
   const [receipts ,setReceipts] = useState<Array<TReceipt>>([]);
 
   const fetchPaymentsInfo = useCallback(async () => {
-    const response = await paymentService.info();
-    const instance = response.instance;
-    if (instance.errors.length) {
-      console.error('Errors fetching payments info:' ,instance.errors);
-    }
-    setPaymentsInfo(instance);
-  } ,[]);
+    await execute(async () => {
+      const response = await paymentService.info();
+      const instance = response.instance;
+      if (instance.errors.length) {
+        console.error('Errors fetching payments info:' ,instance.errors);
+      }
+      setPaymentsInfo(instance);
+    });
+
+  } ,[execute]);
 
   const fetchReceipts = useCallback(async () => {
-    const response = await receiptService.getReceipts();
-    if (response.isFailure) {
-      return;
-    }
-    setReceipts(response.instance);
-  } ,[]);
+    await execute(async () => {
+      const response = await receiptService.getReceipts();
+      if (response.isFailure) {
+        return;
+      }
+      setReceipts(response.instance);
+    })
+  } ,[execute]);
 
   const handleOnCallback = useCallback(async (status: 'error' | 'success') => {
     if (status === 'success') {
