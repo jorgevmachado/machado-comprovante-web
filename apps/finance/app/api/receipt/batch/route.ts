@@ -14,7 +14,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     const body = await request.formData();
-    console.log('# => body => ', body);
 
     const response = await HttpClient.post<TReceiptBatch>({
       path: '/finance/receipt/batch' ,
@@ -23,7 +22,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         body ,
       } ,
     });
-    console.log('# => response => ', response);
     if (response.isFailure) {
       return NextResponse.json({ message: response.error } ,{ status: 422 });
     }

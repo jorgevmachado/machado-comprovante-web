@@ -50,8 +50,8 @@ export default function HomeRouterPage() {
 
   const handleOnCallback = useCallback(async (status: 'error' | 'success') => {
     if (status === 'success') {
-      await fetchPaymentsInfo();
       await fetchReceipts();
+      await fetchPaymentsInfo();
     }
   } ,[fetchPaymentsInfo ,fetchReceipts]);
 
@@ -74,7 +74,7 @@ export default function HomeRouterPage() {
         </div>
 
         { paymentsInfo && (<PaymentsInfo info={paymentsInfo}/>) }
-        <ReceiptInfo receipts={ receipts } onCallback={ handleOnCallback }/>
+        { receipts.length > 0 && (<ReceiptInfo receipts={ receipts } onCallback={ handleOnCallback }/>) }
         <ReceiptBatch onCallback={ handleOnCallback }/>
       </div>
     </main>

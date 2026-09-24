@@ -291,7 +291,7 @@ describe('TableBody', () => {
 
     const [props] = mockTableCell.mock.calls[0];
 
-    expect(props.children).toBe('');
+    expect(props.children).toBe('--');
   });
 
   it('should render an empty string when the item value is null', () => {
@@ -319,7 +319,7 @@ describe('TableBody', () => {
 
     const [props] = mockTableCell.mock.calls[0];
 
-    expect(props.children).toBe('');
+    expect(props.children).toBe('--');
   });
 
   it('should use format when it is provided', () => {

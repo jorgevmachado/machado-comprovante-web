@@ -48,7 +48,7 @@ export type TReceipt = {
   file_name: string;
   file_type: string;
   file_size: string;
-  extracted_data?: TReceiptData;
+  extracted_data: TReceiptData;
   processing_status: EReceiptProcessingStatus;
 }
 
@@ -79,7 +79,7 @@ export type TReceiptConfirm = {
   interest?: number;
   beneficiary: string;
   paid_amount: number;
-  payment_date: Date;
+  payment_date?: Date;
   total_charges?: number;
   authentication?: string;
   transaction_id?: string;

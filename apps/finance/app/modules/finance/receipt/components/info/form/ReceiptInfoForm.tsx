@@ -15,7 +15,7 @@ import {
 
 type ReceiptInfoConfirmProps = {
   item: TReceiptConfirm;
-  onSubmit: (id: string, data: TReceiptData) => void;
+  onSubmit: (dataItem: TReceiptConfirm, data: TReceiptData) => void;
   onCancel: () => void;
 }
 
@@ -111,8 +111,8 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
       {
         type: 'text' ,
         name: 'payer' ,
-        label: 'finance.receipt.payee.label' ,
-        placeholder: 'finance.receipt.payee.placeholder' ,
+        label: 'finance.receipt.payer.label' ,
+        placeholder: 'finance.receipt.payer.placeholder' ,
         value: initialValues.payer ?? '',
       } ,
       {
@@ -200,7 +200,7 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
       }
     }
     const extractedData = convertToExtractedData(data)
-    onSubmit(item.id, extractedData);
+    onSubmit(dataItem, extractedData);
   }
 
   const handleOnError = useCallback((validation: FormValidation) => {

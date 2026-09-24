@@ -1,6 +1,6 @@
 import { useCallback ,useEffect ,useMemo ,useState } from 'react';
 import { HttpClient } from '@machado-repo/shared';
-import { Text ,useAlert ,useModal } from '@machado-repo/ui';
+import { Text ,useAlert ,useLoading ,useModal } from '@machado-repo/ui';
 
 import {
   EReceiptProcessingStatus ,
@@ -31,16 +31,23 @@ export default function ReceiptInfo({
 
   const { showAlert } = useAlert();
   const { modal, openModal, closeModal } = useModal();
+  const { execute } = useLoading();
   const [receiptsState, setReceipts] = useState<Array<TReceipt>>(receipts);
 
   const receiptsList = useMemo(() => {
     if(receiptsState.length === 0) {
+      setReceipts(receipts);
+    }
+
+    const state = receiptsState.length === 0 ? receipts : receiptsState;
+
+    if(state.length === 0) {
       return null;
     }
-    const received = receiptsState.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.RECEIVED);
-    const processed = receiptsState.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.PROCESSED);
-    const processing = receiptsState.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.PROCESSING);
-    const failed = receiptsState.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.FAILED);
+    const received = state.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.RECEIVED);
+    const processed = state.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.PROCESSED);
+    const processing = state.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.PROCESSING);
+    const failed = state.filter((receipt) => receipt.processing_status === EReceiptProcessingStatus.FAILED);
 
     return {
       [EReceiptProcessingStatus.RECEIVED]: received,
@@ -48,14 +55,7 @@ export default function ReceiptInfo({
       [EReceiptProcessingStatus.PROCESSING]: processing,
       [EReceiptProcessingStatus.FAILED]: failed
     };
-  }, [receiptsState]);
-
-  const list = useMemo(() => {
-    if(!receiptsList) {
-      return [];
-    }
-    return receiptsList[type] || [];
-  }, [type, receiptsList]);
+  }, [receipts, receiptsState]);
 
   useEffect(() => {
     if(receiptsState.length === 0 && receipts.length > 0) {
@@ -64,16 +64,31 @@ export default function ReceiptInfo({
   } ,[receipts, receiptsState.length]);
 
   const confirmReceipt = useCallback( async (receipt: TReceiptConfirm) => {
-    const response = await HttpClient.post<{ payment: TPayment }>({
-      path: '/receipt/confirm',
-      baseUrl: '/api',
-      config: { body: receipt }
-    })
+    return await execute(async () => {
+      const response = await HttpClient.post<{ payment: TPayment }>({
+        path: '/receipt/confirm',
+        baseUrl: '/api',
+        config: { body: receipt }
+      })
 
-    const variant = response.isOk ? 'success' : 'error';
-    showAlert({ message: `finance.receipt.confirm.${variant}`, variant });
-    onCallback?.(variant);
-  }, [onCallback, showAlert]);
+      const variant = response.isOk ? 'success' : 'error';
+      showAlert({ message: `finance.receipt.confirm.${variant}`, variant });
+      onCallback?.(variant);
+      if(response.isOk) {
+        const receiptsToUpdate = receiptsState.map((r) => {
+          if(r.id === receipt.id) {
+            return {
+              ...r,
+              processing_status: EReceiptProcessingStatus.PROCESSED
+            }
+          }
+          return r;
+        });
+        setReceipts(receiptsToUpdate);
+      }
+      return response;
+    })
+  }, [execute, showAlert, onCallback, receiptsState]);
 
   const handleOpenConfirmReceiptModal = useCallback(async (item: TReceiptConfirm) => {
     openModal({
@@ -95,24 +110,65 @@ export default function ReceiptInfo({
     })
   }, [closeModal, confirmReceipt, openModal]);
 
-  const updateReceiptToConfirm = useCallback((id: string,data: TReceiptData) => {
+  const updateReceipts = useCallback( async (dataItem: TReceiptConfirm, data: TReceiptData, isPersist: boolean = false) => {
+    return await execute(async () => {
+      if(!isPersist) {
+        return {
+          id: dataItem.id,
+          data: data,
+          status: EReceiptProcessingStatus.RECEIVED
+        }
+      }
+      const response = await HttpClient.put<TReceipt>({
+        path: '/receipt',
+        baseUrl: '/api',
+        config: { body: dataItem }
+      });
+      const variant = response.isOk ? 'success' : 'error';
+      showAlert({ message: `finance.receipt.update.${variant}`, variant });
+      onCallback?.(variant);
+      if(!response.isOk || !response.instance) {
+        return;
+      }
+      const receipt = response.instance;
+      return {
+        id: receipt.id,
+        data: receipt.extracted_data,
+        status: receipt.processing_status
+      }
+    });
+  }, [execute, onCallback, showAlert]);
+
+
+  const updateReceiptList = useCallback(async (dataItem: TReceiptConfirm, data: TReceiptData, isPersist: boolean = false) => {
+    const receiptToUpdateList = await updateReceipts(dataItem, data, isPersist)
+    if(!receiptToUpdateList) {
+      return;
+    }
     const updatedReceipts = receiptsState.map(receipt => {
-      if(receipt.id === id) {
+      if(receipt.id === receiptToUpdateList.id) {
         return {
           ...receipt,
-          extracted_data: data
+          extracted_data: receiptToUpdateList.data,
+          processing_status: receiptToUpdateList.status
         }
       }
       return receipt;
     })
     setReceipts(updatedReceipts);
     closeModal();
-  }, [closeModal, receiptsState]);
+  }, [closeModal, receiptsState, updateReceipts]);
 
-  const handleOpenFormModal = (item: TReceiptConfirm) => {
+  const handleOpenFormModal = (item: TReceiptConfirm, isPersist?: boolean) => {
     openModal({
       title: 'finance.receipt.edit.title',
-      children: <ReceiptInfoConfirm item={item} onSubmit={updateReceiptToConfirm} onCancel={() => closeModal()} />,
+      children: (
+        <ReceiptInfoConfirm
+          item={item}
+          onSubmit={(dataItem, data) => updateReceiptList(dataItem, data, isPersist)}
+          onCancel={() => closeModal()}
+        />
+      ),
     });
   }
 
@@ -138,12 +194,28 @@ export default function ReceiptInfo({
         <TotalReceipts receiptsList={receiptsList} />
       )}
 
-      {list && list.length > 0 && (
+      {receiptsList && receiptsList[EReceiptProcessingStatus.RECEIVED] && receiptsList[EReceiptProcessingStatus.RECEIVED].length > 0 && (
         <ReceiptInfoList
-          receipts={list}
+          receipts={receiptsList[EReceiptProcessingStatus.RECEIVED]}
           onEdit={handleOpenFormModal}
           onShow={handleOpenShowModal}
           onConfirm={handleOpenConfirmReceiptModal}
+          className="mt-6"
+        />
+      )}
+
+      {receiptsList && receiptsList[EReceiptProcessingStatus.FAILED] && receiptsList[EReceiptProcessingStatus.FAILED].length > 0 && (
+        <ReceiptInfoList
+          receipts={receiptsList[EReceiptProcessingStatus.FAILED]}
+          onEdit={(item) => handleOpenFormModal(item, true)}
+          onShow={handleOpenShowModal}
+          className="mt-6"
+        />
+      )}
+
+      {receiptsList && receiptsList[EReceiptProcessingStatus.PROCESSING] && receiptsList[EReceiptProcessingStatus.PROCESSING].length > 0 && (
+        <ReceiptInfoList
+          receipts={receiptsList[EReceiptProcessingStatus.PROCESSING]}
           className="mt-6"
         />
       )}

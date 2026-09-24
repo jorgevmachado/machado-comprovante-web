@@ -123,7 +123,7 @@ export default function LoadingProvider({
   const execute = useCallback(async <T,>(callback: () => Promise<T>) => {
     start();
     try {
-      await callback();
+      return await callback();
     } finally {
       stop();
     }

@@ -3,7 +3,7 @@ import { NextRequest ,NextResponse } from 'next/server';
 import { HttpClient } from '@machado-repo/shared';
 
 import { getServerSession } from '@/app/modules/auth/session';
-import type { TReceiptBatch } from '@/app/modules/finance/receipt';
+import { TPayment } from '@/app/modules/finance';
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const session = await getServerSession();
@@ -15,14 +15,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const payload = await request.json();
     const { id, ...body } = payload;
-    const response = await HttpClient.post<TReceiptBatch>({
+
+    if(body.payment_date) {
+      body.payment_date = new Date(body.payment_date).toISOString().split('T')[0];
+    }
+
+    if(body.due_date) {
+      body.due_date = new Date(body.due_date).toISOString().split('T')[0];
+    }
+
+    const response = await HttpClient.post<{payment: TPayment}>({
       path: `/finance/receipt/${id}/confirm` ,
       config: {
         token: session.token ,
-        body ,
+        body: body ,
       } ,
     });
-    console.log('# => response => ', response);
     if (response.isFailure) {
       return NextResponse.json({ message: response.error } ,{ status: 422 });
     }

@@ -1,7 +1,7 @@
 import { TReceipt ,TReceiptConfirm } from '@/app/modules/finance/receipt';
-import { useMemo } from 'react';
+import { useCallback ,useMemo } from 'react';
 import { Money } from '@machado-repo/shared';
-import { Table } from '@machado-repo/ui';
+import { Table, type TableProps } from '@machado-repo/ui';
 
 type ReceiptInfoListProps = {
   onEdit?: (item: TReceiptConfirm) => void;
@@ -23,9 +23,6 @@ export default function ReceiptInfoList({
     receipts.forEach((receipt) => {
       if(receipt.extracted_data) {
         const data = {...receipt.extracted_data};
-        if (!data.payment_date || !data.payment_date.value) {
-          return;
-        }
         result.push({
           id: receipt.id,
           fine: data.fine.value,
@@ -51,28 +48,42 @@ export default function ReceiptInfoList({
     return result;
   }, [receipts]);
 
+  const formatItem = useCallback((item: TReceiptConfirm) => {
+    return {
+      ...item,
+      payer: item.payer === '--' ? '' : item.payer,
+      barcode: item.barcode === '--' ? '' : item.barcode,
+      beneficiary: item.beneficiary === '--' ? '' : item.beneficiary,
+      authentication: item.authentication === '--' ? '' : item.authentication,
+      transaction_id: item.transaction_id === '--' ? '' : item.transaction_id,
+      effective_payer: item.effective_payer === '--' ? '' : item.effective_payer,
+      source_institution: item.source_institution === '--' ? '' : item.source_institution,
+      destination_institution: item.destination_institution === '--' ? '' : item.destination_institution,
+    }
+  }, []);
+
   const tableActions = useMemo(() => {
-    const icons = [];
+    const icons  = [];
 
     if(onEdit) {
-      icons.push({ icon: 'edit' ,onClick: onEdit });
+      icons.push({ icon: 'edit' ,onClick: (item: TReceiptConfirm) => onEdit(formatItem(item)) });
     }
     if(onShow) {
-      icons.push({ icon: 'show' ,onClick: onShow });
+      icons.push({ icon: 'show' ,onClick: (item: TReceiptConfirm) => onShow(formatItem(item)) });
     }
     if(onConfirm) {
-      icons.push({ icon: 'confirm' ,onClick: onConfirm });
+      icons.push({ icon: 'confirm' ,onClick: (item: TReceiptConfirm) => onConfirm(formatItem(item)), tone: 'success' });
     }
 
     const actions = {
       text: 'form.action.actions' ,
-      icons: icons
+      icons
     };
     if(icons.length > 0) {
-      return actions;
+      return actions as TableProps<TReceiptConfirm>['actions'];
     }
     return undefined;
-  },[onEdit,onShow,onConfirm])
+  },[onEdit, onShow, onConfirm, formatItem])
 
   return (
     <div className={className}>
@@ -81,7 +92,7 @@ export default function ReceiptInfoList({
         headers={[
           { value: 'payer', label: 'Payer' },
           { value: 'beneficiary', label: 'Beneficiary' },
-          { value: 'payment_date', label: 'Payment Date' },
+          { value: 'payment_date', label: 'Payment Date', format: (value) => value ? new Date(value).toLocaleDateString() : '' },
           { value: 'source_institution', label: 'Source Institution' },
           { value: 'destination_institution', label: 'Destination Institution' },
           { value: 'paid_amount', label: 'Paid Amount', format: (value) => Money.tryCreate(value).instance.formatted },

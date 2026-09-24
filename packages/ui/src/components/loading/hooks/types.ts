@@ -12,7 +12,7 @@ export type LoadingContextValue = {
   stop: () => void;
   start: () => void;
   stopAll: () => void;
-  execute: <T>(callback: () => Promise<T>) => Promise<void>;
+  execute: <T>(callback: () => Promise<T>) => Promise<T>;
   isLoading: boolean;
   stopPageRender: () => void;
   startPageRender: () => void;
