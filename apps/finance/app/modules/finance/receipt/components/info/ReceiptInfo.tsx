@@ -1,6 +1,5 @@
 import { useCallback ,useEffect ,useMemo ,useState } from 'react';
-import { HttpClient } from '@machado-repo/shared';
-import { Text ,useAlert ,useLoading ,useModal } from '@machado-repo/ui';
+import { Text ,useModal } from '@machado-repo/ui';
 
 import {
   EReceiptProcessingStatus ,
@@ -10,13 +9,13 @@ import TotalReceipts
   from '@/app/modules/finance/receipt/components/total-receipts';
 import ReceiptInfoList
   from '@/app/modules/finance/receipt/components/info/list';
-import { TPayment } from '@/app/modules/finance';
 
 import ReceiptInfoConfirm
   from '@/app/modules/finance/receipt/components/info/form';
 
 import ReceiptInfoExtractedData
   from '@/app/modules/finance/receipt/components/info/extracted-data';
+import useReceipts from '@/app/modules/finance/receipt/hooks/useReceipts';
 
 type ReceiptInfoProps = {
   type?: EReceiptProcessingStatus;
@@ -29,9 +28,9 @@ export default function ReceiptInfo({
   onCallback
 }: ReceiptInfoProps) {
 
-  const { showAlert } = useAlert();
+  const { confirmReceipt: confirmReceiptService, updateReceipt: updateReceiptService } = useReceipts();
+
   const { modal, openModal, closeModal } = useModal();
-  const { execute } = useLoading();
   const [receiptsState, setReceipts] = useState<Array<TReceipt>>(receipts);
 
   const receiptsList = useMemo(() => {
@@ -64,31 +63,22 @@ export default function ReceiptInfo({
   } ,[receipts, receiptsState.length]);
 
   const confirmReceipt = useCallback( async (receipt: TReceiptConfirm) => {
-    return await execute(async () => {
-      const response = await HttpClient.post<{ payment: TPayment }>({
-        path: '/receipt/confirm',
-        baseUrl: '/api',
-        config: { body: receipt }
-      })
-
-      const variant = response.isOk ? 'success' : 'error';
-      showAlert({ message: `finance.receipt.confirm.${variant}`, variant });
-      onCallback?.(variant);
-      if(response.isOk) {
-        const receiptsToUpdate = receiptsState.map((r) => {
-          if(r.id === receipt.id) {
-            return {
-              ...r,
-              processing_status: EReceiptProcessingStatus.PROCESSED
-            }
+    const result = await confirmReceiptService(receipt);
+    const variant = result ? 'success' : 'error';
+    if(variant === 'success'){
+      const receiptsToUpdate = receiptsState.map((r) => {
+        if(r.id === receipt.id) {
+          return {
+            ...r,
+            processing_status: EReceiptProcessingStatus.PROCESSED
           }
-          return r;
-        });
-        setReceipts(receiptsToUpdate);
-      }
-      return response;
-    })
-  }, [execute, showAlert, onCallback, receiptsState]);
+        }
+        return r;
+      });
+      setReceipts(receiptsToUpdate);
+    }
+    onCallback?.(variant);
+  }, [confirmReceiptService, receiptsState, onCallback]);
 
   const handleOpenConfirmReceiptModal = useCallback(async (item: TReceiptConfirm) => {
     openModal({
@@ -111,34 +101,26 @@ export default function ReceiptInfo({
   }, [closeModal, confirmReceipt, openModal]);
 
   const updateReceipts = useCallback( async (dataItem: TReceiptConfirm, data: TReceiptData, isPersist: boolean = false) => {
-    return await execute(async () => {
-      if(!isPersist) {
-        return {
-          id: dataItem.id,
-          data: data,
-          status: EReceiptProcessingStatus.RECEIVED
-        }
-      }
-      const response = await HttpClient.put<TReceipt>({
-        path: '/receipt',
-        baseUrl: '/api',
-        config: { body: dataItem }
-      });
-      const variant = response.isOk ? 'success' : 'error';
-      showAlert({ message: `finance.receipt.update.${variant}`, variant });
-      onCallback?.(variant);
-      if(!response.isOk || !response.instance) {
-        return;
-      }
-      const receipt = response.instance;
+    if(!isPersist) {
       return {
-        id: receipt.id,
-        data: receipt.extracted_data,
-        status: receipt.processing_status
+        id: dataItem.id,
+        data: data,
+        status: EReceiptProcessingStatus.RECEIVED
       }
-    });
-  }, [execute, onCallback, showAlert]);
-
+    }
+    const result = await updateReceiptService(dataItem);
+    const variant = result ? 'success' : 'error';
+    onCallback?.(variant);
+    if(!result) {
+      return;
+    }
+    const receipt = result;
+    return {
+      id: receipt.id,
+      data: receipt.extracted_data,
+      status: receipt.processing_status
+    }
+  }, [onCallback, updateReceiptService]);
 
   const updateReceiptList = useCallback(async (dataItem: TReceiptConfirm, data: TReceiptData, isPersist: boolean = false) => {
     const receiptToUpdateList = await updateReceipts(dataItem, data, isPersist)

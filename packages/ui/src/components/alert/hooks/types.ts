@@ -26,3 +26,33 @@ export type TShowAlert = {
   duration?: number;
   position?: TAlertPosition;
 }
+
+export type TBuildServiceAlertMessageParams<T> = {
+  type: T,
+  variant: TAlertVariant,
+  message?: string,
+  errorMessage?: string,
+  messagePrefix?: string,
+  successMessage?: string
+}
+
+export type TAlertOption = 'success' | 'error' | 'both' | 'none';
+
+export type TExecuteServiceAlertParams<T> = {
+  isOk: boolean;
+  type: T;
+  alert?: TAlertOption;
+  message?: string;
+  duration?: number;
+  position?: TAlertPosition;
+  defaultAlert?: TAlertOption;
+  errorMessage?: string;
+  messagePrefix?: string;
+  successMessage?: string;
+}
+
+export type TAlertActionOptions = {
+  alert?: TAlertOption;
+  errorMessage?: string;
+  successMessage?: string;
+}

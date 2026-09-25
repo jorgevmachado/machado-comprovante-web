@@ -1,64 +1,53 @@
 'use client';
-import { useCallback ,useEffect ,useState } from 'react';
+import { useCallback ,useEffect } from 'react';
 
-import { Text ,useLoading ,useUser } from '@machado-repo/ui';
+import { Text ,useUser } from '@machado-repo/ui';
 
 import type { TUser } from '@/app/modules/auth';
 
 import {
-  paymentService ,
   PaymentsInfo ,
-  type PaymentsInfoResponse ,
+  usePayments
 } from '@/app/modules/finance/payment';
 
 import {
   ReceiptBatch ,
   ReceiptInfo ,
-  receiptService ,
-  TReceipt ,
 } from '@/app/modules/finance/receipt';
+import useReceipts from '@/app/modules/finance/receipt/hooks/useReceipts';
 
 export default function HomeRouterPage() {
   const { user } = useUser<TUser>();
-  const { execute } = useLoading();
+  const {
+    fetchInfo: fetchPaymentsInfo,
+    payments,
+    maxPayment,
+    totalAmount,
+    paymentCount,
+  } = usePayments();
 
-  const [paymentsInfo ,setPaymentsInfo] = useState<PaymentsInfoResponse | undefined>(
-    undefined);
-  const [receipts ,setReceipts] = useState<Array<TReceipt>>([]);
+  const {
+    receipts,
+    getReceipts: fetchReceipts,
+  } = useReceipts();
 
-  const fetchPaymentsInfo = useCallback(async () => {
-    await execute(async () => {
-      const response = await paymentService.info();
-      const instance = response.instance;
-      if (instance.errors.length) {
-        console.error('Errors fetching payments info:' ,instance.errors);
-      }
-      setPaymentsInfo(instance);
-    });
-
-  } ,[execute]);
-
-  const fetchReceipts = useCallback(async () => {
-    await execute(async () => {
-      const response = await receiptService.getReceipts();
-      if (response.isFailure) {
-        return;
-      }
-      setReceipts(response.instance);
-    })
-  } ,[execute]);
+  const refreshData = useCallback(async () => {
+    await Promise.all([
+      fetchReceipts(),
+      fetchPaymentsInfo(),
+    ]);
+  }, [fetchPaymentsInfo, fetchReceipts]);
 
   const handleOnCallback = useCallback(async (status: 'error' | 'success') => {
-    if (status === 'success') {
-      await fetchReceipts();
-      await fetchPaymentsInfo();
+    if (status !== 'success') {
+      return;
     }
-  } ,[fetchPaymentsInfo ,fetchReceipts]);
+    await refreshData();
+  } ,[refreshData]);
 
   useEffect(() => {
-    fetchPaymentsInfo();
-    fetchReceipts();
-  } ,[]);
+    void refreshData();
+  }, [refreshData]);
 
   return (
     <main className="min-h-screen px-6 py-10">
@@ -73,7 +62,12 @@ export default function HomeRouterPage() {
           </Text>
         </div>
 
-        { paymentsInfo && (<PaymentsInfo info={paymentsInfo}/>) }
+        <PaymentsInfo
+          payments={payments}
+          maxPayment={maxPayment}
+          totalAmount={totalAmount}
+          paymentCount={paymentCount}
+        />
         { receipts.length > 0 && (<ReceiptInfo receipts={ receipts } onCallback={ handleOnCallback }/>) }
         <ReceiptBatch onCallback={ handleOnCallback }/>
       </div>

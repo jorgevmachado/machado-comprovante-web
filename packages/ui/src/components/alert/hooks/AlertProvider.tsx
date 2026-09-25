@@ -2,7 +2,14 @@ import React, { useMemo, useState, useRef, useCallback } from 'react';
 
 import Alert from '../Alert';
 
-import { ALERT_POSITIONS, type TAlert, type TAlertPosition, type TShowAlert } from './types';
+import {
+  ALERT_POSITIONS ,
+  type TBuildServiceAlertMessageParams ,
+  type TAlert ,
+  type TAlertPosition ,
+  type TExecuteServiceAlertParams ,
+  type TShowAlert ,
+} from './types';
 import { removeAlertState, buildAlertId } from './business';
 
 import { AlertContext, type AlertContextProps } from './AlertContext';
@@ -65,17 +72,87 @@ const AlertProvider: React.FC<AlertProviderProps> = ({ children }) => {
     return id;
 
   }, [scheduleDismiss]);
+  
+  const buildServiceAlertMessage = useCallback(<T,>({
+    type,
+    message,
+    variant,
+    errorMessage,
+    messagePrefix,
+    successMessage,
+  }: TBuildServiceAlertMessageParams<T>) => {
+    if(message) {
+      return message;
+    }
 
-  const contextValue = useMemo(() => ({
+    if (messagePrefix) {
+      return `${messagePrefix}.${type}.${variant}`;
+    }
+
+    return variant === 'error'
+      ? errorMessage ?? `Error to fetch data ${type}`
+      : successMessage ?? `Success to fetch data ${type}`;
+
+  },[])
+  
+  const executeServiceAlert = useCallback(<T,>({
+    isOk,
+    type,
+    alert,
+    message,
+    duration,
+    position,
+    defaultAlert = 'both',
+    errorMessage,
+    messagePrefix,
+    successMessage,
+  }: TExecuteServiceAlertParams<T>) => {
+    const option = alert ?? defaultAlert;
+    if (option === 'none') {
+      return;
+    }
+    
+    const variant = isOk ? 'success' : 'error';
+    
+    if(option === 'success' && variant !== 'success') {
+      return;
+    }
+    
+    if(option === 'error' && variant !== 'error') {
+      return;
+    }
+    
+    const rawMessage = buildServiceAlertMessage({
+      type,
+      variant,
+      message,
+      errorMessage,
+      messagePrefix,
+      successMessage,
+    });
+    
+    showAlert({ 
+      message: rawMessage,
+      variant,
+      duration,
+      position
+    });
+  }, [buildServiceAlertMessage, showAlert]);
+
+  const contextValue: AlertContextProps = useMemo(() => ({
     alerts,
     showAlert,
     clearAlerts,
-    dismissAlert
+    dismissAlert,
+    executeServiceAlert,
+    buildServiceAlertMessage
   }), [
     alerts,
     showAlert,
     clearAlerts,
-    dismissAlert
+    dismissAlert,
+    executeServiceAlert,
+    buildServiceAlertMessage
   ]);
 
   return (

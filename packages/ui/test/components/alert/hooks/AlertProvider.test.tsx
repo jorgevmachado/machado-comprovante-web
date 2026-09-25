@@ -133,6 +133,151 @@ const TestConsumer = () => {
   );
 };
 
+const ServiceAlertConsumer = () => {
+  const {
+    alerts,
+    executeServiceAlert,
+  } = React.useContext(AlertContext);
+
+  return (
+    <div>
+      <span data-testid="service-alert-count">{alerts.length}</span>
+
+      <button
+        type="button"
+        data-testid="service-alert-success"
+        onClick={() =>
+          executeServiceAlert({
+            isOk: true,
+            type: 'payment',
+          })
+        }
+      >
+        Success
+      </button>
+
+      <button
+        type="button"
+        data-testid="service-alert-error"
+        onClick={() =>
+          executeServiceAlert({
+            isOk: false,
+            type: 'payment',
+          })
+        }
+      >
+        Error
+      </button>
+
+      <button
+        type="button"
+        data-testid="service-alert-custom-message"
+        onClick={() =>
+          executeServiceAlert({
+            isOk: true,
+            type: 'payment',
+            message: 'Custom message',
+          })
+        }
+      >
+        Custom message
+      </button>
+
+      <button
+        type="button"
+        data-testid="service-alert-prefix"
+        onClick={() =>
+          executeServiceAlert({
+            isOk: false,
+            type: 'payment',
+            messagePrefix: 'finance.payment',
+          })
+        }
+      >
+        Prefix
+      </button>
+
+      <button
+        type="button"
+        data-testid="service-alert-custom-error"
+        onClick={() =>
+          executeServiceAlert({
+            isOk: false,
+            type: 'payment',
+            errorMessage: 'Custom error message',
+          })
+        }
+      >
+        Custom error
+      </button>
+
+      <button
+        type="button"
+        data-testid="service-alert-custom-success"
+        onClick={() =>
+          executeServiceAlert({
+            isOk: true,
+            type: 'payment',
+            successMessage: 'Custom success message',
+          })
+        }
+      >
+        Custom success
+      </button>
+
+      <button
+        type="button"
+        data-testid="service-alert-none"
+        onClick={() =>
+          executeServiceAlert({
+            isOk: true,
+            type: 'payment',
+            alert: 'none',
+          })
+        }
+      >
+        None
+      </button>
+
+      <button
+        type="button"
+        data-testid="service-alert-only-success"
+        onClick={() =>
+          executeServiceAlert({
+            isOk: false,
+            type: 'payment',
+            alert: 'success',
+          })
+        }
+      >
+        Only success
+      </button>
+
+      <button
+        type="button"
+        data-testid="service-alert-only-error"
+        onClick={() =>
+          executeServiceAlert({
+            isOk: true,
+            type: 'payment',
+            alert: 'error',
+          })
+        }
+      >
+        Only error
+      </button>
+    </div>
+  );
+};
+
+const renderServiceAlertProvider = () => {
+  return render(
+    <AlertProvider>
+      <ServiceAlertConsumer />
+    </AlertProvider>,
+  );
+};
+
 const renderProvider = () => {
   return render(
     <AlertProvider>
@@ -426,5 +571,272 @@ describe('AlertProvider', () => {
     expect(
       screen.queryByTestId('alert-description'),
     ).not.toBeInTheDocument();
+  });
+
+  describe('serviceAlert', () => {
+    it('should use the provided message', () => {
+      mockedBuildAlertId.mockReturnValue('alert-1');
+
+      renderServiceAlertProvider();
+
+      act(() => {
+        screen.getByTestId('service-alert-custom-message').click();
+      });
+
+      expect(screen.getByTestId('alert-title')).toHaveTextContent(
+        'Custom message',
+      );
+    });
+    it('should use the provided error message', () => {
+      mockedBuildAlertId.mockReturnValue('alert-1');
+
+      renderServiceAlertProvider();
+
+      act(() => {
+        screen.getByTestId('service-alert-custom-error').click();
+      });
+
+      expect(screen.getByTestId('alert-title')).toHaveTextContent(
+        'Custom error message',
+      );
+
+      expect(screen.getByTestId('alert-variant')).toHaveTextContent(
+        'error',
+      );
+    });
+    it('should use the provided success message', () => {
+      mockedBuildAlertId.mockReturnValue('alert-1');
+
+      renderServiceAlertProvider();
+
+      act(() => {
+        screen.getByTestId('service-alert-custom-success').click();
+      });
+
+      expect(screen.getByTestId('alert-title')).toHaveTextContent(
+        'Custom success message',
+      );
+
+      expect(screen.getByTestId('alert-variant')).toHaveTextContent(
+        'success',
+      );
+    });
+    it('should use the default error message when no message or prefix is provided', () => {
+      mockedBuildAlertId.mockReturnValue('alert-1');
+
+      renderServiceAlertProvider();
+
+      act(() => {
+        screen.getByTestId('service-alert-error').click();
+      });
+
+      expect(screen.getByTestId('alert-title')).toHaveTextContent(
+        'Error to fetch data payment',
+      );
+    });
+    it('should use the default success message when no message or prefix is provided', () => {
+      mockedBuildAlertId.mockReturnValue('alert-1');
+
+      renderServiceAlertProvider();
+
+      act(() => {
+        screen.getByTestId('service-alert-success').click();
+      });
+
+      expect(screen.getByTestId('alert-title')).toHaveTextContent(
+        'Success to fetch data payment',
+      );
+    });
+    it('should use the default success message when no message or prefix is provided', () => {
+      mockedBuildAlertId.mockReturnValue('alert-1');
+
+      renderServiceAlertProvider();
+
+      act(() => {
+        screen.getByTestId('service-alert-success').click();
+      });
+
+      expect(screen.getByTestId('alert-title')).toHaveTextContent(
+        'Success to fetch data payment',
+      );
+    });
+    it('should build the success message using message prefix', () => {
+      mockedBuildAlertId.mockReturnValue('alert-1');
+
+      const Consumer = () => {
+        const { executeServiceAlert } = React.useContext(AlertContext);
+
+        return (
+          <button
+            type="button"
+            data-testid="execute"
+            onClick={() =>
+              executeServiceAlert({
+                isOk: true,
+                type: 'list',
+                messagePrefix: 'finance.payment',
+              })
+            }
+          >
+            Execute
+          </button>
+        );
+      };
+
+      render(
+        <AlertProvider>
+          <Consumer />
+        </AlertProvider>,
+      );
+
+      act(() => {
+        screen.getByTestId('execute').click();
+      });
+
+      expect(screen.getByTestId('alert-title')).toHaveTextContent(
+        'finance.payment.list.success',
+      );
+    });
+    it('should not show an alert when alert is none', () => {
+      renderServiceAlertProvider();
+
+      act(() => {
+        screen.getByTestId('service-alert-none').click();
+      });
+
+      expect(screen.queryByTestId('alert')).not.toBeInTheDocument();
+      expect(screen.getByTestId('service-alert-count')).toHaveTextContent(
+        '0',
+      );
+    });
+    it('should not show an error when alert is success only', () => {
+      renderServiceAlertProvider();
+
+      act(() => {
+        screen.getByTestId('service-alert-only-success').click();
+      });
+
+      expect(screen.queryByTestId('alert')).not.toBeInTheDocument();
+    });
+    it('should not show a success alert when alert is error only', () => {
+      renderServiceAlertProvider();
+
+      act(() => {
+        screen.getByTestId('service-alert-only-error').click();
+      });
+
+      expect(screen.queryByTestId('alert')).not.toBeInTheDocument();
+    });
+    it('should show a success alert when alert is success only', () => {
+      mockedBuildAlertId.mockReturnValue('alert-1');
+
+      const Consumer = () => {
+        const { executeServiceAlert } = React.useContext(AlertContext);
+
+        return (
+          <button
+            type="button"
+            data-testid="execute"
+            onClick={() =>
+              executeServiceAlert({
+                isOk: true,
+                type: 'payment',
+                alert: 'success',
+              })
+            }
+          >
+            Execute
+          </button>
+        );
+      };
+
+      render(
+        <AlertProvider>
+          <Consumer />
+        </AlertProvider>,
+      );
+
+      act(() => {
+        screen.getByTestId('execute').click();
+      });
+
+      expect(screen.getByTestId('alert')).toBeInTheDocument();
+      expect(screen.getByTestId('alert-variant')).toHaveTextContent(
+        'success',
+      );
+    });
+    it('should show a success alert when alert is success only', () => {
+      mockedBuildAlertId.mockReturnValue('alert-1');
+
+      const Consumer = () => {
+        const { executeServiceAlert } = React.useContext(AlertContext);
+
+        return (
+          <button
+            type="button"
+            data-testid="execute"
+            onClick={() =>
+              executeServiceAlert({
+                isOk: true,
+                type: 'payment',
+                alert: 'success',
+              })
+            }
+          >
+            Execute
+          </button>
+        );
+      };
+
+      render(
+        <AlertProvider>
+          <Consumer />
+        </AlertProvider>,
+      );
+
+      act(() => {
+        screen.getByTestId('execute').click();
+      });
+
+      expect(screen.getByTestId('alert')).toBeInTheDocument();
+      expect(screen.getByTestId('alert-variant')).toHaveTextContent(
+        'success',
+      );
+    });
+    it('should use defaultAlert when alert is not provided', () => {
+      mockedBuildAlertId.mockReturnValue('alert-1');
+
+      const Consumer = () => {
+        const { executeServiceAlert } = React.useContext(AlertContext);
+
+        return (
+          <button
+            type="button"
+            data-testid="execute"
+            onClick={() =>
+              executeServiceAlert({
+                isOk: true,
+                type: 'payment',
+                defaultAlert: 'none',
+              })
+            }
+          >
+            Execute
+          </button>
+        );
+      };
+
+      render(
+        <AlertProvider>
+          <Consumer />
+        </AlertProvider>,
+      );
+
+      act(() => {
+        screen.getByTestId('execute').click();
+      });
+
+      expect(screen.queryByTestId('alert')).not.toBeInTheDocument();
+    });
   });
 });

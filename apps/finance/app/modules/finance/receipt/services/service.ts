@@ -1,9 +1,10 @@
 import { HttpClient ,Result } from '@machado-repo/shared';
 import {
   TReceipt ,
-  TReceiptBatch ,
-  TReceiptFilter,
+  TReceiptBatch ,TReceiptConfirm ,
+  TReceiptFilter ,
 } from '@/app/modules/finance/receipt';
+import { TPayment } from '@/app/modules/finance';
 
 
 export class ReceiptService {
@@ -30,6 +31,22 @@ export class ReceiptService {
       path: '/receipt/batch',
       baseUrl: '/api',
       config: { body: formData }
+    });
+  }
+
+  public async confirmReceipt(receipt: TReceiptConfirm): Promise<Result<{ payment: TPayment }>> {
+    return HttpClient.post<{ payment: TPayment }>({
+      path: '/receipt/confirm',
+      baseUrl: '/api',
+      config: { body: receipt }
+    })
+  }
+
+  public async updateReceipt(receipt: TReceiptConfirm): Promise<Result<TReceipt>> {
+    return HttpClient.put<TReceipt>({
+      path: '/receipt',
+      baseUrl: '/api',
+      config: { body: receipt }
     });
   }
 }

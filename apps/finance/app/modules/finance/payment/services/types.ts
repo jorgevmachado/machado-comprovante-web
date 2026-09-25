@@ -1,5 +1,10 @@
 import type { TPayment } from '@/app/modules/finance';
 
+export type PaymentServiceDateParams = {
+  endDate?: Date;
+  startDate?: Date;
+}
+
 export type PaymentsInfoResponse = {
   count: number;
   total: number;

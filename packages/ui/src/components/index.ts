@@ -1,4 +1,4 @@
-export { default as Alert, ALERT_POSITIONS, AlertProvider, type TAlert, type TAlertPosition,type TShowAlert, useAlert } from './alert';
+export { default as Alert, ALERT_POSITIONS, AlertProvider, type TAlert, type TAlertActionOptions,type TAlertOption, type TAlertPosition,type TShowAlert, useAlert } from './alert';
 export { default as Autocomplete } from './autocomplete';
 export { default as Breadcrumb, BreadcrumbProvider, type TBreadcrumbItem, useBreadcrumb } from './breadcrumb';
 export { default as Button } from './button';
