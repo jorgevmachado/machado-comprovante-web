@@ -1,6 +1,7 @@
 export * from './date.vo';
 export * from './description.vo';
 export * from './email.vo';
+export * from './file.vo';
 export * from './fullname.vo';
 export * from './money.vo';
 export * from './name.vo';

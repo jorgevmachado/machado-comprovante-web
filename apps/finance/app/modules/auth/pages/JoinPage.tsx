@@ -156,10 +156,10 @@ export default function JoinPage() {
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
         <Text weight="bold" size="2xl" color="text-gray-900" className="mb-2">
-          <Lang langKey={ `auth.${ mode }.title` }/>
+          { `auth.${ mode }.title` }
         </Text>
         <Text size="sm" color="text-gray-500" className="mb-6">
-          <Lang langKey={ `auth.${ mode }.subtitle` }/>
+          { `auth.${ mode }.subtitle` }
         </Text>
         <Form
           fields={ formProps.fields }

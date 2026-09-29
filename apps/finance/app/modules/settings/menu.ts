@@ -19,6 +19,19 @@ export const menu: Array<TMenuItem> = [
   {
     href: '/institution',
     icon: 'landmark',
-    label: 'navigation.institution' ,
+    label: 'navigation.institution.title' ,
+    disabled: true,
+    children: [
+      {
+        href: '/institution/source',
+        icon: 'sign-out',
+        label: 'navigation.institution.source' ,
+      },
+      {
+        href: '/institution/destination',
+        icon: 'sign-in',
+        label: 'navigation.institution.destination' ,
+      }
+    ]
   }
 ];

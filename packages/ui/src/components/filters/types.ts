@@ -26,3 +26,10 @@ export type FiltersProps = {
   filterCleanLabel?: string;
   filterApplyLabel?: string;
 };
+
+export type TBaseFilter = {
+  page?: string;
+  limit?: string;
+  clean_cache?: boolean;
+  with_deleted?: boolean;
+}

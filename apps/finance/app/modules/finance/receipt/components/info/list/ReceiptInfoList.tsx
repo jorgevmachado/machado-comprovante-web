@@ -90,12 +90,12 @@ export default function ReceiptInfoList({
       <Table
         items={list}
         headers={[
-          { value: 'payer', label: 'Payer' },
-          { value: 'beneficiary', label: 'Beneficiary' },
-          { value: 'payment_date', label: 'Payment Date', format: (value) => value ? new Date(value).toLocaleDateString() : '' },
-          { value: 'source_institution', label: 'Source Institution' },
-          { value: 'destination_institution', label: 'Destination Institution' },
-          { value: 'paid_amount', label: 'Paid Amount', format: (value) => Money.tryCreate(value).instance.formatted },
+          { value: 'payer', label: 'finance.receipt.payer.label' },
+          { value: 'beneficiary', label: 'finance.beneficiary.name.label' },
+          { value: 'payment_date', label: 'finance.payment.date.label', format: (value) => value ? new Date(value).toLocaleDateString() : '' },
+          { value: 'source_institution', label: 'finance.payment.source_institution.label' },
+          { value: 'destination_institution', label: 'finance.payment.destination_institution.label' },
+          { value: 'paid_amount', label: 'finance.receipt.paid_amount.label', format: (value) => Money.tryCreate(value).instance.formatted },
         ]}
         actions={tableActions}
       />

@@ -1,7 +1,9 @@
+import type { TBaseFilter } from '@machado-repo/ui';
+
 import type { TInstitution } from '@/app/modules/finance/institution';
 import type { TBeneficiary } from '@/app/modules/finance/beneficiary';
 
-export type TPaymentFilter = {
+export type TPaymentFilter = TBaseFilter & {
   end_date?: Date;
   start_date?: Date;
   beneficiary?: string;

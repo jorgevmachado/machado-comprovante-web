@@ -8,7 +8,11 @@
     "subcategory": "Subcategory",
     "payment": "Payment",
     "beneficiary": "Beneficiary",
-    "institution": "Institution"
+    "institution": {
+      "title": "Institution",
+      "source": "Source",
+      "destination": "Destination"
+    }
   },
   "auth": {
     "register": {
@@ -56,6 +60,9 @@
       "subtitle": "Manage your financial transactions efficiently."
     },
     "beneficiary": {
+      "title": "Beneficiary",
+      "empty": "No beneficiaries found. Please add a receipts.",
+      "subtitle": "Manage your beneficiaries",
       "name": {
         "label": "Beneficiary Name",
         "placeholder": "Enter the beneficiary's name"
@@ -164,6 +171,24 @@
       "destination_institution": {
         "label": "Destination Institution",
         "placeholder": "Select the destination institution"
+      }
+    },
+    "institution": {
+      "source": {
+        "name": {
+          "label": "Source Institution Name"
+        },
+        "title": "Source Institution",
+        "empty": "No source institutions found.",
+        "subtitle": "your source institutions"
+      },
+      "destination": {
+        "name": {
+          "label": "Destination Institution Name"
+        },
+        "title": "Destination Institution",
+        "empty": "No destination institutions found.",
+        "subtitle": "your destination institutions"
       }
     }
   }

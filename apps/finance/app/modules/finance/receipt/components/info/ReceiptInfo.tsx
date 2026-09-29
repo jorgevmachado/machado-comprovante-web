@@ -164,8 +164,7 @@ export default function ReceiptInfo({
   return (
     <div className="flex-1 overflow-hidden transition-all p-4  rounded-2xl bg-white shadow-md border border-slate-200">
       <div className="flex flex-row mb-4">
-        <Text weight="bold" size="2xl">finance.receipt.info.title</Text>
-        <Text weight="bold" size="2xl">:&nbsp;</Text>
+        <Text weight="bold" size="2xl">{'finance.receipt.info.title'}:</Text>
         <Text size="2xl">{`finance.receipt.${type.toLowerCase()}`}</Text>
       </div>
 

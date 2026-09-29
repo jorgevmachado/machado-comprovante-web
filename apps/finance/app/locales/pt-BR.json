@@ -8,7 +8,11 @@
     "payment": "Pagamento",
     "subcategory": "Subcategoria",
     "beneficiary": "Beneficiário",
-    "institution": "Instituição"
+    "institution": {
+      "title": "Instituição",
+      "source": "Origem",
+      "destination": "Destino"
+    }
   },
   "auth": {
     "register": {
@@ -47,6 +51,144 @@
       "date_birth": {
         "label": "Data de Nascimento",
         "placeholder": "Insira sua data de nascimento"
+      }
+    }
+  },
+  "finance": {
+    "welcome": {
+      "title": "Olá, {{name}}! Boas-vindas ao sistema financeiro",
+      "subtitle": "Gerencie suas transações financeiras com eficiência."
+    },
+    "beneficiary": {
+      "title": "Beneficiário",
+      "empty": "Nenhum beneficiário encontrado. Por favor, adicione um recibo.",
+      "subtitle": "Gerencie seus beneficiários",
+      "name": {
+        "label": "Nome do beneficiário",
+        "placeholder": "Insira o nome do beneficiário"
+      }
+    },
+    "receipt": {
+      "info": {
+        "title": "Informações do comprovante"
+      },
+      "failed": "Falhou",
+      "received": "Recebido",
+      "processed": "Processado",
+      "processing": "Em processamento",
+      "show": {
+        "title": "Detalhes do comprovante",
+        "action": "Visualizar"
+      },
+      "edit": {
+        "title": "Editar comprovante",
+        "action": "Editar"
+      },
+      "confirm": {
+        "title": "Confirmar comprovante",
+        "action": "Confirmar",
+        "message": "Tem certeza de que deseja confirmar este comprovante?",
+        "success": "Comprovante confirmado com sucesso.",
+        "error": "Ocorreu um erro ao confirmar o comprovante. Tente novamente."
+      },
+      "fine": {
+        "label": "Multa",
+        "placeholder": "Insira o valor da multa"
+      },
+      "payer": {
+        "label": "Pagador",
+        "placeholder": "Insira o nome do pagador"
+      },
+      "barcode": {
+        "label": "Código de barras",
+        "placeholder": "Insira o código de barras do pagamento"
+      },
+      "due_date": {
+        "label": "Data de vencimento",
+        "placeholder": "Selecione a data de vencimento do pagamento"
+      },
+      "discount": {
+        "label": "Desconto",
+        "placeholder": "Insira o valor do desconto"
+      },
+      "interest": {
+        "label": "Juros",
+        "placeholder": "Insira o valor dos juros"
+      },
+      "paid_amount": {
+        "label": "Valor pago",
+        "placeholder": "Insira o valor pago"
+      },
+      "total_charges": {
+        "label": "Encargos totais",
+        "placeholder": "Insira o valor total dos encargos"
+      },
+      "authentication": {
+        "label": "Autenticação",
+        "placeholder": "Insira a autenticação"
+      },
+      "transaction_id": {
+        "label": "ID da transação",
+        "placeholder": "Insira o ID da transação"
+      },
+      "effective_payer": {
+        "label": "Pagador efetivo",
+        "placeholder": "Insira o pagador efetivo"
+      },
+      "document_amount": {
+        "label": "Valor do documento",
+        "placeholder": "Insira o valor do documento"
+      }
+    },
+    "payment": {
+      "count": {
+        "title": "Quantidade de pagamentos"
+      },
+      "total": {
+        "title": "Total de pagamentos"
+      },
+      "max": {
+        "title": "Maior pagamento"
+      },
+      "recent": {
+        "title": "Pagamentos recentes"
+      },
+      "info": {
+        "title": "Informações dos pagamentos"
+      },
+      "date": {
+        "label": "Data do pagamento",
+        "placeholder": "Selecione a data do pagamento"
+      },
+      "amount": {
+        "label": "Valor",
+        "placeholder": "Insira o valor do pagamento"
+      },
+      "source_institution": {
+        "label": "Instituição de origem",
+        "placeholder": "Selecione a instituição de origem"
+      },
+      "destination_institution": {
+        "label": "Instituição de destino",
+        "placeholder": "Selecione a instituição de destino"
+      }
+    },
+    "institution": {
+      "source": {
+        "name": {
+          "label": "Nome da Instituição de Origem"
+        },
+        "title": "Instituição de Origem",
+        "empty": "Nenhuma instituição de origem encontrada.",
+        "subtitle": "suas instituições de origem"
+      },
+      "destination": {
+        "name": {
+          "label": "Nome da Instituição de Destino"
+        },
+        "title": "Instituição de Destino",
+        "empty": "Nenhuma instituição de destino encontrada.",
+        "subtitle": "suas instituições de destino"
       }
     }
   }

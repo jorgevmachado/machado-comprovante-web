@@ -8,6 +8,7 @@ export {
   default as Filters,
   type FiltersProps,
   OFilterVariants,
+  type TBaseFilter,
   type TFilter,
   type TFilterOption,
   type TFilterVariants,

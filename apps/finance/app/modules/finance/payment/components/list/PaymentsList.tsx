@@ -1,7 +1,7 @@
 'use client';
-import { Money } from '@machado-repo/shared';
+import { DateVO ,Money } from '@machado-repo/shared';
 
-import { Table ,Text } from '@machado-repo/ui';
+import { Table ,Text ,useUI } from '@machado-repo/ui';
 
 import type { TPayment } from '@/app/modules/finance/payment';
 
@@ -14,6 +14,7 @@ export default function PaymentsList({
   title = 'finance.payment.info.title',
   payments
 }: PaymentsListProps) {
+  const { locale } = useUI();
 
   if(payments.length <= 0) {
     return (
@@ -29,9 +30,9 @@ export default function PaymentsList({
       <Table
         items={payments}
         headers={[
-          {value: 'payment_date', label: 'Payment Date', format: (value) => new Date(value).toLocaleDateString()},
-          {value: 'beneficiary', label: 'Beneficiary Name', format: (value) => value.name},
-          {value: 'amount', label: 'Amount', format: (value) => Money.tryCreate(value).instance.formatted},
+          {value: 'payment_date', label: 'finance.payment.date.label', format: (value) => DateVO.formatDate(new Date(value), locale)},
+          {value: 'beneficiary', label: 'finance.beneficiary.name.label', format: (value) => value.name},
+          {value: 'amount', label: 'finance.payment.amount.label', format: (value) => Money.tryCreate(value).instance.formatted},
         ]}/>
     </div>
   )

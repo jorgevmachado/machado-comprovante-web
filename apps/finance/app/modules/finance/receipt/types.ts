@@ -1,3 +1,5 @@
+import type { TBaseFilter } from '@machado-repo/ui';
+
 export enum EReceiptProcessingStatus {
   FAILED = 'FAILED',
   RECEIVED = 'RECEIVED',
@@ -41,7 +43,7 @@ export type TReceiptData = {
   destination_institution: TReceiptDataField<string>;
 }
 
-export type TReceiptFilter = {};
+export type TReceiptFilter = TBaseFilter;
 
 export type TReceipt = {
   id: string;
