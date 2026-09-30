@@ -52,7 +52,7 @@ export default function PaymentRouterPage() {
 
         <PaymentsList
           resumed={false}
-          payments={ payments}
+          payments={ payments }
           isLoading={ isLoading}
         />
 

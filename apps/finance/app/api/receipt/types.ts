@@ -9,6 +9,8 @@ export type TReceiptExtractedDataResponse = Omit<TReceiptData, 'due_date' | 'pay
   payment_date: TReceiptDataField<string>;
 }
 
-export type TReceiptApiResponse = Omit<TReceipt, 'extracted_data'> & {
+export type TReceiptApiResponse = Omit<TReceipt, 'extracted_data' | 'created_at' | 'update_at'> & {
   extracted_data: TReceiptExtractedDataResponse;
+  created_at: string;
+  updated_at?: string;
 }

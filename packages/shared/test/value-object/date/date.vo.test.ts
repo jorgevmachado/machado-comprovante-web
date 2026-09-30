@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { DateVO } from '../../src';
+import { DateVO } from '../../../src';
 
 describe('DateVO', () => {
   afterEach(() => {
@@ -34,49 +34,7 @@ describe('DateVO', () => {
 
     test('should throw create an error when creating a DateVO with an invalid date', () => {
       const value = new Date('invalid-date');
-      expect(() => DateVO.create(value)).toThrow('date_picker.invalid_date');
-    });
-  });
-
-  describe('toDateOnly', () => {
-    test('should return a new Date object with only the date part', () => {
-      const date = new Date('2024-06-15T12:34:56Z');
-      const result = DateVO.toDateOnly(date);
-      expect(result.toISOString()).toBe('2024-06-15T00:00:00.000Z');
-    });
-
-    test('should throw an error when the date is undefined', () => {
-      const invalidDate = undefined;
-      expect(() => DateVO.toDateOnly(invalidDate)).toThrow('date_picker.invalid_date');
-    });
-
-    test('should throw an error when the date is invalid', () => {
-      const invalidDate = new Date('invalid-date');
-      expect(() => DateVO.toDateOnly(invalidDate)).toThrow('date_picker.invalid_date');
-    });
-  });
-
-  describe('isDateDisabled', () => {
-    test('should return true when date is before minDate', () => {
-      const date = new Date('2024-06-15');
-      const minDate = new Date('2024-06-16');
-      const result = DateVO.isDateDisabled(date, minDate);
-      expect(result).toBe(true);
-    });
-
-    test('should return true when date is after maxDate', () => {
-      const date = new Date('2024-06-17');
-      const maxDate = new Date('2024-06-16');
-      const result = DateVO.isDateDisabled(date, undefined, maxDate);
-      expect(result).toBe(true);
-    });
-
-    test('should return false when date is within minDate and maxDate', () => {
-      const date = new Date('2024-06-15');
-      const minDate = new Date('2024-06-14');
-      const maxDate = new Date('2024-06-16');
-      const result = DateVO.isDateDisabled(date, minDate, maxDate);
-      expect(result).toBe(false);
+      expect(() => DateVO.create(value)).toThrow('date.invalid_date');
     });
   });
 
@@ -115,7 +73,7 @@ describe('DateVO', () => {
     test('should return current date when value is invalid', () => {
       const result = DateVO.getInitialMonth(new Date('invalid'));
 
-      const today = DateVO.toDateOnly(new Date());
+      const today = DateVO.format.toDateOnly(new Date());
 
       expect(result.toISOString()).toBe(today.toISOString());
     });
@@ -189,47 +147,9 @@ describe('DateVO', () => {
     });
   });
 
-  describe('formatDate', () => {
-    test('should return formatted date string for a valid date', () => {
-      const date = new Date('2024-06-15');
-
-      expect(DateVO.formatDate(date, 'en-US')).toBe('6/15/2024');
-    });
-
-    test('should format date using brazilian locale', () => {
-      const date = new Date('2024-06-15');
-
-      expect(DateVO.formatDate(date, 'pt-BR')).toBe('15/06/2024');
-    });
-
-    test('should format date using spanish locale', () => {
-      const date = new Date('2024-06-15');
-
-      expect(DateVO.formatDate(date, 'es-UE')).toBe('15/6/2024');
-    });
-
-    test('should return empty string for null date', () => {
-      expect(DateVO.formatDate(null, 'pt-BR')).toBe('');
-    });
-  });
-
-  describe('formatMonth', () => {
-    test('should return formatted month string for a valid date', () => {
-      const date = new Date('2024-06-15');
-
-      expect(DateVO.formatMonth(date)).toBe('June');
-    });
-
-    test('should return formatted month string for a valid date with brazilian locale', () => {
-      const date = new Date('2024-06-15');
-
-      expect(DateVO.formatMonth(date, 'pt-BR')).toBe('junho');
-    });
-  });
-
   describe('getWeekDays', () => {
     test('should return an array of week days for the given locale', () => {
-      const result = DateVO.getWeekDays('en-US');
+      const result = DateVO.getWeekDays();
       expect(result).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
     });
 

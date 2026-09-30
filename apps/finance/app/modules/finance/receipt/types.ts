@@ -50,6 +50,8 @@ export type TReceipt = {
   file_name: string;
   file_type: string;
   file_size: string;
+  created_at: Date;
+  updated_at?: Date;
   extracted_data: TReceiptData;
   processing_status: EReceiptProcessingStatus;
 }

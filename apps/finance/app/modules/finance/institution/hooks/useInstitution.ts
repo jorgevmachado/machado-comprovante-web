@@ -9,12 +9,14 @@ import {
   TInstitutionFilter,
 } from '@/app/modules/finance/institution';
 import { institutionService } from '@/app/modules/finance/institution';
+import type { TPaymentFilter } from '@/app/modules/finance';
 
 type useInstitutionActionOptions = TAlertActionOptions;
 
 export type useInstitutionReturn = {
     meta?: TPaginatedMeta;
     items: Array<TInstitution>;
+    goToPage: (page: number, params?: TInstitutionFilter, options?: useInstitutionActionOptions) => Promise<void>;
     isLoading: boolean;
     fetchList: (params?: TInstitutionFilter, options?: useInstitutionActionOptions) => Promise<void>;
 }
@@ -55,5 +57,20 @@ export default function useInstitution(): useInstitutionReturn {
     });
   }, [execute, executeServiceAlert]);
 
-  return { meta, isLoading, items, fetchList };
+  const goToPage = useCallback(async (page: number, params?: TPaymentFilter, options?: useInstitutionActionOptions) => {
+    const targetPage = Math.min(Math.max(page, 1), Math.max(meta?.total_pages ?? 1, 1));
+
+    if (targetPage === meta?.current_page || isLoading) {
+      return;
+    }
+
+    const nextParams = {
+      ...params,
+      page: targetPage.toString(),
+    };
+
+    await fetchList(nextParams, options);
+  }, [fetchList, isLoading, meta]);
+
+  return { meta, goToPage, isLoading, items, fetchList };
 }

@@ -22,17 +22,18 @@ export default function PaymentsList({
   const tableHeader: TableProps<TPayment>['headers'] = useMemo(() => {
     if(resumed) {
       return [
-        {value: 'payment_date', label: 'finance.payment.date.label', format: (value) => DateVO.formatDate(new Date(value), locale)},
+        {value: 'payment_date', label: 'finance.payment.date.label', format: (value) => DateVO.format.date(value, locale)},
         {value: 'beneficiary', label: 'finance.beneficiary.name.label', format: (value) => value.name},
         {value: 'amount', label: 'finance.payment.amount.label', format: (value) => Money.tryCreate(value).instance.formatted},
       ]
     }
     return [
+      {value: 'receipt', label: 'finance.receipt.payer.label', format: (value) => value.payer ?? '--'},
       {value: 'beneficiary', label: 'finance.beneficiary.name.label', format: (value) => value.name},
       {value: 'amount', label: 'finance.payment.amount.label', format: (value) => Money.tryCreate(value, { locale }).instance.formatted},
       {value: 'source_institution', label: 'finance.payment.source_institution.label', format: (value) => value.name},
       {value: 'destination_institution', label: 'finance.payment.destination_institution.label', format: (value) => value?.name ?? '--'},
-      {value: 'payment_date', label: 'finance.payment.date.label', format: (value) => DateVO.formatDate(new Date(value), locale)},
+      {value: 'payment_date', label: 'finance.payment.date.label', format: (value) => DateVO.format.date(value, locale)},
     ]
   }, [locale, resumed]);
 

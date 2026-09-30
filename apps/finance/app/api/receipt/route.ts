@@ -1,36 +1,31 @@
 import { NextRequest ,NextResponse } from 'next/server';
 
-import { HttpClient ,type TPaginatedListResponse } from '@machado-repo/shared';
+import {
+  DateVO ,
+  HttpClient ,
+  type TPaginatedListResponse,
+} from '@machado-repo/shared';
 
 import { getServerSession } from '@/app/modules/auth/session';
 
 import type { TReceipt } from '@/app/modules/finance/receipt';
 import { TReceiptApiResponse } from '@/app/api/receipt/types';
 
-const convertDateStringToDate = (dateString?: string): Date | undefined => {
-  if (!dateString){
-    return undefined;
-  }
-  const [year, month, day] = dateString.split('-').map(Number);
-  if(!year || !month || !day) {
-    return undefined;
-  }
-  return new Date(year, month - 1, day);
-}
-
 const convertReceiptApiResponseToReceipt = (receipt: TReceiptApiResponse): TReceipt => {
   const { extracted_data, ...rest } = receipt;
   return {
     ...rest,
+    created_at: DateVO.format.dateStringToDate(receipt.created_at) as Date,
+    updated_at: DateVO.format.dateStringToDate(receipt.updated_at),
     extracted_data: {
       ...extracted_data,
       due_date: {
         ...extracted_data.due_date,
-        value: convertDateStringToDate(extracted_data.due_date.value)
+        value: DateVO.format.dateStringToDate(extracted_data.due_date.value)
       },
       payment_date: {
         ...extracted_data.payment_date,
-        value: convertDateStringToDate(extracted_data.payment_date.value)
+        value: DateVO.format.dateStringToDate(extracted_data.payment_date.value)
       }
     }
   };
@@ -84,11 +79,11 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
     const payload = await request.json();
     const { id, ...body } = payload;
     if(body.payment_date) {
-      body.payment_date = new Date(body.payment_date).toISOString().split('T')[0];
+      body.payment_date = DateVO.format.dateToDateString(body.payment_date);
     }
 
     if(body.due_date) {
-      body.due_date = new Date(body.due_date).toISOString().split('T')[0];
+      body.due_date = DateVO.format.dateToDateString(body.due_date);
     }
     const response = await HttpClient.put<TReceiptApiResponse>({
       path: `/finance/receipt/${id}`,

@@ -17,11 +17,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const { id, ...body } = payload;
 
     if(body.payment_date) {
-      body.payment_date = new Date(body.payment_date).toISOString().split('T')[0];
+      body.payment_date = DateVO.format.dateToDateString(body.payment_date);
     }
 
     if(body.due_date) {
-      body.due_date = new Date(body.due_date).toISOString().split('T')[0];
+      body.due_date = DateVO.format.dateToDateString(body.due_date);
     }
 
     const response = await HttpClient.post<{payment: TPayment}>({

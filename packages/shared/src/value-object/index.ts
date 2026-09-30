@@ -1,4 +1,4 @@
-export * from './date.vo';
+export * from './date';
 export * from './description.vo';
 export * from './email.vo';
 export * from './file.vo';
