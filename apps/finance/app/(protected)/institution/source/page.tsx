@@ -7,11 +7,11 @@ import {
 } from '@/app/modules/finance/institution';
 
 export default function InstitutionSourceRouterPage() {
-  const { institutions, getInstitutions, isLoading } = useInstitution();
+  const { items, fetchList, isLoading } = useInstitution();
 
   useEffect(() => {
-    void getInstitutions({institution_type: 'source'});
-  } ,[getInstitutions]);
+    void fetchList({institution_type: 'source'});
+  } ,[fetchList]);
 
-  return <InstitutionList type="source" institutions={institutions} isLoading={isLoading} />;
+  return <InstitutionList type="source" institutions={items} isLoading={isLoading} />;
 }

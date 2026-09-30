@@ -141,6 +141,8 @@
       }
     },
     "payment": {
+      "title": "Payments",
+      "subtitle": "Manage your payments",
       "count": {
         "title": "Payments Count"
       },
@@ -159,6 +161,14 @@
       "date": {
         "label": "Payment Date",
         "placeholder": "Select the payment date"
+      },
+      "start_date": {
+        "label": "Start Date",
+        "placeholder": "Select the start date"
+      },
+      "end_date": {
+        "label": "End Date",
+        "placeholder": "Select the end date"
       },
       "amount": {
         "label": "Amount",

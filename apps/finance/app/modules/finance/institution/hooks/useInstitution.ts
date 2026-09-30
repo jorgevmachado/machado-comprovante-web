@@ -14,9 +14,9 @@ type useInstitutionActionOptions = TAlertActionOptions;
 
 export type useInstitutionReturn = {
     meta?: TPaginatedMeta;
+    items: Array<TInstitution>;
     isLoading: boolean;
-    institutions: Array<TInstitution>;
-    getInstitutions: (params?: TInstitutionFilter, options?: useInstitutionActionOptions) => Promise<void>;
+    fetchList: (params?: TInstitutionFilter, options?: useInstitutionActionOptions) => Promise<void>;
 }
 
 const messagePrefix = 'finance.institution';
@@ -26,9 +26,9 @@ export default function useInstitution(): useInstitutionReturn {
   const { executeServiceAlert } = useAlert();
 
   const [meta, setMeta] = useState<TPaginatedMeta | undefined>(undefined);
-  const [institutions, setInstitutions] = useState<Array<TInstitution>>([]);
+  const [items, setItems] = useState<Array<TInstitution>>([]);
 
-  const getInstitutions = useCallback(async (params?: TInstitutionFilter, options?: useInstitutionActionOptions) => {
+  const fetchList = useCallback(async (params?: TInstitutionFilter, options?: useInstitutionActionOptions) => {
     await execute(async () => {
       const response = await institutionService.getInstitutions(params);
       const instance = response.instance;
@@ -46,14 +46,14 @@ export default function useInstitution(): useInstitutionReturn {
       }
 
       if(Array.isArray(instance)) {
-        setInstitutions(instance);
+        setItems(instance);
         return;
       }
 
       setMeta(instance.meta);
-      setInstitutions(instance.items);
+      setItems(instance.items);
     });
   }, [execute, executeServiceAlert]);
 
-  return { meta, isLoading, institutions, getInstitutions };
+  return { meta, isLoading, items, fetchList };
 }

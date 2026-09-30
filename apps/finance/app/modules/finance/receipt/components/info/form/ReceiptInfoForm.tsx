@@ -89,24 +89,45 @@ const initialReceiptData: TReceiptData = {
 export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: ReceiptInfoConfirmProps) {
   const { showAlert } = useAlert();
 
+  const convertDateToDateString = useCallback((date?: Date) => {
+    if(!date) {
+      return undefined;
+    }
+
+    const newDate = new Date(date);
+
+    if(isNaN(newDate.getTime())) {
+      return undefined;
+    }
+
+    return newDate.toISOString().split('T')[0];
+  },[])
+
   const initialValues: Record<string, string> = useMemo(() => {
-    const data: Record<string, string> = {};
-    Object.entries(item).forEach(([key, value]) => {
-      if(!value) {
-        data[key] = '';
-        return;
-      }
-      if(value instanceof Date) {
-        const currentValue = value.toISOString().split('T')[0];
-        data[key] = !currentValue ? '' : currentValue;
-        return;
-      }
-      data[key] = String(value);
-    })
+    const data: Record<string, string> = {
+      id: item.id,
+      fine: String(item.fine ?? ''),
+      payer: String(item.payer ?? ''),
+      barcode: String(item.barcode ?? ''),
+      due_date: item.due_date ? convertDateToDateString(item.due_date) ?? '' : '',
+      discount: String(item.discount ?? ''),
+      interest: String(item.interest ?? ''),
+      beneficiary: String(item.beneficiary ?? ''),
+      paid_amount: String(item.paid_amount ?? ''),
+      payment_date: item.payment_date ? convertDateToDateString(item.payment_date) ?? '' : '',
+      total_charges: String(item.total_charges ?? ''),
+      authentication: String(item.authentication ?? ''),
+      transaction_id: String(item.transaction_id ?? ''),
+      effective_payer: String(item.effective_payer ?? ''),
+      document_amount: String(item.document_amount ?? ''),
+      source_institution: String(item.source_institution ?? ''),
+      destination_institution: String(item.destination_institution ?? ''),
+    };
     return data;
-  } ,[item]);
+  } ,[convertDateToDateString, item]);
 
   const fields: FormProps['fields'] = useMemo(() => {
+    const paymentDate = !initialValues.payment_date ? undefined : convertDateToDateString(new Date(initialValues.payment_date));
     return [
       {
         type: 'text' ,
@@ -143,8 +164,8 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
         name: 'payment_date' ,
         label: 'finance.payment.date.label' ,
         placeholder: 'finance.payment.date.placeholder' ,
-        value: initialValues.payment_date ?? '',
-        disabled: Boolean(initialValues.payment_date) ,
+        value: paymentDate ?? '',
+        disabled: Boolean(paymentDate) ,
         required: true ,
       } ,
       {
@@ -157,19 +178,106 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
         required: true ,
       }
     ];
-  } ,[initialValues]);
+  } ,[convertDateToDateString, initialValues]);
 
   const convertToExtractedData = (item: Record<string, string>): TReceiptData => {
     const result = {...initialReceiptData};
-    Object.entries(item).forEach(([key, value]) => {
-      if(!value){
-        return
-      }
-      result[key as keyof TReceiptData] = {
-        value ,
+    if(item['fine'] && item['fine'] !== '') {
+      result.fine = {
+        value: Number(item['fine']),
         status: EReceiptFieldStatus.FOUND
-      };
-    })
+      }
+    }
+    if(item['payer'] && item['payer'] !== '') {
+      result.payer = {
+        value: item['payer'],
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['barcode'] && item['barcode'] !== '') {
+      result.barcode = {
+        value: item['barcode'],
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['due_date'] && item['due_date'] !== '') {
+      result.due_date = {
+        value: new Date(item['due_date']),
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['discount'] && item['discount'] !== '') {
+      result.discount = {
+        value: Number(item['discount']),
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['interest'] && item['interest'] !== '') {
+      result.interest = {
+        value: Number(item['interest']),
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['paid_amount'] && item['paid_amount'] !== '') {
+      result.paid_amount = {
+        value: Number(item['paid_amount']),
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['beneficiary'] && item['beneficiary'] !== '') {
+      result.beneficiary = {
+        value: item['beneficiary'],
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['payment_date'] && item['payment_date'] !== '') {
+      result.payment_date = {
+        value: new Date(item['payment_date']),
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['total_charges'] && item['total_charges'] !== '') {
+      result.total_charges = {
+        value: Number(item['total_charges']),
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['authentication'] && item['authentication'] !== '') {
+      result.authentication = {
+        value: item['authentication'],
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['transaction_id'] && item['transaction_id'] !== '') {
+      result.transaction_id = {
+        value: item['transaction_id'],
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['effective_payer'] && item['effective_payer'] !== '') {
+      result.effective_payer = {
+        value: item['effective_payer'],
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['document_amount'] && item['document_amount'] !== '') {
+      result.document_amount = {
+        value: Number(item['document_amount']),
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['source_institution'] && item['source_institution'] !== '') {
+      result.source_institution = {
+        value: item['source_institution'],
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['destination_institution'] && item['destination_institution'] !== '') {
+      result.destination_institution = {
+        value: item['destination_institution'],
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
     return result;
   }
 

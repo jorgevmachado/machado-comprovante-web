@@ -30,6 +30,7 @@ export type FiltersProps = {
 export type TBaseFilter = {
   page?: string;
   limit?: string;
+  order_by?: string;
   clean_cache?: boolean;
   with_deleted?: boolean;
 }

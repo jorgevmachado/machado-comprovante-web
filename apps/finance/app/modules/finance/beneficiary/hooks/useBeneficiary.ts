@@ -14,11 +14,10 @@ type UseBeneficiaryActionOptions = TAlertActionOptions;
 
 export type UseBeneficiaryReturn = {
     meta?: TPaginatedMeta;
+    items: Array<TBeneficiary>;
     goToPage: (page: number, params?: TBeneficiaryFilter, options?: UseBeneficiaryActionOptions) => Promise<void>;
     isLoading: boolean;
-    beneficiaries: Array<TBeneficiary>;
-    getBeneficiaries: (params?: TBeneficiaryFilter, options?: UseBeneficiaryActionOptions) => Promise<void>;
-
+    fetchList: (params?: TBeneficiaryFilter, options?: UseBeneficiaryActionOptions) => Promise<void>;
 }
 
 const messagePrefix = 'finance.beneficiary';
@@ -28,9 +27,9 @@ export default function useBeneficiary(): UseBeneficiaryReturn {
   const { executeServiceAlert } = useAlert();
 
   const [meta, setMeta] = useState<TPaginatedMeta | undefined>(undefined);
-  const [beneficiaries, setBeneficiaries] = useState<Array<TBeneficiary>>([]);
+  const [items, setItems] = useState<Array<TBeneficiary>>([]);
 
-  const getBeneficiaries = useCallback(async (params?: TBeneficiaryFilter, options?: UseBeneficiaryActionOptions) => {
+  const fetchList = useCallback(async (params?: TBeneficiaryFilter, options?: UseBeneficiaryActionOptions) => {
     await execute(async () => {
       const filter: TBeneficiaryFilter = {
         ...params,
@@ -52,12 +51,12 @@ export default function useBeneficiary(): UseBeneficiaryReturn {
       }
 
       if(Array.isArray(instance)) {
-        setBeneficiaries(instance);
+        setItems(instance);
         return;
       }
 
       setMeta(instance.meta);
-      setBeneficiaries(instance.items);
+      setItems(instance.items);
     });
   }, [execute, executeServiceAlert]);
 
@@ -72,8 +71,8 @@ export default function useBeneficiary(): UseBeneficiaryReturn {
       return;
     }
 
-    await getBeneficiaries({ ...params, page: page.toString() }, options);
-  }, [clampPage, getBeneficiaries, isLoading, meta?.current_page, meta?.total_pages]);
+    await fetchList({ ...params, page: page.toString() }, options);
+  }, [clampPage, fetchList, isLoading, meta?.current_page, meta?.total_pages]);
 
-  return { meta, goToPage, isLoading, beneficiaries, getBeneficiaries };
+  return { meta, goToPage, isLoading, items, fetchList };
 }

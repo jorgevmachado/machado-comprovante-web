@@ -9,7 +9,23 @@ import {
 } from '@/app/modules/finance/beneficiary';
 
 export class BeneficiaryService {
-  public async getBeneficiaries(params?: TBeneficiaryFilter): Promise<Result<TPaginatedListResponse<TBeneficiary> | Array<TBeneficiary>>> {
+  private toSnakeCase(value?: string): string {
+    if (!value) {
+      return '';
+    }
+    const matches = value.match(/[A-Z]{2,}(?=[A-Z][a-z]+\d*|\b)|[A-Z]?[a-z]+\d*|[A-Z]|\d+/g);
+
+    if (!matches) {
+      return value;
+    }
+
+    return matches.map((word) => word.toLowerCase()).join('_');
+  }
+  public async getBeneficiaries(filters?: TBeneficiaryFilter): Promise<Result<TPaginatedListResponse<TBeneficiary> | Array<TBeneficiary>>> {
+    const params = {
+      ...filters,
+      ...(filters?.name ? { name: this.toSnakeCase(filters.name) } : {}),
+    }
     return HttpClient.get({
       path: '/beneficiary',
       baseUrl: '/api',

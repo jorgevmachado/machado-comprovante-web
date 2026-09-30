@@ -4,11 +4,11 @@ import { useBeneficiary } from '@/app/modules/finance/beneficiary';
 import { useEffect } from 'react';
 
 export default function BeneficiaryRouterPage() {
-  const { meta, goToPage, getBeneficiaries, beneficiaries, isLoading } = useBeneficiary();
+  const { meta, goToPage, fetchList, items, isLoading } = useBeneficiary();
 
   useEffect(() => {
-    void getBeneficiaries({ page: '1' });
-  } ,[getBeneficiaries]);
+    void fetchList({ page: '1' });
+  } ,[fetchList]);
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-6 text-slate-950 sm:px-6 lg:px-8">
@@ -22,17 +22,17 @@ export default function BeneficiaryRouterPage() {
 
         <Filters
           filters={[{ name: 'name', type: 'text', value: '' }]}
-          onApply={(nextFilters) => getBeneficiaries(nextFilters)}
+          onApply={(nextFilters) => fetchList(nextFilters)}
         />
 
-        { !isLoading && beneficiaries.length === 0 && (
+        { !isLoading && items.length === 0 && (
           <div className="flex flex-col items-center justify-center">
             <Text>finance.beneficiary.empty</Text>
           </div>
         )}
 
-        {!isLoading && beneficiaries.length > 0 && (
-          <Table items={beneficiaries} headers={[
+        {!isLoading && items.length > 0 && (
+          <Table items={items} headers={[
             { value: 'id', label: 'ID'},
             { value: 'name', label: 'finance.beneficiary.name.label', sortable: true},
           ]}/>

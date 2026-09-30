@@ -21,6 +21,7 @@ export default function HomeRouterPage() {
   const {
     fetchInfo: fetchPaymentsInfo,
     payments,
+    isLoading: isLoadingPayments,
     maxPayment,
     totalAmount,
     paymentCount,
@@ -64,6 +65,7 @@ export default function HomeRouterPage() {
 
         <PaymentsInfo
           payments={payments}
+          isLoading={isLoadingPayments}
           maxPayment={maxPayment}
           totalAmount={totalAmount}
           paymentCount={paymentCount}

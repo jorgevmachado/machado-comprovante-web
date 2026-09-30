@@ -5,11 +5,13 @@ import {
   PaymentsTotal ,
   type TPayment ,
 } from '@/app/modules/finance/payment';
+import { Text } from '@machado-repo/ui';
 
 type PaymentsInfoProps = {
   title?: string;
   maxTitle?: string;
   payments: Array<TPayment>;
+  isLoading: boolean;
   maxPayment: number;
   countTitle?: string;
   totalTitle?: string;
@@ -21,6 +23,7 @@ export default function PaymentsInfo({
   title = 'finance.payment.recent.title' ,
   maxTitle ,
   payments,
+  isLoading,
   maxPayment,
   countTitle ,
   totalTitle ,
@@ -29,12 +32,15 @@ export default function PaymentsInfo({
 }: PaymentsInfoProps) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-row gap-6">
-        <PaymentsCount title={ countTitle } count={ paymentCount }/>
-        <PaymentsTotal title={ totalTitle } total={ totalAmount }/>
-        <PaymentsMax title={ maxTitle } maxValue={ maxPayment }/>
-      </div>
-      <PaymentsList title={ title } payments={ payments }/>
+      {!isLoading && (
+        <div className="flex flex-row gap-6">
+          <PaymentsCount title={ countTitle } count={ paymentCount }/>
+          <PaymentsTotal title={ totalTitle } total={ totalAmount }/>
+          <PaymentsMax title={ maxTitle } maxValue={ maxPayment }/>
+        </div>
+      )}
+      <Text weight="bold" size="3xl">{title}</Text>
+      <PaymentsList payments={ payments } isLoading={isLoading}/>
     </div>
   );
 }

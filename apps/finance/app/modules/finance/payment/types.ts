@@ -3,7 +3,13 @@ import type { TBaseFilter } from '@machado-repo/ui';
 import type { TInstitution } from '@/app/modules/finance/institution';
 import type { TBeneficiary } from '@/app/modules/finance/beneficiary';
 
+export enum EPaymentOrder {
+  ASC = 'asc',
+  DESC = 'desc',
+}
+
 export type TPaymentFilter = TBaseFilter & {
+  order?: EPaymentOrder;
   end_date?: Date;
   start_date?: Date;
   beneficiary?: string;

@@ -1,4 +1,8 @@
-import { HttpClient ,Result } from '@machado-repo/shared';
+import {
+  HttpClient ,
+  Result ,
+  type TPaginatedListResponse,
+} from '@machado-repo/shared';
 
 import type {
   TPayment ,
@@ -31,7 +35,7 @@ export class PaymentService {
     });
   }
 
-  public async getPayments(params?: TPaymentFilter): Promise<Result<Array<TPayment>>> {
+  public async getPayments(params?: TPaymentFilter): Promise<Result<TPaginatedListResponse<TPayment> |Array<TPayment>>> {
     return HttpClient.get<Array<TPayment>>({
       path: '/payment',
       baseUrl: '/api',

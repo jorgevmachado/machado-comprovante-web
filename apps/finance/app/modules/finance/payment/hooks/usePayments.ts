@@ -7,19 +7,24 @@ import {
 } from '@machado-repo/ui';
 
 import {
+  EPaymentOrder ,
   paymentService ,
   type PaymentServiceDateParams ,
   type TPayment ,
   type TPaymentFilter ,
 } from '@/app/modules/finance';
+import type { TPaginatedMeta } from '@machado-repo/shared';
 
 type UsePaymentsFc = (params?: PaymentServiceDateParams, options?: UsePaymentsActionOptions) => Promise<void>;
 
 type UsePaymentsActionOptions = TAlertActionOptions;
 
 type UsePaymentsReturn = {
+  meta?: TPaginatedMeta;
   payments: Array<TPayment>;
+  goToPage: (page: number, params?: TPaymentFilter, options?: UsePaymentsActionOptions) => Promise<void>;
   fetchInfo: (params?: TPaymentFilter, options?: UsePaymentsActionOptions) => Promise<void>;
+  isLoading: boolean;
   maxPayment: number;
   getPayments: (params?: TPaymentFilter, options?: UsePaymentsActionOptions) => Promise<void>;
   totalAmount: number;
@@ -32,9 +37,10 @@ type UsePaymentsReturn = {
 const messagePrefix = 'finance.payment';
 
 export default function usePayments(): UsePaymentsReturn {
-  const { execute } = useLoading();
+  const { execute, isLoading } = useLoading();
   const { executeServiceAlert } = useAlert();
 
+  const [meta, setMeta] = useState<TPaginatedMeta | undefined>(undefined);
   const [payments ,setPayments] = useState<Array<TPayment>>([]);
   const [maxPayment ,setMaxPayment] = useState<number>(0);
   const [totalAmount ,setTotalAmount] = useState<number>(0);
@@ -44,7 +50,6 @@ export default function usePayments(): UsePaymentsReturn {
   const getPayments = useCallback(async (params?: TPaymentFilter, options?: UsePaymentsActionOptions) => {
     await execute(async () => {
       const response = await paymentService.getPayments(params);
-      const result = response.isFailure ? [] : response.instance;
       executeServiceAlert({
         isOk: response.isOk,
         type: 'list',
@@ -54,7 +59,12 @@ export default function usePayments(): UsePaymentsReturn {
         messagePrefix: messagePrefix,
         successMessage: options?.successMessage,
       })
-      setPayments(result);
+      if(Array.isArray(response.instance)) {
+        setPayments(response.instance ?? []);
+        return;
+      }
+      setPayments(response.instance.items ?? []);
+      setMeta(response.instance.meta);
     });
   }, [execute, executeServiceAlert]);
 
@@ -111,10 +121,17 @@ export default function usePayments(): UsePaymentsReturn {
     });
   }, [execute, executeServiceAlert]);
 
-  const fetchInfo = useCallback(async (params?: TPaymentFilter, options?: UsePaymentsActionOptions) => {
+  const fetchInfo = useCallback(async (filters?: TPaymentFilter, options?: UsePaymentsActionOptions) => {
     const rawOptions = {
       ...options,
       alert: options?.alert ?? 'none',
+    }
+    const params = {
+      ...filters,
+      ...(filters?.page ? { page: filters.page } : { page: '1' }),
+      ...(filters?.order ? { order: filters.order } : { order: EPaymentOrder.DESC }),
+      ...(filters?.order_by ? { order_by: filters.order_by } : { order_by: 'created_at' }),
+      ...(filters?.limit ? { limit: filters.limit } : { limit: '3' }),
     }
     await Promise.all([
       getTotalAmount({endDate: params?.end_date, startDate: params?.start_date}, rawOptions),
@@ -124,9 +141,27 @@ export default function usePayments(): UsePaymentsReturn {
     ])
   },[getPaymentCount, getPaymentWithMaxAmount, getPayments, getTotalAmount]);
 
+  const goToPage = useCallback(async (page: number, params?: TPaymentFilter, options?: UsePaymentsActionOptions) => {
+    const targetPage = Math.min(Math.max(page, 1), Math.max(meta?.total_pages ?? 1, 1));
+
+    if (targetPage === meta?.current_page || isLoading) {
+      return;
+    }
+
+    const nextParams = {
+      ...params,
+      page: targetPage.toString(),
+    };
+
+    await getPayments(nextParams, options);
+  }, [getPayments, isLoading, meta]);
+
   return {
+    meta,
     payments,
+    goToPage,
     fetchInfo,
+    isLoading,
     maxPayment,
     getPayments,
     totalAmount,
@@ -134,6 +169,5 @@ export default function usePayments(): UsePaymentsReturn {
     getTotalAmount,
     getPaymentCount,
     getPaymentWithMaxAmount,
-
   }
 }

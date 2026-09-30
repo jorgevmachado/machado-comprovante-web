@@ -141,6 +141,8 @@
       }
     },
     "payment": {
+      "title": "Pagos",
+      "subtitle": "Gestiona tus pagos",
       "count": {
         "title": "Número de pagos"
       },
@@ -159,6 +161,14 @@
       "date": {
         "label": "Fecha de pago",
         "placeholder": "Selecciona la fecha de pago"
+      },
+      "start_date": {
+        "label": "Fecha de inicio",
+        "placeholder": "Selecciona la fecha de inicio"
+      },
+      "end_date": {
+        "label": "Fecha de fin",
+        "placeholder": "Selecciona la fecha de fin"
       },
       "amount": {
         "label": "Importe",

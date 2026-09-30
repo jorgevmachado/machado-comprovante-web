@@ -141,6 +141,8 @@
       }
     },
     "payment": {
+      "title": "Pagamentos",
+      "subtitle": "Gerencie seus pagamentos",
       "count": {
         "title": "Quantidade de pagamentos"
       },
@@ -159,6 +161,14 @@
       "date": {
         "label": "Data do pagamento",
         "placeholder": "Selecione a data do pagamento"
+      },
+      "start_date": {
+        "label": "Data de início",
+        "placeholder": "Selecione a data de início"
+      },
+      "end_date": {
+        "label": "Data de fim",
+        "placeholder": "Selecione a data de fim"
       },
       "amount": {
         "label": "Valor",
