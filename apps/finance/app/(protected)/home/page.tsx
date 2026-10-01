@@ -52,7 +52,7 @@ export default function HomeRouterPage() {
 
   return (
     <main className="min-h-screen px-6 py-10">
-      <div className="mx-auto flex max-w-7xl flex-col gap-6">
+      <div className="mx-auto flex max-w-8xl flex-col gap-6">
         <div className="flex flex-col gap-3">
           <Text as="h1" className="text-3xl font-bold text-slate-950 sm:text-4xl">
             {`finance.welcome.title, {name: ${user?.name}}`}

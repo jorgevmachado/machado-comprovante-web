@@ -14,7 +14,7 @@ type UseReceiptsReturn = {
   receiptBatch?: TReceiptBatch;
   updateReceipt: (receipt: TReceiptConfirm, options?: TAlertActionOptions) => Promise<TReceipt | undefined>;
   confirmReceipt: (receipt: TReceiptConfirm, options?: TAlertActionOptions) => Promise<boolean>;
-  receiptBatchUpload: (files: Array<File>, options?: TAlertActionOptions) => Promise<void>;
+  receiptBatchUpload: (files: Array<File>, options?: TAlertActionOptions) => Promise<boolean>;
 }
 
 const messagePrefix = 'finance.receipt';
@@ -46,7 +46,7 @@ export default function useReceipts(): UseReceiptsReturn {
 
   const receiptBatchUpload = useCallback(async (files: Array<File>, options?: UseReceiptActionOptions) => {
 
-    await execute(async () => {
+    return await execute(async () => {
       const response = await receiptService.receiptBatch(files);
       executeServiceAlert({
         isOk: response.isOk,
@@ -58,6 +58,7 @@ export default function useReceipts(): UseReceiptsReturn {
         successMessage: options?.successMessage,
       })
       setReceiptBatch(response.instance);
+      return response.isOk;
     });
   }, [execute, executeServiceAlert]);
 
