@@ -1,6 +1,6 @@
 import { NextRequest ,NextResponse } from 'next/server';
 
-import { HttpClient } from '@machado-repo/shared';
+import { HttpClient, DateVO } from '@machado-repo/shared';
 
 import { getServerSession } from '@/app/modules/auth/session';
 import { TPayment } from '@/app/modules/finance';

@@ -69,6 +69,8 @@
       }
     },
     "receipt": {
+      "title": "Receipts",
+      "subtitle": "Manage your receipts",
       "info": {
         "title": "Receipt Information"
       },
@@ -138,10 +140,15 @@
       "document_amount": {
         "label": "Document Amount",
         "placeholder": "Enter the document amount"
+      },
+      "file_name": {
+        "label": "File Name",
+        "placeholder": "Enter the file name"
       }
     },
     "payment": {
       "title": "Payments",
+      "empty": "No payments found.",
       "subtitle": "Manage your payments",
       "count": {
         "title": "Payments Count"

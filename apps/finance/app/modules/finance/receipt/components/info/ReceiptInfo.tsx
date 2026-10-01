@@ -18,12 +18,10 @@ import ReceiptInfoExtractedData
 import useReceipts from '@/app/modules/finance/receipt/hooks/useReceipts';
 
 type ReceiptInfoProps = {
-  type?: EReceiptProcessingStatus;
   receipts: Array<TReceipt>;
   onCallback?: (status: 'error' | 'success') => void;
 }
 export default function ReceiptInfo({
-  type = EReceiptProcessingStatus.RECEIVED,
   receipts,
   onCallback
 }: ReceiptInfoProps) {
@@ -164,8 +162,7 @@ export default function ReceiptInfo({
   return (
     <div className="flex-1 overflow-hidden transition-all p-4  rounded-2xl bg-white shadow-md border border-slate-200">
       <div className="flex flex-row mb-4">
-        <Text weight="bold" size="2xl">{'finance.receipt.info.title'}:</Text>
-        <Text size="2xl">{`finance.receipt.${type.toLowerCase()}`}</Text>
+        <Text weight="bold" size="2xl">{'finance.receipt.title'}</Text>
       </div>
 
       {!receiptsState || receiptsState.length === 0 && (
@@ -177,6 +174,7 @@ export default function ReceiptInfo({
 
       {receiptsList && receiptsList[EReceiptProcessingStatus.RECEIVED] && receiptsList[EReceiptProcessingStatus.RECEIVED].length > 0 && (
         <ReceiptInfoList
+          type={EReceiptProcessingStatus.RECEIVED}
           receipts={receiptsList[EReceiptProcessingStatus.RECEIVED]}
           onEdit={handleOpenFormModal}
           onShow={handleOpenShowModal}
@@ -187,6 +185,7 @@ export default function ReceiptInfo({
 
       {receiptsList && receiptsList[EReceiptProcessingStatus.FAILED] && receiptsList[EReceiptProcessingStatus.FAILED].length > 0 && (
         <ReceiptInfoList
+          type={EReceiptProcessingStatus.FAILED}
           receipts={receiptsList[EReceiptProcessingStatus.FAILED]}
           onEdit={(item) => handleOpenFormModal(item, true)}
           onShow={handleOpenShowModal}
@@ -196,6 +195,7 @@ export default function ReceiptInfo({
 
       {receiptsList && receiptsList[EReceiptProcessingStatus.PROCESSING] && receiptsList[EReceiptProcessingStatus.PROCESSING].length > 0 && (
         <ReceiptInfoList
+          type={EReceiptProcessingStatus.PROCESSING}
           receipts={receiptsList[EReceiptProcessingStatus.PROCESSING]}
           className="mt-6"
         />

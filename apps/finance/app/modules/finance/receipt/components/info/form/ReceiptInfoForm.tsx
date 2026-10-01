@@ -1,5 +1,5 @@
 import { useCallback ,useMemo } from 'react';
-
+import { DateVO ,Money } from '@machado-repo/shared';
 import {
   Form ,
   type FormProps ,
@@ -89,32 +89,18 @@ const initialReceiptData: TReceiptData = {
 export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: ReceiptInfoConfirmProps) {
   const { showAlert } = useAlert();
 
-  const convertDateToDateString = useCallback((date?: Date) => {
-    if(!date) {
-      return undefined;
-    }
-
-    const newDate = new Date(date);
-
-    if(isNaN(newDate.getTime())) {
-      return undefined;
-    }
-
-    return newDate.toISOString().split('T')[0];
-  },[])
-
   const initialValues: Record<string, string> = useMemo(() => {
     const data: Record<string, string> = {
       id: item.id,
       fine: String(item.fine ?? ''),
       payer: String(item.payer ?? ''),
       barcode: String(item.barcode ?? ''),
-      due_date: item.due_date ? convertDateToDateString(item.due_date) ?? '' : '',
+      due_date: item.due_date ? DateVO.format.dateToDateString(item.due_date) ?? '' : '',
       discount: String(item.discount ?? ''),
       interest: String(item.interest ?? ''),
       beneficiary: String(item.beneficiary ?? ''),
       paid_amount: String(item.paid_amount ?? ''),
-      payment_date: item.payment_date ? convertDateToDateString(item.payment_date) ?? '' : '',
+      payment_date: item.payment_date ? DateVO.format.dateToDateString(item.payment_date) ?? '' : '',
       total_charges: String(item.total_charges ?? ''),
       authentication: String(item.authentication ?? ''),
       transaction_id: String(item.transaction_id ?? ''),
@@ -124,10 +110,17 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
       destination_institution: String(item.destination_institution ?? ''),
     };
     return data;
-  } ,[convertDateToDateString, item]);
+  } ,[item]);
 
   const fields: FormProps['fields'] = useMemo(() => {
-    const paymentDate = !initialValues.payment_date ? undefined : convertDateToDateString(new Date(initialValues.payment_date));
+    const paymentDate = !initialValues.payment_date
+      ? undefined
+      : DateVO.format.dateToDateString(initialValues.payment_date);
+
+    const paidAmount = !initialValues.paid_amount || initialValues.paid_amount === '0'
+      ? undefined
+      : initialValues.paid_amount;
+
     return [
       {
         type: 'text' ,
@@ -173,12 +166,12 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
         name: 'paid_amount' ,
         label: 'finance.payment.amount.label' ,
         placeholder: 'finance.payment.amount.placeholder' ,
-        value: initialValues.paid_amount ?? '',
-        disabled: Boolean(initialValues.paid_amount) ,
+        value: paidAmount ?? '',
+        disabled: Boolean(paidAmount) ,
         required: true ,
       }
     ];
-  } ,[convertDateToDateString, initialValues]);
+  } ,[initialValues]);
 
   const convertToExtractedData = (item: Record<string, string>): TReceiptData => {
     const result = {...initialReceiptData};
@@ -302,9 +295,10 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
       }
     }
     if(data.paid_amount) {
-      const validAmount = Number(data.paid_amount);
+      const validAmount = Money.tryCreate(data.paid_amount).instance.valueNumber;
       if(!isNaN(validAmount)) {
         dataItem.paid_amount = dataItem.paid_amount !== validAmount ? validAmount : dataItem.paid_amount;
+        data['paid_amount'] = validAmount.toString();
       }
     }
     const extractedData = convertToExtractedData(data)

@@ -69,6 +69,8 @@
       }
     },
     "receipt": {
+      "title": "Recibos",
+      "subtitle": "Gestiona tus recibos",
       "info": {
         "title": "Información del justificante"
       },
@@ -138,10 +140,15 @@
       "document_amount": {
         "label": "Importe del documento",
         "placeholder": "Introduce el importe del documento"
+      },
+      "file_name": {
+        "label": "Nombre del archivo",
+        "placeholder": "Introduce el nombre del archivo"
       }
     },
     "payment": {
       "title": "Pagos",
+      "empty": "No se encontraron pagos.",
       "subtitle": "Gestiona tus pagos",
       "count": {
         "title": "Número de pagos"

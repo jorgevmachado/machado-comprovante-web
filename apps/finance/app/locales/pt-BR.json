@@ -69,6 +69,8 @@
       }
     },
     "receipt": {
+      "title": "Recibos",
+      "subtitle": "Gerencie seus recibos",
       "info": {
         "title": "Informações do comprovante"
       },
@@ -138,10 +140,15 @@
       "document_amount": {
         "label": "Valor do documento",
         "placeholder": "Insira o valor do documento"
+      },
+      "file_name": {
+        "label": "Nome do arquivo",
+        "placeholder": "Insira o nome do arquivo"
       }
     },
     "payment": {
       "title": "Pagamentos",
+      "empty": "Nenhum pagamento encontrado.",
       "subtitle": "Gerencie seus pagamentos",
       "count": {
         "title": "Quantidade de pagamentos"
