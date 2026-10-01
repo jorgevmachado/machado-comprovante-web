@@ -11,10 +11,7 @@ export default function useNavigation() {
 
   const push = useCallback(
     (href: string) => {
-      console.log('START NAVIGATION');
-      console.log({ href });
       startPageRender();
-      console.log('PAGE RENDER STARTED');
       router.push(href);
     },
     [router, startPageRender],
