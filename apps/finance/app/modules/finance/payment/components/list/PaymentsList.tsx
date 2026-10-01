@@ -1,18 +1,20 @@
-'use client';
+import { useMemo } from 'react';
+
 import { DateVO ,Money } from '@machado-repo/shared';
 
 import { Table ,TableProps ,Text ,useUI } from '@machado-repo/ui';
 
 import type { TPayment } from '@/app/modules/finance/payment';
-import { useMemo } from 'react';
 
 type PaymentsListProps = {
+  onEdit?: (item: TPayment) => void;
   resumed?: boolean;
   payments: Array<TPayment>;
   isLoading: boolean;
 }
 
 export default function PaymentsList({
+  onEdit,
   resumed = true,
   payments,
   isLoading
@@ -37,6 +39,19 @@ export default function PaymentsList({
     ]
   }, [locale, resumed]);
 
+  const tableActions: TableProps<TPayment>['actions'] = useMemo(() => {
+    if(resumed || !onEdit) {
+      return undefined;
+    }
+    return {
+      text: 'form.action.actions',
+      icons: [{
+        icon: 'edit',
+        onClick: onEdit
+      }]
+    };
+  }, [resumed, onEdit]);
+
   const classNameList = useMemo(() => {
     if(!resumed) {
       return undefined;
@@ -56,7 +71,9 @@ export default function PaymentsList({
       {!isLoading && payments.length > 0 && (
         <Table
           items={payments}
-          headers={tableHeader}/>
+          headers={tableHeader}
+          actions={tableActions}
+        />
       )}
     </div>
   )

@@ -11,7 +11,7 @@ import {
   paymentService ,
   type PaymentServiceDateParams ,
   type TPayment ,
-  type TPaymentFilter ,
+  type TPaymentFilter ,TPaymentPersist ,
 } from '@/app/modules/finance';
 import type { TPaginatedMeta } from '@machado-repo/shared';
 
@@ -29,6 +29,7 @@ type UsePaymentsReturn = {
   getPayments: (params?: TPaymentFilter, options?: UsePaymentsActionOptions) => Promise<void>;
   totalAmount: number;
   paymentCount: number;
+  updatePayment:(item: TPaymentPersist, options?: UsePaymentsActionOptions) => Promise<void>;
   getTotalAmount: UsePaymentsFc;
   getPaymentCount: UsePaymentsFc;
   getPaymentWithMaxAmount: UsePaymentsFc;
@@ -156,6 +157,21 @@ export default function usePayments(): UsePaymentsReturn {
     await getPayments(nextParams, options);
   }, [getPayments, isLoading, meta]);
 
+  const updatePayment = useCallback(async (item: TPaymentPersist, options?: UsePaymentsActionOptions) => {
+    await execute(async () => {
+      const response = await paymentService.updatePayment(item);
+      executeServiceAlert({
+        isOk: response.isOk,
+        type: 'update',
+        alert: options?.alert,
+        defaultAlert: 'both',
+        errorMessage: options?.errorMessage,
+        messagePrefix: messagePrefix,
+        successMessage: options?.successMessage,
+      })
+    });
+  }, [execute, executeServiceAlert]);
+
   return {
     meta,
     payments,
@@ -166,6 +182,7 @@ export default function usePayments(): UsePaymentsReturn {
     getPayments,
     totalAmount,
     paymentCount,
+    updatePayment,
     getTotalAmount,
     getPaymentCount,
     getPaymentWithMaxAmount,

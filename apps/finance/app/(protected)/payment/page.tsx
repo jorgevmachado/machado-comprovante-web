@@ -1,11 +1,17 @@
 'use client';
 import { useEffect ,useMemo } from 'react';
-import { Filters ,Pagination ,Text } from '@machado-repo/ui';
+import { Filters ,Pagination ,Text ,useModal } from '@machado-repo/ui';
 
-import { PaymentsList ,usePayments } from '@/app/modules/finance';
+import {
+  PaymentForm ,
+  PaymentsList ,
+  type TPayment ,TPaymentPersist ,
+  usePayments ,
+} from '@/app/modules/finance';
 
 export default function PaymentRouterPage() {
-  const { getPayments, goToPage, meta, payments, isLoading } = usePayments();
+  const { modal, openModal, closeModal } = useModal();
+  const { getPayments, goToPage, meta, payments, isLoading, updatePayment } = usePayments();
 
   const defaultEndData = useMemo(() => {
     const currentDate = new Date().toISOString().split('T')[0];
@@ -27,6 +33,21 @@ export default function PaymentRouterPage() {
     }
     return currentDate;
   };
+
+  const handleUpdatePayment = async (item: TPaymentPersist) => {
+    await updatePayment(item);
+    await getPayments({ page: '1', end_date: new Date(defaultEndData) });
+    closeModal();
+  }
+
+  const handleOpenFormModal = (item: TPayment) => {
+    openModal({
+      title: 'finance.payment.edit.title',
+      children: (
+        <PaymentForm item={item} onSubmit={handleUpdatePayment} onCancel={closeModal} />
+      )
+    });
+  }
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-6 text-slate-950 sm:px-6 lg:px-8">
@@ -52,10 +73,11 @@ export default function PaymentRouterPage() {
 
         <PaymentsList
           resumed={false}
+          onEdit={handleOpenFormModal}
           payments={ payments }
           isLoading={ isLoading}
         />
-
+        {modal}
         {meta && (
           <Pagination
             isLoading={isLoading}

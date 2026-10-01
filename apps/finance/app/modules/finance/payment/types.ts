@@ -32,3 +32,13 @@ export type TPayment = {
   source_institution: TInstitution;
   destination_institution?: TInstitution;
 }
+
+export type TPaymentPersist = {
+  id: string;
+  payer?: string;
+  amount?: number;
+  beneficiary?: string;
+  payment_date?: Date;
+  source_institution?: string;
+  destination_institution?: string;
+}

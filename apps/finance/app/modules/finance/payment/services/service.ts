@@ -6,8 +6,8 @@ import {
 
 import type {
   TPayment ,
-  TPaymentFilter,
-  PaymentServiceDateParams
+  TPaymentFilter ,
+  PaymentServiceDateParams ,TPaymentPersist,
 } from '@/app/modules/finance';
 
 export class PaymentService {
@@ -40,6 +40,15 @@ export class PaymentService {
       path: '/payment',
       baseUrl: '/api',
       config: { params: params }
+    })
+  }
+
+  public async updatePayment(item: TPaymentPersist): Promise<Result<TPayment>> {
+    const { id, ...body } = item;
+    return HttpClient.put<TPayment>({
+      path: `/payment/${id}`,
+      baseUrl: '/api',
+      config: { body }
     })
   }
 }
