@@ -207,6 +207,15 @@
         "empty": "Nenhuma instituição de destino encontrada.",
         "subtitle": "suas instituições de destino"
       }
+    },
+    "category": {
+      "title": "Categorias",
+      "empty": "Nenhuma categoria encontrada.",
+      "subtitle": "Gerencie suas categorias",
+      "name": {
+        "label": "Categoria",
+        "placeholder": "Insira o nome da categoria"
+      }
     }
   }
 }

@@ -30,7 +30,9 @@ export type TReceiptData = {
   barcode: TReceiptDataField<string>
   due_date: TReceiptDataField<Date>
   discount: TReceiptDataField<number>
+  category: TReceiptDataField<string>;
   interest: TReceiptDataField<number>
+  description: TReceiptDataField<string>;
   paid_amount: TReceiptDataField<number>;
   beneficiary: TReceiptDataField<string>;
   payment_date: TReceiptDataField<Date>;
@@ -79,9 +81,11 @@ export type TReceiptConfirm = {
   payer?: string;
   barcode?: string;
   due_date?: Date;
+  category: string;
   discount?: number;
   interest?: number;
   beneficiary: string;
+  description?: string;
   paid_amount: number;
   payment_date?: Date;
   total_charges?: number;

@@ -207,6 +207,15 @@
         "empty": "No destination institutions found.",
         "subtitle": "your destination institutions"
       }
+    },
+    "category": {
+      "title": "Categories",
+      "empty": "No categories found.",
+      "subtitle": "Manage your categories",
+      "name": {
+        "label": "Category Name",
+        "placeholder": "Enter the category name"
+      }
     }
   }
 }

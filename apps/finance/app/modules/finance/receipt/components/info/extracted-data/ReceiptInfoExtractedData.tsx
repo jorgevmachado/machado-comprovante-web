@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react';
-import { Money } from '@machado-repo/shared';
-import { Text } from '@machado-repo/ui';
+import { DateVO ,Money } from '@machado-repo/shared';
+import { Text ,useUI } from '@machado-repo/ui';
 
 import { TReceiptConfirm } from '@/app/modules/finance/receipt';
 
@@ -14,13 +14,14 @@ type ReceiptInfoExtractedDataListItem = {
 }
 
 export default function ReceiptInfoExtractedData({ item }: ReceiptInfoExtractedDataProps) {
+  const { locale } = useUI()
   const formatValue = useCallback((key: string, value: string | number | Date | null | undefined): string => {
     if(key === 'fine' || key === 'discount' || key === 'interest' || key === 'paid_amount' || key === 'total_charge') {
-      return Money.tryCreate(Number(value ?? 0)).instance.formatted;
+      return Money.tryCreate(Number(value ?? 0), { locale }).instance.formatted;
     }
 
     if((key === 'due_date' || key === 'payment_date') && value) {
-      return new Date(value).toLocaleDateString();
+      return DateVO.format.date(String(value), locale);
     }
 
     if(!value) {
@@ -28,7 +29,7 @@ export default function ReceiptInfoExtractedData({ item }: ReceiptInfoExtractedD
     }
 
     return value.toString();
-  }, []);
+  }, [locale]);
 
   const formatLabel = useCallback((key: string): string => {
     if(key === 'beneficiary') {
@@ -46,6 +47,14 @@ export default function ReceiptInfoExtractedData({ item }: ReceiptInfoExtractedD
       return 'finance.payment.destination_institution.label';
     }
 
+    if(key === 'category') {
+      return 'finance.category.name.label';
+    }
+
+    if(key === 'description') {
+      return 'form.label.description';
+    }
+
     return `finance.receipt.${key}.label`
   }, []);
 
@@ -60,7 +69,11 @@ export default function ReceiptInfoExtractedData({ item }: ReceiptInfoExtractedD
         value: formatValue(key, value)
       })
     });
-    return data;
+    return data.sort((a, b) => {
+      if (a.label === 'form.label.description') return 1;
+      if (b.label === 'form.label.description') return -1;
+      return 0;
+    });
   }, [formatValue, formatLabel, item]);
 
   return (

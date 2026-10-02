@@ -17,6 +17,11 @@ export const menu: Array<TMenuItem> = [
     label: 'navigation.beneficiary' ,
   },
   {
+    href: '/category',
+    icon: 'category',
+    label: 'navigation.category' ,
+  },
+  {
     href: '/institution',
     icon: 'landmark',
     label: 'navigation.institution.title' ,

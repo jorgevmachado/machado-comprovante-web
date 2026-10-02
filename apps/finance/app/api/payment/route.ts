@@ -18,6 +18,7 @@ function convertPaymentReceiptApiResponseToPaymentReceipt(receipt: TPaymentApiRe
     fine: receipt.extracted_data.fine.value,
     payer: receipt.extracted_data.payer.value,
     barcode: receipt.extracted_data.barcode.value,
+    category: receipt.extracted_data.category.value ?? '',
     due_date: DateVO.format.dateStringToDate(receipt.extracted_data.due_date.value),
     discount: receipt.extracted_data.discount.value,
     interest: receipt.extracted_data.interest.value,

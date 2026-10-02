@@ -4,7 +4,7 @@ import {
   Form ,
   type FormProps ,
   type FormValidation ,
-  useAlert ,
+  useAlert ,useUser ,
 } from '@machado-repo/ui';
 
 import {
@@ -12,6 +12,7 @@ import {
   TReceiptConfirm ,
   TReceiptData ,
 } from '@/app/modules/finance/receipt';
+import { TUser } from '@/app/modules/auth';
 
 type ReceiptInfoConfirmProps = {
   item: TReceiptConfirm;
@@ -32,6 +33,10 @@ const initialReceiptData: TReceiptData = {
     value: undefined,
     status: EReceiptFieldStatus.NOT_FOUND
   },
+  category: {
+    value: undefined,
+    status: EReceiptFieldStatus.NOT_FOUND
+  },
   due_date: {
     value: undefined,
     status: EReceiptFieldStatus.NOT_FOUND
@@ -41,6 +46,10 @@ const initialReceiptData: TReceiptData = {
     status: EReceiptFieldStatus.NOT_FOUND
   },
   interest: {
+    value: undefined,
+    status: EReceiptFieldStatus.NOT_FOUND
+  },
+  description: {
     value: undefined,
     status: EReceiptFieldStatus.NOT_FOUND
   },
@@ -88,16 +97,20 @@ const initialReceiptData: TReceiptData = {
 
 export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: ReceiptInfoConfirmProps) {
   const { showAlert } = useAlert();
+  const { user } = useUser<TUser>();
 
   const initialValues: Record<string, string> = useMemo(() => {
+    const payer = item?.payer && item?.payer !== '' ? item?.payer : user?.name;
     const data: Record<string, string> = {
       id: item.id,
       fine: String(item.fine ?? ''),
-      payer: String(item.payer ?? ''),
+      payer: payer ?? '',
       barcode: String(item.barcode ?? ''),
       due_date: item.due_date ? DateVO.format.dateToDateString(item.due_date) ?? '' : '',
       discount: String(item.discount ?? ''),
       interest: String(item.interest ?? ''),
+      category: String(item.category ?? ''),
+      description: String(item.description ?? ''),
       beneficiary: String(item.beneficiary ?? ''),
       paid_amount: String(item.paid_amount ?? ''),
       payment_date: item.payment_date ? DateVO.format.dateToDateString(item.payment_date) ?? '' : '',
@@ -110,7 +123,7 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
       destination_institution: String(item.destination_institution ?? ''),
     };
     return data;
-  } ,[item]);
+  } ,[item, user]);
 
   const fields: FormProps['fields'] = useMemo(() => {
     const paymentDate = !initialValues.payment_date
@@ -128,6 +141,14 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
         label: 'finance.receipt.payer.label' ,
         placeholder: 'finance.receipt.payer.placeholder' ,
         value: initialValues.payer ?? '',
+      } ,
+      {
+        type: 'text' ,
+        name: 'category' ,
+        label: 'finance.category.name.label' ,
+        placeholder: 'finance.category.name.placeholder' ,
+        required: true ,
+        value: initialValues.category ?? ''
       } ,
       {
         type: 'text' ,
@@ -169,6 +190,11 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
         value: paidAmount ?? '',
         disabled: Boolean(paidAmount) ,
         required: true ,
+      },
+      {
+        type: 'description' ,
+        name: 'description' ,
+        value: initialValues.description ?? '',
       }
     ];
   } ,[initialValues]);
@@ -193,6 +219,13 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
         status: EReceiptFieldStatus.FOUND
       }
     }
+    if(item['category'] && item['category'] !== '') {
+      result.category = {
+        value: item['category'],
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+
     if(item['due_date'] && item['due_date'] !== '') {
       result.due_date = {
         value: new Date(item['due_date']),
@@ -220,6 +253,12 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
     if(item['beneficiary'] && item['beneficiary'] !== '') {
       result.beneficiary = {
         value: item['beneficiary'],
+        status: EReceiptFieldStatus.FOUND
+      }
+    }
+    if(item['description'] && item['description'] !== '') {
+      result.description = {
+        value: item['description'],
         status: EReceiptFieldStatus.FOUND
       }
     }
@@ -279,6 +318,14 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
     if(data.payer) {
       dataItem.payer = dataItem.payer !== data.payer ? data.payer : dataItem.payer;
     }
+    if(data.category) {
+      dataItem.category = data.category !== dataItem.category ? data.category : dataItem.category;
+    }
+
+    if(data.description) {
+      dataItem.description = data.description !== dataItem.description ? data.description : dataItem.description;
+    }
+
     if(data.beneficiary) {
       dataItem.beneficiary = data.beneficiary !== dataItem.beneficiary ? data.beneficiary : dataItem.beneficiary;
     }
