@@ -2,6 +2,7 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 
 import { getServerSession } from '@/app/modules/auth/session';
+import { CategoryProvider } from '@/app/modules/finance/category';
 
 type ProtectedLayoutProps = {
   children: React.ReactNode;
@@ -14,5 +15,9 @@ export default async function ProtectedLayout({ children }: ProtectedLayoutProps
     redirect('/join');
   }
 
-  return children;
+  return (
+    <CategoryProvider>
+      {children}
+    </CategoryProvider>
+  );
 }

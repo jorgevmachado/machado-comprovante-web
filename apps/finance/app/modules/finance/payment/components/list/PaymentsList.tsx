@@ -30,9 +30,10 @@ export default function PaymentsList({
       ]
     }
     return [
-      {value: 'receipt', label: 'finance.receipt.payer.label', format: (value) => value.payer ?? '--'},
-      {value: 'beneficiary', label: 'finance.beneficiary.name.label', format: (value) => value.name},
-      {value: 'amount', label: 'finance.payment.amount.label', format: (value) => Money.tryCreate(value, { locale }).instance.formatted},
+      {value: 'receipt', label: 'finance.receipt.payer.label', sortable: true, format: (value) => value.payer ?? '--'},
+      {value: 'category', label: 'finance.category.name.label', sortable: true, format: (value) => value.name},
+      {value: 'beneficiary', label: 'finance.beneficiary.name.label', sortable: true,format: (value) => value.name},
+      {value: 'amount', label: 'finance.payment.amount.label', sortable: true, format: (value) => Money.tryCreate(value, { locale }).instance.formatted},
       {value: 'source_institution', label: 'finance.payment.source_institution.label', format: (value) => value.name},
       {value: 'destination_institution', label: 'finance.payment.destination_institution.label', format: (value) => value?.name ?? '--'},
       {value: 'payment_date', label: 'finance.payment.date.label', format: (value) => DateVO.format.date(value, locale)},

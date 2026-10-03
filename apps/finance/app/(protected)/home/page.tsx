@@ -1,7 +1,7 @@
 'use client';
 import { useCallback ,useEffect } from 'react';
 
-import { Autocomplete ,Select ,Text ,useUser } from '@machado-repo/ui';
+import { Text ,useUser } from '@machado-repo/ui';
 
 import type { TUser } from '@/app/modules/auth';
 
@@ -33,18 +33,14 @@ export default function HomeRouterPage() {
     getReceipts: fetchReceipts,
   } = useReceipts();
 
-  const {
-    fetchList: fetchCategories,
-    items: categories,
-  } = useCategory()
+  const { categories } = useCategory();
 
   const refreshData = useCallback(async () => {
     await Promise.all([
-      fetchCategories(),
       fetchReceipts(),
       fetchPaymentsInfo(),
     ]);
-  }, [fetchCategories, fetchPaymentsInfo, fetchReceipts]);
+  }, [fetchPaymentsInfo, fetchReceipts]);
 
   const handleOnCallback = useCallback(async (status: 'error' | 'success') => {
     if (status !== 'success') {
@@ -68,18 +64,6 @@ export default function HomeRouterPage() {
           <Text className="max-w-2xl text-slate-600">
             finance.welcome.subtitle
           </Text>
-
-          <Select name="example" options={[
-            { value: 'option1', label: 'Option 1' },
-            { value: 'option2', label: 'Option 2' },
-            { value: 'option3', label: 'Option 3' },
-          ]} onChange={(value) => console.log('SELECT => value => ', value)} />
-
-          <Autocomplete name="example" options={[
-            { key: '1', value: 'option1', label: 'Option 1' },
-            { key: '2', value: 'option2', label: 'Option 2' },
-            { key: '3', value: 'option3', label: 'Option 3' },
-          ]} onChange={(value) => console.log('AUTOCOMPLETE => value => ', value)} />
 
         </div>
 

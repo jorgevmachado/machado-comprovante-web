@@ -1,3 +1,4 @@
+'use client';
 import { TCategory ,TCategoryPersist } from '@/app/modules/finance/category';
 import {
   Form ,

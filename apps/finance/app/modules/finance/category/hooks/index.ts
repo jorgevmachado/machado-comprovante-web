@@ -1,1 +1,2 @@
-export { default as  useCategory } from './useCategory';
+export { default as  CategoryProvider } from './categoryProvider';
+export { useCategory } from './useCategory';

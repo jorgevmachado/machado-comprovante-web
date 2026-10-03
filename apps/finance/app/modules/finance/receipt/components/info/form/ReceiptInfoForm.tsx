@@ -207,6 +207,9 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel, categorie
         type: 'description' ,
         name: 'description' ,
         value: initialValues.description ?? '',
+        presentation: {
+          minLength: 0
+        }
       }
     ];
   } ,[categories, initialValues.beneficiary, initialValues.category, initialValues.description, initialValues.destination_institution, initialValues.paid_amount, initialValues.payer, initialValues.payment_date, initialValues.source_institution]);

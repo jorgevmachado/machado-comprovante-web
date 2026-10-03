@@ -3,6 +3,7 @@ import type { TBaseFilter } from '@machado-repo/ui';
 import type { TInstitution } from '@/app/modules/finance/institution';
 import type { TBeneficiary } from '@/app/modules/finance/beneficiary';
 import { TReceiptConfirm } from '@/app/modules/finance/receipt';
+import { TCategory } from '@/app/modules/finance/category';
 
 export enum EPaymentOrder {
   ASC = 'asc',
@@ -27,6 +28,7 @@ export type TPayment = {
   id: string;
   amount: number;
   receipt: TPaymentReceipt;
+  category: TCategory;
   beneficiary: TBeneficiary;
   payment_date: Date;
   source_institution: TInstitution;
