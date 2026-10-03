@@ -4,6 +4,8 @@ import type { BaseInputProps } from '../../../types';
 
 import type { InputProps } from '../../input';
 import type { TextareaProps } from '../../textarea';
+import type { AutocompleteProps } from '../../autocomplete';
+import type { SelectProps } from '../../select';
 
 export type TFormTextFieldType = 'text' | 'name' | 'fullname' | 'date' | 'money';
 
@@ -13,11 +15,17 @@ export type TFormCredentialFieldType = 'password' | 'password_confirmation';
 
 export type TFormContactFieldType = 'email' | 'phone';
 
+export type TFormSelectFieldType = 'select';
+
+export type TFormAutocompleteFieldType = 'autocomplete';
+
 export type TFormFieldType =
   | TFormTextFieldType
   | TFormTextAreaFieldType
   | TFormCredentialFieldType
-  | TFormContactFieldType;
+  | TFormContactFieldType
+  | TFormSelectFieldType
+  | TFormAutocompleteFieldType;
 
 export type TFormFieldPresentation = Pick<
   BaseInputProps,
@@ -49,6 +57,22 @@ export type TFormTextareaPresentation = TFormFieldPresentation & Pick<
   | 'showCharacterCount'
 >;
 
+export type TFormSelectPresentation = TFormFieldPresentation;
+
+export type TFormAutocompletePresentation = TFormFieldPresentation & Pick<
+  AutocompleteProps,
+  | 'maxLength'
+  | 'minLength'
+  | 'maxOptions'
+  | 'filterOptions'
+  | 'noResultsText'
+  | 'onInputKeyDown'
+  | 'onSelectOption'
+  | 'optionClassName'
+  | 'listboxClassName'
+  | 'loadingPlaceholder'
+>;
+
 export type TFormValidation = {
   matchField?: string;
   errorMessage?: string;
@@ -75,14 +99,31 @@ export type TFormTextareaField = TBaseFormField & {
   presentation?: TFormTextareaPresentation;
 }
 
-export type TFormField = TFormInputField | TFormTextareaField;
+export type TFormSelectField = TBaseFormField & {
+  type: TFormSelectFieldType;
+  options: SelectProps['options'];
+  presentation?: TFormSelectPresentation;
+}
+
+export type TFormAutocompleteField = TBaseFormField & {
+  type: TFormAutocompleteFieldType;
+  options: AutocompleteProps['options'];
+  presentation?: TFormAutocompletePresentation;
+}
+
+export type TFormField =
+  | TFormInputField
+  | TFormTextareaField
+  | TFormSelectField
+  | TFormAutocompleteField;
+
 
 export type TFormFieldController = {
   value: string;
   isInvalid?: boolean;
-  onValueBlur?: (value: string, name: string, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onValueBlur?: (value: string, name: string, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
   errorMessage?: string;
-  onValueChange?: (value: string, name: string, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onValueChange?: (value: string, name: string, event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }
 
 export type FormFieldProps = TFormField & TFormFieldController;

@@ -1,31 +1,32 @@
-import { ReactNode, KeyboardEvent } from 'react';
+import {
+  ReactNode ,
+  KeyboardEvent ,
+  InputHTMLAttributes ,
+  type ChangeEvent,
+} from 'react';
 import type { TIcon } from '@machado-repo/icons';
 
-import type { InputProps } from '../input';
+import type { BaseInputOptions ,BaseInputProps } from '../../types';
 
-export type AutocompleteOption = {
+export type AutocompleteOption = Omit<BaseInputOptions, 'label'> & {
   key: string;
   icon?: ReactNode | TIcon;
-  value: string;
   label?: string;
   description?: string;
 };
 
-export type AutocompleteProps = Readonly<Omit<
-  InputProps,
-  'role' | 'value' | 'onChange' | 'onValueChange' | 'children'
-> & {
+export type AutocompleteProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'type' | 'value'> & BaseInputProps & {
   name: string;
-  value: string;
-  label?: string;
+  value?: string;
   options: ReadonlyArray<AutocompleteOption>;
   maxOptions?: number;
+  onValueBlur?: (value: string, name: string, event: ChangeEvent<HTMLInputElement>) => void;
   filterOptions?: (option: AutocompleteOption, normalizedQuery: string) => boolean;
   noResultsText?: string;
-  onValueChange?: (value: string) => void;
-  onInputKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
+  onValueChange?: (value: string, name: string, event: ChangeEvent<HTMLInputElement>) => void;
   onSelectOption?: (option: AutocompleteOption) => void;
+  onInputKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
   optionClassName?: string;
   listboxClassName?: string;
   loadingPlaceholder?: string;
-}>;
+};

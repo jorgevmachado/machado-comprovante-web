@@ -1,11 +1,11 @@
 import React from 'react';
-import { act, fireEvent, render, screen } from '@testing-library/react';
 
-const OPTIONS = [
-  { key: 'electric', value: 'electric' },
-  { key: 'fire', value: 'fire', label: 'Fire Type' },
-  { key: 'water', value: 'water' },
-];
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+} from '@testing-library/react';
 
 jest.mock('../../src/components/input', () => ({
   __esModule: true,
@@ -13,38 +13,74 @@ jest.mock('../../src/components/input', () => ({
     value,
     name,
     role,
+    placeholder,
     onValueChange,
+    onValueBlur,
     onFocus,
     onBlur,
     onKeyDown,
     onClear,
+    onChange,
     showClearButton,
-    placeholder,
+    isLoading,
+    ...props
   }: {
-    value: string;
-    name: string;
+    value?: string;
+    name?: string;
     role?: string;
-    onValueChange?: (value: string, event: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    placeholder?: string;
+    onValueChange?: (
+      value: string,
+      name: string,
+      event: React.ChangeEvent<HTMLInputElement>,
+    ) => void;
+    onValueBlur?: (
+      value: string,
+      name: string,
+      event: React.FocusEvent<HTMLInputElement>,
+    ) => void;
     onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void;
     onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
     onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
     onClear?: () => void;
     showClearButton?: boolean;
-    placeholder?: string;
+    isLoading?: boolean;
   }) => (
     <div>
       <input
+        {...props}
         role={role}
         name={name}
         value={value}
         placeholder={placeholder}
-        onChange={(event) => onValueChange?.(event.currentTarget.value, event)}
+        aria-busy={isLoading || undefined}
+        onChange={(event) => {
+          onChange?.(event);
+          onValueChange?.(
+            event.currentTarget.value,
+            event.currentTarget.name,
+            event,
+          );
+        }}
         onFocus={onFocus}
-        onBlur={onBlur}
+        onBlur={(event) => {
+          onBlur?.(event);
+          onValueBlur?.(
+            event.currentTarget.value,
+            event.currentTarget.name,
+            event,
+          );
+        }}
         onKeyDown={onKeyDown}
       />
+
       {showClearButton ? (
-        <button type='button' aria-label='Clear input' onClick={onClear}>
+        <button
+          type="button"
+          aria-label="Clear input"
+          onClick={onClear}
+        >
           Clear input
         </button>
       ) : null}
@@ -52,39 +88,70 @@ jest.mock('../../src/components/input', () => ({
   ),
 }));
 
+jest.mock('../../src/lang', () => ({
+  useTranslationResolver: () => ({
+    resolve: (value: string) => value,
+  }),
+}));
+
 import { Autocomplete } from '../../src';
 
+const OPTIONS = [
+  {
+    key: 'electric',
+    value: 'electric',
+  },
+  {
+    key: 'fire',
+    value: 'fire',
+    label: 'Fire Type',
+  },
+  {
+    key: 'water',
+    value: 'water',
+  },
+];
+
 describe('<Autocomplete />', () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('renders options on focus and filters by input value', () => {
     const onValueChange = jest.fn();
 
-    const ControlledAutocomplete = () => {
-      const [value, setValue] = React.useState('');
-
-      return (
-        <Autocomplete
-          name='type'
-          value={value}
-          options={OPTIONS}
-          onValueChange={(nextValue) => {
-            setValue(nextValue);
-            onValueChange(nextValue);
-          }}
-        />
-      );
-    };
-
-    render(<ControlledAutocomplete />);
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+        onValueChange={onValueChange}
+      />,
+    );
 
     const input = screen.getByRole('combobox');
 
     fireEvent.focus(input);
+
     expect(screen.getByRole('listbox')).toBeInTheDocument();
 
-    fireEvent.change(input, { target: { value: 'fi' } });
-    expect(onValueChange).toHaveBeenCalledWith('fi');
+    fireEvent.change(input, {
+      target: {
+        value: 'fi',
+      },
+    });
+
+    expect(onValueChange).toHaveBeenCalledWith(
+      'fi',
+      'type',
+      expect.any(Object),
+    );
+
     expect(screen.getByText('Fire Type')).toBeInTheDocument();
-    expect(screen.queryByText('water')).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText('water'),
+    ).not.toBeInTheDocument();
   });
 
   it('selects highlighted option with Enter key', () => {
@@ -93,8 +160,8 @@ describe('<Autocomplete />', () => {
 
     render(
       <Autocomplete
-        name='type'
-        value=''
+        name="type"
+        value=""
         options={OPTIONS}
         onValueChange={onValueChange}
         onSelectOption={onSelectOption}
@@ -104,134 +171,318 @@ describe('<Autocomplete />', () => {
     const input = screen.getByRole('combobox');
 
     fireEvent.focus(input);
-    fireEvent.keyDown(input, { key: 'ArrowDown' });
-    fireEvent.keyDown(input, { key: 'Enter' });
 
-    expect(onSelectOption).toHaveBeenCalledWith({ key: 'electric', value: 'electric' });
-    expect(onValueChange).toHaveBeenCalledWith('electric');
+    fireEvent.keyDown(input, {
+      key: 'ArrowDown',
+    });
+
+    fireEvent.keyDown(input, {
+      key: 'Enter',
+    });
+
+    expect(onSelectOption).toHaveBeenCalledWith({
+      key: 'electric',
+      value: 'electric',
+    });
+
+    expect(onValueChange).toHaveBeenCalledWith(
+      'electric',
+      'type',
+      expect.any(Object),
+    );
   });
 
   it('renders loading placeholder when loading', () => {
     render(
       <Autocomplete
-        name='type'
-        value=''
+        name="type"
+        value=""
         options={OPTIONS}
-        onValueChange={() => undefined}
         isLoading
-        loadingPlaceholder='Loading types...'
+        loadingPlaceholder="Loading types..."
       />,
     );
 
-    expect(screen.getByRole('combobox')).toHaveAttribute('placeholder', 'Loading types...');
+    expect(
+      screen.getByRole('combobox'),
+    ).toHaveAttribute(
+      'placeholder',
+      'Loading types...',
+    );
+  });
+
+  it('renders default loading placeholder when loadingPlaceholder is not provided', () => {
+    render(
+      <Autocomplete
+        name="pokemon"
+        value=""
+        options={OPTIONS}
+        isLoading
+      />,
+    );
+
+    expect(
+      screen.getByRole('combobox'),
+    ).toHaveAttribute(
+      'placeholder',
+      'Loading pokemon...',
+    );
+  });
+
+  it('uses regular placeholder when not loading', () => {
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+        placeholder="Select a type"
+        loadingPlaceholder="Loading types..."
+      />,
+    );
+
+    expect(
+      screen.getByRole('combobox'),
+    ).toHaveAttribute(
+      'placeholder',
+      'Select a type',
+    );
   });
 
   it('navigates up through options with ArrowUp key', () => {
-    const onValueChange = jest.fn();
-
     render(
       <Autocomplete
-        name='type'
-        value=''
+        name="type"
+        value=""
         options={OPTIONS}
-        onValueChange={onValueChange}
       />,
     );
 
     const input = screen.getByRole('combobox');
 
     fireEvent.focus(input);
-    // ArrowUp from -1 should go to last option
-    fireEvent.keyDown(input, { key: 'ArrowUp' });
+
+    fireEvent.keyDown(input, {
+      key: 'ArrowUp',
+    });
 
     const options = screen.getAllByRole('option');
-    expect(options[options.length - 1]).toHaveAttribute('aria-selected', 'true');
+
+    expect(
+      options[options.length - 1],
+    ).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
   });
 
   it('wraps ArrowDown to first option after last', () => {
     render(
       <Autocomplete
-        name='type'
-        value=''
+        name="type"
+        value=""
         options={OPTIONS}
-        onValueChange={jest.fn()}
       />,
     );
 
     const input = screen.getByRole('combobox');
+
     fireEvent.focus(input);
 
-    // Navigate to last option
-    for (let i = 0; i < OPTIONS.length; i++) {
-      fireEvent.keyDown(input, { key: 'ArrowDown' });
+    for (let index = 0; index < OPTIONS.length; index += 1) {
+      fireEvent.keyDown(input, {
+        key: 'ArrowDown',
+      });
     }
-    // One more ArrowDown should wrap to first
-    fireEvent.keyDown(input, { key: 'ArrowDown' });
+
+    fireEvent.keyDown(input, {
+      key: 'ArrowDown',
+    });
 
     const options = screen.getAllByRole('option');
-    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+    expect(options[0]).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
   });
 
   it('navigates up from first option to last', () => {
     render(
       <Autocomplete
-        name='type'
-        value=''
+        name="type"
+        value=""
         options={OPTIONS}
-        onValueChange={jest.fn()}
       />,
     );
 
     const input = screen.getByRole('combobox');
+
     fireEvent.focus(input);
 
-    fireEvent.keyDown(input, { key: 'ArrowDown' }); // index 0
-    fireEvent.keyDown(input, { key: 'ArrowUp' });   // back to last
-    fireEvent.keyDown(input, { key: 'ArrowUp' });   // second to last
+    fireEvent.keyDown(input, {
+      key: 'ArrowDown',
+    });
+
+    fireEvent.keyDown(input, {
+      key: 'ArrowUp',
+    });
+
+    fireEvent.keyDown(input, {
+      key: 'ArrowUp',
+    });
 
     const options = screen.getAllByRole('option');
-    expect(options[OPTIONS.length - 2]).toHaveAttribute('aria-selected', 'true');
+
+    expect(
+      options[OPTIONS.length - 2],
+    ).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
   });
 
   it('closes dropdown on Escape key', () => {
     render(
       <Autocomplete
-        name='type'
-        value=''
+        name="type"
+        value=""
         options={OPTIONS}
-        onValueChange={jest.fn()}
       />,
     );
 
     const input = screen.getByRole('combobox');
-    fireEvent.focus(input);
-    expect(screen.getByRole('listbox')).toBeInTheDocument();
 
-    fireEvent.keyDown(input, { key: 'Escape' });
-    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+    fireEvent.focus(input);
+
+    expect(
+      screen.getByRole('listbox'),
+    ).toBeInTheDocument();
+
+    fireEvent.keyDown(input, {
+      key: 'Escape',
+    });
+
+    expect(
+      screen.queryByRole('listbox'),
+    ).not.toBeInTheDocument();
   });
 
-  it('calls onClear and clears value', () => {
+  it('calls onValueChange when input value changes', () => {
     const onValueChange = jest.fn();
 
-    const ControlledAutocomplete = () => {
-      const [value, setValue] = React.useState('fire');
-      return (
-        <Autocomplete
-          name='type'
-          value={value}
-          options={OPTIONS}
-          onValueChange={(next) => { setValue(next); onValueChange(next); }}
-        />
-      );
-    };
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+        onValueChange={onValueChange}
+      />,
+    );
 
-    render(<ControlledAutocomplete />);
+    fireEvent.change(
+      screen.getByRole('combobox'),
+      {
+        target: {
+          value: 'fi',
+        },
+      },
+    );
 
-    const clearButton = screen.getByRole('button', { name: 'Clear input' });
-    fireEvent.click(clearButton);
+    expect(onValueChange).toHaveBeenCalledWith(
+      'fi',
+      'type',
+      expect.any(Object),
+    );
+  });
 
-    expect(onValueChange).toHaveBeenCalledWith('');
+  it('calls onValueBlur when input loses focus', () => {
+    jest.useFakeTimers();
+
+    const onValueBlur = jest.fn();
+
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+        onValueBlur={onValueBlur}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+    fireEvent.blur(input);
+
+    expect(onValueBlur).toHaveBeenCalledWith(
+      '',
+      'type',
+      expect.any(Object),
+    );
+  });
+
+  it('calls onBlur and closes dropdown after delay', () => {
+    jest.useFakeTimers();
+
+    const onBlur = jest.fn();
+
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+        onBlur={onBlur}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+
+    expect(
+      screen.getByRole('listbox'),
+    ).toBeInTheDocument();
+
+    fireEvent.blur(input);
+
+    expect(onBlur).toHaveBeenCalledTimes(1);
+
+    expect(
+      screen.getByRole('listbox'),
+    ).toBeInTheDocument();
+
+    act(() => {
+      jest.advanceTimersByTime(120);
+    });
+
+    expect(
+      screen.queryByRole('listbox'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('clears the input when clear button is clicked', () => {
+    const onValueChange = jest.fn();
+
+    render(
+      <Autocomplete
+        name="type"
+        value="fire"
+        options={OPTIONS}
+        onValueChange={onValueChange}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Clear input',
+      }),
+    );
+
+    expect(onValueChange).not.toHaveBeenCalled();
+
+    expect(
+      screen.getByRole('combobox'),
+    ).toHaveValue('');
   });
 
   it('calls onFocus callback', () => {
@@ -239,157 +490,212 @@ describe('<Autocomplete />', () => {
 
     render(
       <Autocomplete
-        name='type'
-        value=''
+        name="type"
+        value=""
         options={OPTIONS}
-        onValueChange={jest.fn()}
         onFocus={onFocus}
       />,
     );
 
-    fireEvent.focus(screen.getByRole('combobox'));
-    expect(onFocus).toHaveBeenCalled();
-  });
-
-  it('calls onBlur callback and closes dropdown after delay', () => {
-    jest.useFakeTimers();
-    const onBlur = jest.fn();
-
-    render(
-      <Autocomplete
-        name='type'
-        value=''
-        options={OPTIONS}
-        onValueChange={jest.fn()}
-        onBlur={onBlur}
-      />,
+    fireEvent.focus(
+      screen.getByRole('combobox'),
     );
 
-    const input = screen.getByRole('combobox');
-    fireEvent.focus(input);
-    expect(screen.getByRole('listbox')).toBeInTheDocument();
-
-    fireEvent.blur(input);
-    expect(onBlur).toHaveBeenCalled();
-
-    act(() => {
-      jest.advanceTimersByTime(200);
-    });
-    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
-
-    jest.useRealTimers();
+    expect(onFocus).toHaveBeenCalledTimes(1);
   });
 
   it('respects custom filterOptions function', () => {
-    const filterOptions = jest.fn((option: { value: string }, query: string) =>
-      option.value.startsWith(query),
+    const filterOptions = jest.fn(
+      (
+        option: { value: string },
+        query: string,
+      ) => option.value.startsWith(query),
     );
 
     render(
       <Autocomplete
-        name='type'
-        value=''
+        name="type"
+        value=""
         options={OPTIONS}
-        onValueChange={jest.fn()}
         filterOptions={filterOptions}
       />,
     );
 
     const input = screen.getByRole('combobox');
+
     fireEvent.focus(input);
-    fireEvent.change(input, { target: { value: 'el' } });
+
+    fireEvent.change(input, {
+      target: {
+        value: 'el',
+      },
+    });
 
     expect(filterOptions).toHaveBeenCalled();
-    expect(screen.getByText('electric')).toBeInTheDocument();
-    expect(screen.queryByText('Fire Type')).not.toBeInTheDocument();
+
+    expect(
+      screen.getByText('electric'),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByText('Fire Type'),
+    ).not.toBeInTheDocument();
   });
 
   it('shows noResultsText when no options match', () => {
     render(
       <Autocomplete
-        name='type'
-        value=''
+        name="type"
+        value=""
         options={OPTIONS}
-        onValueChange={jest.fn()}
-        noResultsText='Nothing found.'
+        noResultsText="Nothing found."
       />,
     );
 
     const input = screen.getByRole('combobox');
+
     fireEvent.focus(input);
-    fireEvent.change(input, { target: { value: 'zzz' } });
 
-    expect(screen.getByText('Nothing found.')).toBeInTheDocument();
-  });
-
-  it('ArrowDown with no filtered options does not move highlight', () => {
-    render(
-      <Autocomplete
-        name='type'
-        value=''
-        options={OPTIONS}
-        onValueChange={jest.fn()}
-      />,
-    );
-
-    const input = screen.getByRole('combobox');
-    fireEvent.focus(input);
-    fireEvent.change(input, { target: { value: 'zzz' } }); // no results
-
-    fireEvent.keyDown(input, { key: 'ArrowDown' });
-    // Should not throw and should keep -1 highlight
-    expect(screen.getByText('No options found.')).toBeInTheDocument();
-  });
-
-  it('ArrowUp with no filtered options does not move highlight', () => {
-    render(
-      <Autocomplete
-        name='type'
-        value=''
-        options={OPTIONS}
-        onValueChange={jest.fn()}
-      />,
-    );
-
-    const input = screen.getByRole('combobox');
-    fireEvent.focus(input);
-    fireEvent.change(input, { target: { value: 'zzz' } }); // no results
-
-    fireEvent.keyDown(input, { key: 'ArrowUp' });
-    expect(screen.getByText('No options found.')).toBeInTheDocument();
-  });
-
-  it('respects onInputKeyDown with preventDefault', () => {
-    const onInputKeyDown = jest.fn((event: React.KeyboardEvent) => {
-      event.preventDefault();
+    fireEvent.change(input, {
+      target: {
+        value: 'zzz',
+      },
     });
 
+    expect(
+      screen.getByText('Nothing found.'),
+    ).toBeInTheDocument();
+  });
+
+  it('uses default no results text when noResultsText is not provided', () => {
     render(
       <Autocomplete
-        name='type'
-        value=''
+        name="type"
+        value=""
         options={OPTIONS}
-        onValueChange={jest.fn()}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+
+    fireEvent.change(input, {
+      target: {
+        value: 'zzz',
+      },
+    });
+
+    expect(
+      screen.getByText('form.no_options'),
+    ).toBeInTheDocument();
+  });
+
+  it('does not move highlight when ArrowDown is pressed with no filtered options', () => {
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+
+    fireEvent.change(input, {
+      target: {
+        value: 'zzz',
+      },
+    });
+
+    fireEvent.keyDown(input, {
+      key: 'ArrowDown',
+    });
+
+    expect(
+      screen.getByText('form.no_options'),
+    ).toBeInTheDocument();
+
+    expect(input).not.toHaveAttribute(
+      'aria-activedescendant',
+    );
+  });
+
+  it('does not move highlight when ArrowUp is pressed with no filtered options', () => {
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+
+    fireEvent.change(input, {
+      target: {
+        value: 'zzz',
+      },
+    });
+
+    fireEvent.keyDown(input, {
+      key: 'ArrowUp',
+    });
+
+    expect(
+      screen.getByText('form.no_options'),
+    ).toBeInTheDocument();
+
+    expect(input).not.toHaveAttribute(
+      'aria-activedescendant',
+    );
+  });
+
+  it('respects onInputKeyDown when event is prevented', () => {
+    const onInputKeyDown = jest.fn(
+      (event: React.KeyboardEvent<HTMLInputElement>) => {
+        event.preventDefault();
+      },
+    );
+
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
         onInputKeyDown={onInputKeyDown}
       />,
     );
 
     const input = screen.getByRole('combobox');
-    fireEvent.focus(input);
-    fireEvent.keyDown(input, { key: 'ArrowDown' });
 
-    expect(onInputKeyDown).toHaveBeenCalled();
-    // After preventDefault, options should still show but no navigation should happen
+    fireEvent.focus(input);
+
+    fireEvent.keyDown(input, {
+      key: 'ArrowDown',
+    });
+
+    expect(onInputKeyDown).toHaveBeenCalledTimes(1);
+
+    expect(
+      input,
+    ).not.toHaveAttribute(
+      'aria-activedescendant',
+    );
   });
 
-  it('selects option by clicking (mouseDown)', () => {
+  it('selects option by mouseDown', () => {
     const onValueChange = jest.fn();
     const onSelectOption = jest.fn();
 
     render(
       <Autocomplete
-        name='type'
-        value=''
+        name="type"
+        value=""
         options={OPTIONS}
         onValueChange={onValueChange}
         onSelectOption={onSelectOption}
@@ -397,113 +703,453 @@ describe('<Autocomplete />', () => {
     );
 
     const input = screen.getByRole('combobox');
+
     fireEvent.focus(input);
 
-    const waterOption = screen.getByText('water');
-    fireEvent.mouseDown(waterOption);
+    fireEvent.mouseDown(
+      screen.getByText('water'),
+    );
 
-    expect(onSelectOption).toHaveBeenCalledWith({ key: 'water', value: 'water' });
-    expect(onValueChange).toHaveBeenCalledWith('water');
+    expect(onSelectOption).toHaveBeenCalledWith({
+      key: 'water',
+      value: 'water',
+    });
+
+    expect(onValueChange).toHaveBeenCalledWith(
+      'water',
+      'type',
+      expect.any(Object),
+    );
+
+    expect(
+      screen.queryByRole('listbox'),
+    ).not.toBeInTheDocument();
   });
 
-  it('shows label in input while keeping selected value in callback', () => {
+  it('shows option label in input while keeping option value', () => {
     const onValueChange = jest.fn();
-    const onSelectOption = jest.fn();
-
-    const ControlledAutocomplete = () => {
-      const [value, setValue] = React.useState('');
-
-      return (
-        <Autocomplete
-          name='type'
-          value={value}
-          options={OPTIONS}
-          onSelectOption={onSelectOption}
-          onValueChange={(nextValue) => {
-            setValue(nextValue);
-            onValueChange(nextValue);
-          }}
-        />
-      );
-    };
-
-    render(<ControlledAutocomplete />);
-
-    const input = screen.getByRole('combobox');
-    fireEvent.focus(input);
-    fireEvent.change(input, { target: { value: 'fi' } });
-    fireEvent.mouseDown(screen.getByText('Fire Type'));
-
-    expect(onSelectOption).toHaveBeenCalledWith({ key: 'fire', value: 'fire', label: 'Fire Type' });
-    expect(onValueChange).toHaveBeenLastCalledWith('fire');
-    expect(screen.getByRole('combobox')).toHaveValue('Fire Type');
-  });
-
-  it('displays option.label when available', () => {
-    render(
-      <Autocomplete
-        name='type'
-        value=''
-        options={OPTIONS}
-        onValueChange={jest.fn()}
-      />,
-    );
-
-    const input = screen.getByRole('combobox');
-    fireEvent.focus(input);
-
-    // fire type has label 'Fire Type'
-    expect(screen.getByText('Fire Type')).toBeInTheDocument();
-    expect(screen.queryByText('fire')).not.toBeInTheDocument();
-  });
-
-  it('renders default loading placeholder from name when no loadingPlaceholder given', () => {
-    render(
-      <Autocomplete
-        name='pokemon'
-        value=''
-        options={OPTIONS}
-        onValueChange={jest.fn()}
-        isLoading
-      />,
-    );
-
-    expect(screen.getByRole('combobox')).toHaveAttribute('placeholder', 'Loading pokemon...');
-  });
-
-  it('ignores non-special key presses while dropdown is open', () => {
-    render(
-      <Autocomplete
-        name='type'
-        value=''
-        options={OPTIONS}
-        onValueChange={jest.fn()}
-      />,
-    );
-
-    const input = screen.getByRole('combobox');
-    fireEvent.focus(input);
-    // Dropdown is open; press a non-special key (not ArrowDown/Up/Enter/Escape)
-    fireEvent.keyDown(input, { key: 'Tab' });
-    // Options should still be visible (Tab is ignored)
-    expect(screen.getByText('water')).toBeInTheDocument();
-  });
-
-  it('should keep option value when selected option has no label', () => {
     const onSelectOption = jest.fn();
 
     render(
       <Autocomplete
         name="type"
+        value=""
+        options={OPTIONS}
+        onValueChange={onValueChange}
+        onSelectOption={onSelectOption}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+
+    fireEvent.mouseDown(
+      screen.getByText('Fire Type'),
+    );
+
+    expect(onSelectOption).toHaveBeenCalledWith({
+      key: 'fire',
+      value: 'fire',
+      label: 'Fire Type',
+    });
+
+    expect(onValueChange).toHaveBeenCalledWith(
+      'fire',
+      'type',
+      expect.any(Object),
+    );
+
+    expect(input).toHaveValue('Fire Type');
+  });
+
+  it('displays option value when option has no label', () => {
+    render(
+      <Autocomplete
+        name="type"
         value="electric"
         options={OPTIONS}
-        onSelectOption={onSelectOption}
-        onValueChange={jest.fn()}
       />,
     );
 
     expect(
       screen.getByRole('combobox'),
     ).toHaveValue('electric');
+  });
+
+  it('displays option label when initial value has a label', () => {
+    render(
+      <Autocomplete
+        name="type"
+        value="fire"
+        options={OPTIONS}
+      />,
+    );
+
+    expect(
+      screen.getByRole('combobox'),
+    ).toHaveValue('Fire Type');
+  });
+
+  it('updates displayed value when external value changes', () => {
+    const ControlledAutocomplete = () => {
+      const [value, setValue] = React.useState('');
+
+      return (
+        <>
+          <Autocomplete
+            name="type"
+            value={value}
+            options={OPTIONS}
+          />
+
+          <button
+            type="button"
+            onClick={() => setValue('fire')}
+          >
+            Set fire
+          </button>
+        </>
+      );
+    };
+
+    render(<ControlledAutocomplete />);
+
+    expect(
+      screen.getByRole('combobox'),
+    ).toHaveValue('');
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Set fire',
+      }),
+    );
+
+    expect(
+      screen.getByRole('combobox'),
+    ).toHaveValue('Fire Type');
+  });
+
+  it('respects maxOptions', () => {
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        maxOptions={2}
+        options={[
+          ...OPTIONS,
+          {
+            key: 'grass',
+            value: 'grass',
+          },
+        ]}
+      />,
+    );
+
+    fireEvent.focus(
+      screen.getByRole('combobox'),
+    );
+
+    expect(
+      screen.getAllByRole('option'),
+    ).toHaveLength(2);
+  });
+
+  it('does not render disabled options', () => {
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={[
+          ...OPTIONS,
+          {
+            key: 'disabled',
+            value: 'disabled',
+            label: 'Disabled',
+            disabled: true,
+          },
+        ]}
+      />,
+    );
+
+    fireEvent.focus(
+      screen.getByRole('combobox'),
+    );
+
+    expect(
+      screen.queryByRole('option', {
+        name: 'Disabled',
+      }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('renders custom option and listbox classes', () => {
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+        optionClassName="custom-option"
+        listboxClassName="custom-listbox"
+      />,
+    );
+
+    fireEvent.focus(
+      screen.getByRole('combobox'),
+    );
+
+    expect(
+      screen.getByRole('listbox'),
+    ).toHaveClass('custom-listbox');
+
+    expect(
+      screen.getByRole('option', {
+        name: 'Fire Type',
+      }),
+    ).toHaveClass('custom-option');
+  });
+
+  it('sets active descendant when an option is highlighted', () => {
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+
+    fireEvent.keyDown(input, {
+      key: 'ArrowDown',
+    });
+
+    expect(input).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
+
+    expect(input).toHaveAttribute(
+      'aria-activedescendant',
+      'type-option-0',
+    );
+
+    expect(
+      screen.getByRole('option', {
+        name: 'electric',
+      }),
+    ).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+  });
+
+  it('forwards onChange callback', () => {
+    const onChange = jest.fn();
+
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+        onChange={onChange}
+      />,
+    );
+
+    fireEvent.change(
+      screen.getByRole('combobox'),
+      {
+        target: {
+          value: 'fi',
+        },
+      },
+    );
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('calls onSelectOption when selecting with Enter', () => {
+    const onSelectOption = jest.fn();
+
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+        onSelectOption={onSelectOption}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+
+    fireEvent.keyDown(input, {
+      key: 'ArrowDown',
+    });
+
+    fireEvent.keyDown(input, {
+      key: 'Enter',
+    });
+
+    expect(onSelectOption).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps dropdown open when a non-special key is pressed', () => {
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+
+    fireEvent.keyDown(input, {
+      key: 'Tab',
+    });
+
+    expect(
+      screen.getByRole('listbox'),
+    ).toBeInTheDocument();
+  });
+
+  it('closes dropdown when Escape is pressed without highlighted option', () => {
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+
+    fireEvent.keyDown(input, {
+      key: 'Escape',
+    });
+
+    expect(
+      screen.queryByRole('listbox'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('does not select an option on Enter when no option is highlighted', () => {
+    const onSelectOption = jest.fn();
+    const onValueChange = jest.fn();
+
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+        onSelectOption={onSelectOption}
+        onValueChange={onValueChange}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+
+    fireEvent.keyDown(input, {
+      key: 'Enter',
+    });
+
+    expect(onSelectOption).not.toHaveBeenCalled();
+    expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it('does not call optional callbacks when they are not provided', () => {
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+
+    expect(() => {
+      fireEvent.focus(input);
+      fireEvent.change(input, {
+        target: {
+          value: 'fire',
+        },
+      });
+      fireEvent.blur(input);
+      fireEvent.keyDown(input, {
+        key: 'ArrowDown',
+      });
+      fireEvent.keyDown(input, {
+        key: 'Escape',
+      });
+    }).not.toThrow();
+  });
+
+  it('uses empty string when value is undefined', () => {
+    render(
+      <Autocomplete
+        name="type"
+        options={OPTIONS}
+      />,
+    );
+
+    expect(
+      screen.getByRole('combobox'),
+    ).toHaveValue('');
+  });
+
+  it('clears the previous blur timeout when blur happens again', () => {
+    jest.useFakeTimers();
+
+    const onBlur = jest.fn();
+
+    render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={OPTIONS}
+        onBlur={onBlur}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+
+    fireEvent.focus(input);
+
+    fireEvent.blur(input);
+
+    act(() => {
+      jest.advanceTimersByTime(60);
+    });
+
+    fireEvent.blur(input);
+
+    expect(onBlur).toHaveBeenCalledTimes(2);
+
+    act(() => {
+      jest.advanceTimersByTime(59);
+    });
+
+    expect(
+      screen.getByRole('listbox'),
+    ).toBeInTheDocument();
+
+    act(() => {
+      jest.advanceTimersByTime(61);
+    });
+
+    expect(
+      screen.queryByRole('listbox'),
+    ).not.toBeInTheDocument();
   });
 });

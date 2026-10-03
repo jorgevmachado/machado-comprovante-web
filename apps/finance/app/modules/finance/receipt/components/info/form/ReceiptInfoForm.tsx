@@ -13,11 +13,13 @@ import {
   TReceiptData ,
 } from '@/app/modules/finance/receipt';
 import { TUser } from '@/app/modules/auth';
+import { TCategory } from '@/app/modules/finance/category';
 
 type ReceiptInfoConfirmProps = {
   item: TReceiptConfirm;
   onSubmit: (dataItem: TReceiptConfirm, data: TReceiptData) => void;
   onCancel: () => void;
+  categories: Array<TCategory>;
 }
 
 const initialReceiptData: TReceiptData = {
@@ -95,12 +97,21 @@ const initialReceiptData: TReceiptData = {
   },
 };
 
-export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: ReceiptInfoConfirmProps) {
+export default function ReceiptInfoConfirm({ item, onSubmit, onCancel, categories }: ReceiptInfoConfirmProps) {
   const { showAlert } = useAlert();
   const { user } = useUser<TUser>();
 
+  const getCategory  = useCallback((category?: string) => {
+    if(!category || category === '') {
+      return '';
+    }
+    const foundCategory = categories.find(cat => cat.name === category);
+    return foundCategory?.name ?? '';
+  },[categories])
+
   const initialValues: Record<string, string> = useMemo(() => {
     const payer = item?.payer && item?.payer !== '' ? item?.payer : user?.name;
+    const category = getCategory(item?.category);
     const data: Record<string, string> = {
       id: item.id,
       fine: String(item.fine ?? ''),
@@ -109,7 +120,7 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
       due_date: item.due_date ? DateVO.format.dateToDateString(item.due_date) ?? '' : '',
       discount: String(item.discount ?? ''),
       interest: String(item.interest ?? ''),
-      category: String(item.category ?? ''),
+      category: category,
       description: String(item.description ?? ''),
       beneficiary: String(item.beneficiary ?? ''),
       paid_amount: String(item.paid_amount ?? ''),
@@ -123,7 +134,7 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
       destination_institution: String(item.destination_institution ?? ''),
     };
     return data;
-  } ,[item, user]);
+  } ,[getCategory, item.authentication, item.barcode, item.beneficiary, item?.category, item.description, item.destination_institution, item.discount, item.document_amount, item.due_date, item.effective_payer, item.fine, item.id, item.interest, item.paid_amount, item?.payer, item.payment_date, item.source_institution, item.total_charges, item.transaction_id, user?.name]);
 
   const fields: FormProps['fields'] = useMemo(() => {
     const paymentDate = !initialValues.payment_date
@@ -143,9 +154,10 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
         value: initialValues.payer ?? '',
       } ,
       {
-        type: 'text' ,
+        type: 'autocomplete' ,
         name: 'category' ,
         label: 'finance.category.name.label' ,
+        options: categories.map((category) => ({ key: category.id, label: category.name, value: category.name })),
         placeholder: 'finance.category.name.placeholder' ,
         required: true ,
         value: initialValues.category ?? ''
@@ -197,7 +209,7 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel }: Receipt
         value: initialValues.description ?? '',
       }
     ];
-  } ,[initialValues]);
+  } ,[categories, initialValues.beneficiary, initialValues.category, initialValues.description, initialValues.destination_institution, initialValues.paid_amount, initialValues.payer, initialValues.payment_date, initialValues.source_institution]);
 
   const convertToExtractedData = (item: Record<string, string>): TReceiptData => {
     const result = {...initialReceiptData};

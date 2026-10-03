@@ -16,6 +16,7 @@
       "inactive": "Inativo",
       "submitting": "Enviando"
     },
+    "no_options": "Nenhuma opção encontrada",
     "validation": {
       "required": "Este campo é obrigatório",
       "invalid_type": "Tipo inválido",
@@ -63,6 +64,8 @@
       "date": "Data",
       "email": "Email",
       "name": "Nome",
+      "select": "Selecionar",
+      "autocomplete": "Autocompletar",
       "active": "Ativo",
       "inactive": "Inativo",
       "status": "Status",
@@ -82,7 +85,9 @@
       "fullname": "Insira seu nome completo",
       "password": "Insira sua senha",
       "description": "Insira uma descrição",
-      "password_confirmation": "Confirme sua senha"
+      "password_confirmation": "Confirme sua senha",
+      "select": "Selecione uma opção",
+      "autocomplete": "Selecione uma opção"
     }
   }
 }

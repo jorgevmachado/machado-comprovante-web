@@ -106,6 +106,8 @@ describe('FORM_FIELD_DEFINITIONS', () => {
       'password',
       'description',
       'password_confirmation',
+      'select',
+      'autocomplete',
     ]);
   });
 });

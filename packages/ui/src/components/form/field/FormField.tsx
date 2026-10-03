@@ -4,25 +4,28 @@ import { useTranslationResolver } from '../../../lang';
 
 import Input from '../../input';
 import Textarea from '../../textarea';
+import Select from '../../select';
+import Autocomplete from '../../autocomplete';
 
 import { FORM_FIELD_DEFINITIONS } from './definitions';
 
 import type { FormFieldProps } from './types';
 
-const FormField = ({
-  type,
-  name,
-  label,
-  value,
-  hidden,
-  disabled,
-  isInvalid,
-  onValueBlur,
-  placeholder,
-  errorMessage,
-  presentation,
-  onValueChange
-}: FormFieldProps) => {
+const FormField = (props: FormFieldProps) => {
+  const {
+    type,
+    name,
+    label,
+    value,
+    hidden,
+    disabled,
+    isInvalid,
+    onValueBlur,
+    placeholder,
+    errorMessage,
+    presentation,
+    onValueChange
+  } = props;
   const definition = FORM_FIELD_DEFINITIONS[type];
   const { resolve: resolveTranslation } = useTranslationResolver();
 
@@ -34,6 +37,44 @@ const FormField = ({
     }
     return resolveTranslation(errorMessage);
   }, [errorMessage, resolveTranslation]);
+
+  if(type === 'select') {
+    return (
+      <Select
+        {...presentation}
+        name={name}
+        label={fieldLabel}
+        value={value}
+        hidden={hidden}
+        options={props.options}
+        disabled={disabled}
+        isInvalid={isInvalid}
+        placeholder={fieldPlaceholder}
+        onValueBlur={onValueBlur}
+        errorMessage={fieldErrorMessage}
+        onValueChange={onValueChange}
+      />
+    )
+  }
+
+  if (type === 'autocomplete') {
+    return (
+      <Autocomplete
+        {...presentation}
+        name={name}
+        label={fieldLabel}
+        value={value}
+        hidden={hidden}
+        options={props.options}
+        disabled={disabled}
+        isInvalid={isInvalid}
+        placeholder={fieldPlaceholder}
+        onValueBlur={onValueBlur}
+        errorMessage={fieldErrorMessage}
+        onValueChange={onValueChange}
+      />
+    );
+  }
 
   if (definition.component === 'textarea') {
     return (

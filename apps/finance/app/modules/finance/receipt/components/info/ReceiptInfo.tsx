@@ -16,13 +16,16 @@ import ReceiptInfoConfirm
 import ReceiptInfoExtractedData
   from '@/app/modules/finance/receipt/components/info/extracted-data';
 import useReceipts from '@/app/modules/finance/receipt/hooks/useReceipts';
+import { TCategory } from '@/app/modules/finance/category';
 
 type ReceiptInfoProps = {
   receipts: Array<TReceipt>;
+  categories: Array<TCategory>
   onCallback?: (status: 'error' | 'success') => void;
 }
 export default function ReceiptInfo({
   receipts,
+  categories,
   onCallback
 }: ReceiptInfoProps) {
 
@@ -147,6 +150,7 @@ export default function ReceiptInfo({
           item={item}
           onSubmit={(dataItem, data) => updateReceiptList(dataItem, data, isPersist)}
           onCancel={() => closeModal()}
+          categories={categories}
         />
       ),
     });

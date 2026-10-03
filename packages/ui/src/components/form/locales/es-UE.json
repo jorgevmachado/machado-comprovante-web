@@ -16,6 +16,7 @@
       "inactive": "Inactivo",
       "submitting": "Enviando"
     },
+    "no_options": "No se encontraron opciones",
     "validation": {
       "required": "Este campo es obligatorio",
       "invalid_type": "Tipo inválido",
@@ -63,6 +64,8 @@
       "date": "Fecha",
       "email": "Email",
       "name": "Nombre",
+      "select": "Seleccionar",
+      "autocomplete": "Autocompletar",
       "active": "Activo",
       "inactive": "Inactivo",
       "status": "Estatus",
@@ -79,6 +82,8 @@
       "date": "Introduce una fecha",
       "email": "Introduce tu email",
       "name": "Introduce tu nombre",
+      "select": "Selecciona una opción",
+      "autocomplete": "Selecciona una opción",
       "fullname": "Introduce tu nombre completo",
       "password": "Introduce tu contraseña",
       "description": "Introduce una descripción",
