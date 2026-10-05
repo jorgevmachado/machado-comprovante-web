@@ -3,7 +3,11 @@ import { createContext } from 'react';
 
 import type { TPaginatedMeta } from '@machado-repo/shared';
 
-import type { TCategory ,TCategoryFilter } from '@/app/modules/finance/category';
+import type {
+  TCategory ,
+  TCategoryFilter ,
+  TCategoryPersist,
+} from '@/app/modules/finance/category';
 
 import type {
   CategoryActionOptions
@@ -13,6 +17,8 @@ import type {
 export type CategoryContextProps = {
   meta?: TPaginatedMeta;
   items: Array<TCategory>;
+  create: (item: TCategoryPersist, options?: CategoryActionOptions) => Promise<TCategory>;
+  update: (item: TCategoryPersist, options?: CategoryActionOptions) => Promise<TCategory | undefined>;
   refresh: () => Promise<void>;
   goToPage: (page: number, params?: TCategoryFilter, options?: CategoryActionOptions) => Promise<void>;
   fetchList: (params?: TCategoryFilter, options?: CategoryActionOptions) => Promise<void>;

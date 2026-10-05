@@ -8,7 +8,7 @@ import { useAlert ,useLoading } from '@machado-repo/ui';
 import {
   categoryService ,
   type TCategory ,
-  TCategoryFilter ,
+  TCategoryFilter ,TCategoryPersist ,
 } from '@/app/modules/finance/category';
 
 import {
@@ -99,6 +99,64 @@ const CategoryProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     await fetchCategories();
   }, [fetchCategories, isLoading]);
 
+  const refreshAll = useCallback(async () => {
+    if (isLoading) {
+      return;
+    }
+    await Promise.all([fetchCategories(), fetchList()]);
+  }, [fetchCategories, fetchList, isLoading]);
+
+  const create = useCallback(async (item: TCategoryPersist, options?: CategoryActionOptions) => {
+    return execute(async () => {
+      const response = await categoryService.create(item);
+      executeServiceAlert({
+        isOk: response.isOk,
+        type: 'create',
+        alert: options?.alert,
+        defaultAlert: 'both',
+        errorMessage: options?.errorMessage,
+        messagePrefix: messagePrefix,
+        successMessage: options?.successMessage,
+      });
+      if(response.isOk) {
+        await refreshAll();
+      }
+      return response.instance;
+    });
+  }, [execute, executeServiceAlert, refreshAll]);
+
+  const update = useCallback(async (item: TCategoryPersist, options?: CategoryActionOptions) => {
+    const identifier = item.id;
+    if(!identifier) {
+      executeServiceAlert({
+        isOk: false,
+        type: 'update',
+        alert: options?.alert,
+        defaultAlert: 'error',
+        errorMessage: options?.errorMessage ?? 'finance.category.update.error.no_id',
+        messagePrefix: messagePrefix,
+        successMessage: options?.successMessage,
+      });
+      return;
+    }
+    return execute(async () => {
+      const response = await categoryService.update(identifier, item);
+      executeServiceAlert({
+        isOk: response.isOk,
+        type: 'update',
+        alert: options?.alert,
+        defaultAlert: 'both',
+        errorMessage: options?.errorMessage,
+        messagePrefix: messagePrefix,
+        successMessage: options?.successMessage,
+      });
+      if(response.isOk) {
+        await refreshAll();
+      }
+      return response.instance;
+    });
+  }, [execute, executeServiceAlert, refreshAll]);
+
   useEffect(() => {
     void fetchCategories();
   } ,[fetchCategories]);
@@ -106,6 +164,8 @@ const CategoryProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const contextValue: CategoryContextProps = useMemo(() => ({
     meta,
     items,
+    create,
+    update,
     refresh,
     goToPage,
     fetchList,
@@ -115,6 +175,8 @@ const CategoryProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   }), [
     meta,
     items,
+    create,
+    update,
     refresh,
     goToPage,
     fetchList,

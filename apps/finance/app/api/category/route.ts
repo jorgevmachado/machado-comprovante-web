@@ -6,7 +6,6 @@ import { getServerSession } from '@/app/modules/auth/session';
 
 import type { TCategory } from '@/app/modules/finance/category';
 
-
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const session = await getServerSession();
 
@@ -30,5 +29,33 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   } catch (error) {
     const message = error instanceof Error && error.message ? error.message : 'Could not load list of categories.';
     return NextResponse.json({ message }, { status: 500 });
+  }
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  const session = await getServerSession();
+
+  if (!session.isAuthenticated || !session.token) {
+    return NextResponse.json({ message: 'Unauthorized' } ,{ status: 401 });
+  }
+
+  try {
+    const body = await request.json();
+    const response = await HttpClient.post<TCategory>({
+      path: `/finance/category` ,
+      config: {
+        token: session.token ,
+        body,
+      } ,
+    });
+    if (response.isFailure) {
+      return NextResponse.json({ message: response.error } ,{ status: 422 });
+    }
+    return NextResponse.json(response.instance);
+  } catch (error) {
+    const message = error instanceof Error && error.message ?
+      error.message :
+      'Could not create category.';
+    return NextResponse.json({ message } ,{ status: 500 });
   }
 }
