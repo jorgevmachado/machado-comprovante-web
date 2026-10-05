@@ -212,6 +212,14 @@
       "title": "Categorias",
       "empty": "Nenhuma categoria encontrada.",
       "subtitle": "Gerencie suas categorias",
+      "edit": {
+        "title": "Editar Categoria {{name}}",
+        "action": "Editar"
+      },
+      "create": {
+        "title": "Criar Categoria",
+        "action": "Criar"
+      },
       "name": {
         "label": "Categoria",
         "placeholder": "Insira o nome da categoria"

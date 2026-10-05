@@ -17,8 +17,7 @@ import type {
 export type CategoryContextProps = {
   meta?: TPaginatedMeta;
   items: Array<TCategory>;
-  create: (item: TCategoryPersist, options?: CategoryActionOptions) => Promise<TCategory>;
-  update: (item: TCategoryPersist, options?: CategoryActionOptions) => Promise<TCategory | undefined>;
+  persist: (item: TCategoryPersist, options?: CategoryActionOptions) => Promise<TCategory | undefined>;
   refresh: () => Promise<void>;
   goToPage: (page: number, params?: TCategoryFilter, options?: CategoryActionOptions) => Promise<void>;
   fetchList: (params?: TCategoryFilter, options?: CategoryActionOptions) => Promise<void>;

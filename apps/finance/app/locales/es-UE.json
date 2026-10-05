@@ -207,15 +207,23 @@
         "empty": "No se encontraron instituciones de destino.",
         "subtitle": "tus instituciones de destino"
       }
-    }
-  },
-  "category": {
-    "title": "Categorías",
-    "empty": "No se encontraron categorías.",
-    "subtitle": "Gestiona tus categorías",
-    "name": {
-      "label": "Nombre de la categoría",
-      "placeholder": "Introduce el nombre de la categoría"
+    },
+    "category": {
+      "title": "Categorías",
+      "empty": "No se encontraron categorías.",
+      "subtitle": "Gestiona tus categorías",
+      "edit": {
+        "title": "Editar Categoría {{name}}",
+        "action": "Editar"
+      },
+      "create": {
+        "title": "Crear Categoría",
+        "action": "Crear"
+      },
+      "name": {
+        "label": "Nombre de la categoría",
+        "placeholder": "Introduce el nombre de la categoría"
+      }
     }
   }
 }

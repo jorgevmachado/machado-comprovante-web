@@ -157,6 +157,14 @@ const CategoryProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     });
   }, [execute, executeServiceAlert, refreshAll]);
 
+  const persist = useCallback(async (item: TCategoryPersist, options?: CategoryActionOptions) => {
+    const identifier = item.id;
+    if(!identifier) {
+      return await create(item, options);
+    }
+    return await update(item, options);
+  }, [create, update]);
+
   useEffect(() => {
     void fetchCategories();
   } ,[fetchCategories]);
@@ -164,8 +172,7 @@ const CategoryProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const contextValue: CategoryContextProps = useMemo(() => ({
     meta,
     items,
-    create,
-    update,
+    persist,
     refresh,
     goToPage,
     fetchList,
@@ -175,8 +182,7 @@ const CategoryProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   }), [
     meta,
     items,
-    create,
-    update,
+    persist,
     refresh,
     goToPage,
     fetchList,

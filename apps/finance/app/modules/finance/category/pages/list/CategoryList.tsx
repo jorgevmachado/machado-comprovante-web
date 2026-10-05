@@ -19,23 +19,24 @@ import {
 
 export default function CategoryListPage() {
   const { modal, openModal, closeModal } = useModal();
-  const { meta, goToPage, fetchList, items, isLoading } = useCategory();
+  const { meta, goToPage, fetchList, items, isLoading, persist } = useCategory();
 
   useEffect(() => {
     void fetchList({ page: '1' });
   } ,[fetchList]);
 
-  const handleUpdatePayment = async (item: TCategoryPersist) => {
-    console.log('# => item => ', item)
+  const handlePersistCategory = async (item: TCategoryPersist) => {
+    await persist(item);
     closeModal();
   }
 
-
   const handleOpenFormModal = (item?: TCategory) => {
     openModal({
-      title: 'finance.category.edit.title',
+      title: item?.id
+        ? `finance.category.edit.title, {name: ${item.name}`
+        : 'finance.category.create.title',
       children: (
-        <CategoryForm item={item} onSubmit={handleUpdatePayment} onCancel={closeModal} />
+        <CategoryForm item={item} onSubmit={handlePersistCategory} onCancel={closeModal} />
       )
     });
   }

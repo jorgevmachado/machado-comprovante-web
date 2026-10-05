@@ -212,6 +212,18 @@
       "title": "Categories",
       "empty": "No categories found.",
       "subtitle": "Manage your categories",
+      "show": {
+        "title": "Category Details",
+        "action": "View"
+      },
+      "edit": {
+        "title": "Edit Category {{name}}",
+        "action": "Edit"
+      },
+      "create": {
+        "title": "Create Category",
+        "action": "Create"
+      },
       "name": {
         "label": "Category Name",
         "placeholder": "Enter the category name"
