@@ -1,6 +1,7 @@
 {
   "navigation": {
     "home": "Home",
+    "payer": "Payer",
     "title": "Finance System",
     "signOut": "Sign out",
     "subtitle": "Finance Portal",
@@ -70,6 +71,14 @@
     },
     "receipt": {
       "title": "Receipts",
+      "update": {
+        "success": "Receipt updated successfully.",
+        "error": "An error occurred while updating the receipt. Please try again."
+      },
+      "batch": {
+        "success": "Receipts batch processed successfully.",
+        "error": "An error occurred while processing the receipts batch. Please try again."
+      },
       "subtitle": "Manage your receipts",
       "info": {
         "title": "Receipt Information"
@@ -217,7 +226,7 @@
         "action": "View"
       },
       "edit": {
-        "title": "Edit Category {{name}}",
+        "title": "Edit Category: {{name}}",
         "action": "Edit"
       },
       "create": {
@@ -227,6 +236,33 @@
       "name": {
         "label": "Category Name",
         "placeholder": "Enter the category name"
+      }
+    },
+    "payer": {
+      "title": "Payers",
+      "empty": "No payers found.",
+      "subtitle": "Manage your payers",
+      "show": {
+        "title": "Payer Details",
+        "action": "View"
+      },
+      "edit": {
+        "title": "Edit Payer: {{name}}",
+        "action": "Edit"
+      },
+      "create": {
+        "title": "Create Payer",
+        "action": "Create",
+        "success": "Payer created successfully.",
+        "error": "An error occurred while creating the payer. Please try again."
+      },
+      "update": {
+        "success": "Payer updated successfully.",
+        "error": "An error occurred while updating the payer. Please try again."
+      },
+      "name": {
+        "label": "Payer Name",
+        "placeholder": "Enter the payer name"
       }
     }
   }

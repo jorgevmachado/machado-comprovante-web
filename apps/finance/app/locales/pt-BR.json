@@ -1,6 +1,7 @@
 {
   "navigation": {
     "home": "Início",
+    "payer": "Pagador",
     "title": "Sistema Financeiro",
     "signOut": "Sair",
     "subtitle": "Portal Financeiro",
@@ -70,6 +71,14 @@
     },
     "receipt": {
       "title": "Recibos",
+      "update": {
+        "success": "Recibo atualizado com sucesso.",
+        "error": "Ocorreu um erro ao atualizar o recibo. Por favor, tente novamente."
+      },
+      "batch": {
+        "success": "Lote de recibos processado com sucesso.",
+        "error": "Ocorreu um erro ao processar o lote de recibos. Por favor, tente novamente."
+      },
       "subtitle": "Gerencie seus recibos",
       "info": {
         "title": "Informações do comprovante"
@@ -213,7 +222,7 @@
       "empty": "Nenhuma categoria encontrada.",
       "subtitle": "Gerencie suas categorias",
       "edit": {
-        "title": "Editar Categoria {{name}}",
+        "title": "Editar Categoria: {{name}}",
         "action": "Editar"
       },
       "create": {
@@ -223,6 +232,27 @@
       "name": {
         "label": "Categoria",
         "placeholder": "Insira o nome da categoria"
+      }
+    },
+    "payer": {
+      "title": "Pagadores",
+      "empty": "Nenhum pagador encontrado.",
+      "subtitle": "Gerencie seus pagadores",
+      "show": {
+        "title": "Detalhes do pagador",
+        "action": "Ver"
+      },
+      "edit": {
+        "title": "Editar Pagador: {{name}}",
+        "action": "Editar"
+      },
+      "create": {
+        "title": "Criar Pagador",
+        "action": "Criar"
+      },
+      "name": {
+        "label": "Nome do pagador",
+        "placeholder": "Insira o nome do pagador"
       }
     }
   }

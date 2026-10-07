@@ -6,6 +6,7 @@ export * from './fullname.vo';
 export * from './money.vo';
 export * from './name.vo';
 export * from './password.vo';
+export * from './string.vo';
 export * from './text.vo';
 export * from './token.vo';
 export * from './url.vo';

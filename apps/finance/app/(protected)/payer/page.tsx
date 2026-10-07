@@ -1,6 +1,4 @@
 'use client';
-import { useEffect } from 'react';
-
 import {
   Button ,
   Filters ,
@@ -9,35 +7,31 @@ import {
   Text ,
   useModal,
 } from '@machado-repo/ui';
-import {
-  CategoryForm ,
-  TCategory ,
-  TCategoryPersist ,
-  useCategory ,
-} from '@/app/modules/finance/category';
+import { TPayer ,TPayerPersist ,usePayer } from '@/app/modules/finance/payer';
+import { useEffect } from 'react';
+import PayerForm from '../../modules/finance/payer/components/form';
 
-
-export default function CategoryListPage() {
+export default function PayerRouterPage() {
   const { modal, openModal, closeModal } = useModal();
-  const { meta, goToPage, fetchList, items, isLoading, persist } = useCategory();
+  const { meta, goToPage, fetchList, items, isLoading, persist } = usePayer();
 
   useEffect(() => {
     void fetchList({ page: '1' });
   } ,[fetchList]);
 
-  const handlePersistCategory = async (item: TCategoryPersist) => {
+  const handlePersistPayer = async (item: TPayerPersist) => {
     await persist(item);
-    closeModal();
+    closeModal()
   }
 
-  const handleOpenFormModal = (item?: TCategory) => {
+  const handleOpenFormModal = (item?: TPayer) => {
 
     openModal({
       title: item?.id
-        ? `finance.category.edit.title, {name: ${item.name}}`
-        : 'finance.category.create.title',
+        ? `finance.payer.edit.title, {name: ${item.name}}`
+        : 'finance.payer.create.title',
       children: (
-        <CategoryForm item={item} onSubmit={handlePersistCategory} onCancel={closeModal} />
+        <PayerForm item={item} onSubmit={handlePersistPayer} onCancel={closeModal} />
       )
     });
   }
@@ -47,11 +41,11 @@ export default function CategoryListPage() {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
         <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <Text weight="bold" size="3xl">finance.category.title</Text>
-            <Text>finance.category.subtitle</Text>
+            <Text weight="bold" size="3xl">finance.payer.title</Text>
+            <Text>finance.payer.subtitle</Text>
           </div>
           <div>
-            <Button onClick={() => handleOpenFormModal()} tone="success">finance.category.create.title</Button>
+            <Button onClick={() => handleOpenFormModal()} tone="success">finance.payer.create.title</Button>
           </div>
         </header>
 
@@ -62,18 +56,14 @@ export default function CategoryListPage() {
 
         { !isLoading && items.length === 0 && (
           <div className="flex flex-col items-center justify-center">
-            <Text>finance.category.empty</Text>
+            <Text>finance.payer.empty</Text>
           </div>
         )}
 
         {!isLoading && items.length > 0 && (
           <Table
             items={items}
-            headers={[
-              { value: 'id', label: 'ID'},
-              { value: 'name', label: 'finance.category.name.label', sortable: true},
-              { value: 'description', label: 'form.label.description'},
-            ]}
+            headers={[{ value: 'id', label: 'ID'},{ value: 'name', label: 'finance.payer.name.label', sortable: true}]}
             actions={{
               text: 'form.action.actions',
               icons: [{

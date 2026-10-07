@@ -1,5 +1,5 @@
 import { useCallback ,useState } from 'react';
-import { Button ,FileUpload } from '@machado-repo/ui';
+import { Button ,FileUpload, Text } from '@machado-repo/ui';
 import { useReceipts } from '@/app/modules/finance/receipt';
 
 type ReceiptBatchProps = {
@@ -21,6 +21,7 @@ export default function ReceiptBatch({ onCallback }: ReceiptBatchProps) {
 
   return (
     <div className="flex flex-col gap-6">
+      <Text>Total: {files.length}</Text>
       <FileUpload multiple value={files} onFilesChange={(files) => setFiles(files)} />
       <Button onClick={bachReceipts}>form.action.send</Button>
     </div>

@@ -7,6 +7,11 @@ export const menu: Array<TMenuItem> = [
     label: 'navigation.home' ,
   },
   {
+    href: '/payer',
+    icon: 'user-tie',
+    label: 'navigation.payer' ,
+  },
+  {
     href: '/payment',
     icon: 'money',
     label: 'navigation.payment' ,

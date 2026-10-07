@@ -200,7 +200,6 @@ export default function ReceiptInfoConfirm({ item, onSubmit, onCancel, categorie
         label: 'finance.payment.amount.label' ,
         placeholder: 'finance.payment.amount.placeholder' ,
         value: paidAmount ?? '',
-        disabled: Boolean(paidAmount) ,
         required: true ,
       },
       {

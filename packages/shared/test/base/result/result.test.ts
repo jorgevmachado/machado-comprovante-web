@@ -235,6 +235,20 @@ describe('Result', () => {
     });
   });
 
+  describe('error', () => {
+    test('should return the first error', () => {
+      const result = Result.fail<string>(['first.error', 'second.error']);
+
+      expect(result.error).toBe('first.error');
+    });
+
+    test('should return an empty string when there are no errors', () => {
+      const result = Result.ok<string>('value');
+
+      expect(result.error).toBe('');
+    });
+  });
+
   test('should convert to string for ok and fail', () => {
     const ok = Result.ok({ a: 1 });
     expect(ok.instance).toBeTruthy();

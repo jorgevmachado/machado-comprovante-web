@@ -1,6 +1,7 @@
 {
   "navigation": {
     "home": "Inicio",
+    "payer": "Pagador",
     "title": "Sistema Financiero",
     "signOut": "Cerrar sesión",
     "subtitle": "Portal Financiero",
@@ -70,6 +71,14 @@
     },
     "receipt": {
       "title": "Recibos",
+      "update": {
+        "success": "Recibo actualizado con éxito.",
+        "error": "Ocurrió un error al actualizar el recibo. Por favor, inténtalo de nuevo."
+      },
+      "batch": {
+        "success": "Lote de recibos procesado con éxito.",
+        "error": "Ocurrió un error al procesar el lote de recibos. Por favor, inténtalo de nuevo."
+      },
       "subtitle": "Gestiona tus recibos",
       "info": {
         "title": "Información del justificante"
@@ -213,7 +222,7 @@
       "empty": "No se encontraron categorías.",
       "subtitle": "Gestiona tus categorías",
       "edit": {
-        "title": "Editar Categoría {{name}}",
+        "title": "Editar Categoría: {{name}}",
         "action": "Editar"
       },
       "create": {
@@ -223,6 +232,27 @@
       "name": {
         "label": "Nombre de la categoría",
         "placeholder": "Introduce el nombre de la categoría"
+      }
+    },
+    "payer": {
+      "title": "Pagadores",
+      "empty": "No se encontraron pagadores.",
+      "subtitle": "Gestiona tus pagadores",
+      "show": {
+        "title": "Detalles del pagador",
+        "action": "Ver"
+      },
+      "edit": {
+        "title": "Editar Pagador: {{name}}",
+        "action": "Editar"
+      },
+      "create": {
+        "title": "Crear Pagador",
+        "action": "Crear"
+      },
+      "name": {
+        "label": "Nombre del pagador",
+        "placeholder": "Introduce el nombre del pagador"
       }
     }
   }
