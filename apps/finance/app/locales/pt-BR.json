@@ -248,7 +248,13 @@
       },
       "create": {
         "title": "Criar Pagador",
-        "action": "Criar"
+        "action": "Criar",
+        "success": "Pagador criado com sucesso.",
+        "error": "Ocorreu um erro ao criar o pagador. Por favor, tente novamente."
+      },
+      "update": {
+        "success": "Pagador atualizado com sucesso.",
+        "error": "Ocorreu um erro ao atualizar o pagador. Por favor, tente novamente."
       },
       "name": {
         "label": "Nome do pagador",
