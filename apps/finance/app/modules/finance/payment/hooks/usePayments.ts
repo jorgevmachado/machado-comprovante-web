@@ -1,4 +1,4 @@
-import { useCallback ,useState } from 'react';
+import { useCallback ,useMemo ,useState } from 'react';
 
 import {
   type TAlertActionOptions ,
@@ -10,7 +10,7 @@ import {
   EPaymentOrder ,
   paymentService ,
   type PaymentServiceDateParams ,
-  type TPayment ,
+  type TPayment ,TPaymentDashboard ,TPaymentDashboardParams ,
   type TPaymentFilter ,TPaymentPersist ,
 } from '@/app/modules/finance';
 import type { TPaginatedMeta } from '@machado-repo/shared';
@@ -24,14 +24,17 @@ type UsePaymentsReturn = {
   payments: Array<TPayment>;
   goToPage: (page: number, params?: TPaymentFilter, options?: UsePaymentsActionOptions) => Promise<void>;
   fetchInfo: (params?: TPaymentFilter, options?: UsePaymentsActionOptions) => Promise<void>;
+  dashboard?: TPaymentDashboard;
   isLoading: boolean;
   maxPayment: number;
   getPayments: (params?: TPaymentFilter, options?: UsePaymentsActionOptions) => Promise<void>;
   totalAmount: number;
+  getDashboard: (params?: Partial<TPaymentDashboardParams>, options?: UsePaymentsActionOptions) => Promise<void>;
   paymentCount: number;
   updatePayment:(item: TPaymentPersist, options?: UsePaymentsActionOptions) => Promise<void>;
   getTotalAmount: UsePaymentsFc;
   getPaymentCount: UsePaymentsFc;
+  defaultStartEndDates: { start_date: Date; end_date: Date };
   getPaymentWithMaxAmount: UsePaymentsFc;
 }
 
@@ -46,7 +49,14 @@ export default function usePayments(): UsePaymentsReturn {
   const [maxPayment ,setMaxPayment] = useState<number>(0);
   const [totalAmount ,setTotalAmount] = useState<number>(0);
   const [paymentCount ,setPaymentCount] = useState<number>(0);
+  const [dashboard, setDashboard] = useState<TPaymentDashboard | undefined>(undefined);
 
+  const defaultStartEndDates = useMemo(() => {
+    const end_date = new Date();
+    const start_date = new Date(end_date);
+    start_date.setMonth(start_date.getMonth() - 1);
+    return { start_date, end_date };
+  },[])
 
   const getPayments = useCallback(async (params?: TPaymentFilter, options?: UsePaymentsActionOptions) => {
     await execute(async () => {
@@ -172,19 +182,47 @@ export default function usePayments(): UsePaymentsReturn {
     });
   }, [execute, executeServiceAlert]);
 
+  const getDashboard = useCallback(async (params?: Partial<TPaymentDashboardParams>, options?: UsePaymentsActionOptions) => {
+    await execute(async () => {
+      const end_date = params?.end_date ?? defaultStartEndDates.end_date;
+      const start_date = params?.start_date ?? defaultStartEndDates.start_date;
+      const filters: TPaymentDashboardParams = {
+        ...params,
+        end_date,
+        start_date,
+      };
+      const response = await paymentService.getDashboard(filters);
+      executeServiceAlert({
+        isOk: response.isOk,
+        type: 'dashboard',
+        alert: options?.alert,
+        defaultAlert: 'error',
+        errorMessage: options?.errorMessage,
+        messagePrefix: messagePrefix,
+        successMessage: options?.successMessage,
+      });
+      if (response.isOk) {
+        setDashboard(response.instance);
+      }
+    });
+  }, [defaultStartEndDates.end_date, defaultStartEndDates.start_date, execute, executeServiceAlert]);
+
   return {
     meta,
     payments,
     goToPage,
     fetchInfo,
+    dashboard,
     isLoading,
     maxPayment,
     getPayments,
     totalAmount,
     paymentCount,
+    getDashboard,
     updatePayment,
     getTotalAmount,
     getPaymentCount,
+    defaultStartEndDates,
     getPaymentWithMaxAmount,
   }
 }

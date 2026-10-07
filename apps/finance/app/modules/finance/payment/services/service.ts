@@ -4,10 +4,11 @@ import {
   type TPaginatedListResponse,
 } from '@machado-repo/shared';
 
-import type {
+import {
   TPayment ,
   TPaymentFilter ,
-  PaymentServiceDateParams ,TPaymentPersist,
+  PaymentServiceDateParams ,TPaymentPersist ,TPaymentDashboard ,
+  TPaymentDashboardParams ,
 } from '@/app/modules/finance';
 
 export class PaymentService {
@@ -49,6 +50,14 @@ export class PaymentService {
       path: `/payment/${id}`,
       baseUrl: '/api',
       config: { body }
+    })
+  }
+
+  public async getDashboard(params: TPaymentDashboardParams): Promise<Result<TPaymentDashboard>> {
+    return HttpClient.get<TPaymentDashboard>({
+      path: '/payment/dashboard',
+      baseUrl: '/api',
+      config: { params }
     })
   }
 }

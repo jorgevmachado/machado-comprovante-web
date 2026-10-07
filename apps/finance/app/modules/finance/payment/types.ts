@@ -12,6 +12,7 @@ export enum EPaymentOrder {
 
 export type TPaymentFilter = TBaseFilter & {
   order?: EPaymentOrder;
+  payer?: string;
   end_date?: Date;
   start_date?: Date;
   beneficiary?: string;
@@ -43,4 +44,65 @@ export type TPaymentPersist = {
   payment_date?: Date;
   source_institution?: string;
   destination_institution?: string;
+}
+
+export type TPaymentDashboardPeriod = {
+  end_date: Date;
+  start_date: Date;
+}
+
+export type TPaymentDashboardSummary = {
+  total: number;
+  count: number;
+  average: number;
+  highest: number;
+}
+
+export type TPaymentDashboardMonthly = {
+  total:number;
+  count:number;
+  period: string;
+}
+
+export type TPaymentDashboardInstitution = {
+  total:number;
+  count:number;
+  institution: string;
+}
+
+export type TPaymentDashboardBeneficiary = {
+  name: string;
+  total: number;
+  count: number;
+  beneficiary_id: string;
+}
+
+export type TPaymentDashboardCategory = {
+  name: string;
+  total: number;
+  count: number;
+  category_id: string;
+}
+
+export type TPaymentDashboardPayer = {
+  name: string;
+  total: number;
+  count: number;
+  payer_id: string;
+}
+
+export type TPaymentDashboardParams = {
+  end_date: Date
+  start_date: Date
+  institution?: string;
+}
+
+export type TPaymentDashboard = {
+  payers: Array<TPaymentDashboardPayer>;
+  period: TPaymentDashboardPeriod;
+  summary: TPaymentDashboardSummary;
+  monthly: Array<TPaymentDashboardMonthly>;
+  categories: Array<TPaymentDashboardCategory>;
+  institutions: Array<TPaymentDashboardInstitution>;
+  beneficiaries: Array<TPaymentDashboardBeneficiary>;
 }

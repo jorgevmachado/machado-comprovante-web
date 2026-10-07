@@ -2,6 +2,7 @@
   "navigation": {
     "home": "Início",
     "payer": "Pagador",
+    "receipt": "Recibo",
     "title": "Sistema Financeiro",
     "signOut": "Sair",
     "subtitle": "Portal Financeiro",
@@ -157,6 +158,14 @@
     },
     "payment": {
       "title": "Pagamentos",
+      "distribution_of_payments_by_payer": {
+        "title": "Distribuição de pagamentos por pagador"
+      },
+      "distribution_of_payments_by_beneficiary": {
+        "title": "Distribuição de pagamentos por beneficiário"
+      },
+      "counter_one": "{{ count }} Pagamento",
+      "counter_other": "{{ count }} Pagamentos",
       "empty": "Nenhum pagamento encontrado.",
       "subtitle": "Gerencie seus pagamentos",
       "count": {
@@ -167,6 +176,18 @@
       },
       "max": {
         "title": "Maior pagamento"
+      },
+      "average": {
+        "title": "Pagamento médio"
+      },
+      "monthly_progression": {
+        "title": "Progressão mensal"
+      },
+      "expense_by_institution": {
+        "title": "Gasto por instituição"
+      },
+      "expense_by_category": {
+        "title": "Gasto por categoria"
       },
       "recent": {
         "title": "Pagamentos recentes"
@@ -200,6 +221,7 @@
       }
     },
     "institution": {
+      "title": "Instituições",
       "source": {
         "name": {
           "label": "Nome da Instituição de Origem"

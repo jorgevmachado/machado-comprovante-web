@@ -64,6 +64,7 @@ export default function PaymentRouterPage() {
           filters={[
             { name: 'start_date', label: 'finance.payment.start_date.label', placeholder: 'finance.payment.start_date.placeholder', type: 'date', value: '' },
             { name: 'end_date', label: 'finance.payment.end_date.label', placeholder: 'finance.payment.end_date.placeholder', type: 'date', value: defaultDate() },
+            { name: 'payer', label: 'finance.payer.name.label', placeholder: 'finance.payer.name.placeholder', type: 'text', value: '' },
             { name: 'beneficiary', label: 'finance.beneficiary.name.label', placeholder: 'finance.beneficiary.name.placeholder', type: 'text', value: '' },
             { name: 'source_institution', label: 'finance.payment.source_institution.label', placeholder: 'finance.payment.source_institution.placeholder', type: 'text', value: '' },
             { name: 'destination_institution', label: 'finance.payment.destination_institution.label', placeholder: 'finance.payment.destination_institution.placeholder', type: 'text', value: '' },

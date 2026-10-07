@@ -2,6 +2,7 @@
   "navigation": {
     "home": "Inicio",
     "payer": "Pagador",
+    "receipt": "Recibo",
     "title": "Sistema Financiero",
     "signOut": "Cerrar sesión",
     "subtitle": "Portal Financiero",
@@ -157,6 +158,14 @@
     },
     "payment": {
       "title": "Pagos",
+      "counter_one": "{{ count }} Pago",
+      "counter_other": "{{ count }} Pagos",
+      "distribution_of_payments_by_payer": {
+        "title": "Distribución de pagos por pagador"
+      },
+      "distribution_of_payments_by_beneficiary": {
+        "title": "Distribución de pagos por beneficiario"
+      },
       "empty": "No se encontraron pagos.",
       "subtitle": "Gestiona tus pagos",
       "count": {
@@ -167,6 +176,18 @@
       },
       "max": {
         "title": "Pago máximo"
+      },
+      "average": {
+        "title": "Pago promedio"
+      },
+      "monthly_progression": {
+        "title": "Progresión mensual"
+      },
+      "expense_by_institution": {
+        "title": "Gasto por institución"
+      },
+      "expense_by_category": {
+        "title": "Gasto por categoría"
       },
       "recent": {
         "title": "Pagos recientes"
@@ -200,6 +221,7 @@
       }
     },
     "institution": {
+      "title": "Instituciones",
       "source": {
         "name": {
           "label": "Nombre de la institución de origen"

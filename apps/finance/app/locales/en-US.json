@@ -2,6 +2,7 @@
   "navigation": {
     "home": "Home",
     "payer": "Payer",
+    "receipt": "Receipt",
     "title": "Finance System",
     "signOut": "Sign out",
     "subtitle": "Finance Portal",
@@ -156,6 +157,14 @@
       }
     },
     "payment": {
+      "counter_one": "{{ count }} Payment",
+      "counter_other": "{{ count }} Payments",
+      "distribution_of_payments_by_payer": {
+        "title": "Distribution of Payments by Payer"
+      },
+      "distribution_of_payments_by_beneficiary": {
+        "title": "Distribution of Payments by Beneficiary"
+      },
       "title": "Payments",
       "empty": "No payments found.",
       "subtitle": "Manage your payments",
@@ -167,6 +176,18 @@
       },
       "max": {
         "title": "Maximum Payment"
+      },
+      "average": {
+        "title": "Average Payment"
+      },
+      "monthly_progression": {
+        "title": "Monthly Progression"
+      },
+      "expense_by_institution": {
+        "title": "Expense by Institution"
+      },
+      "expense_by_category": {
+        "title": "Expense by Category"
       },
       "recent": {
         "title": "Recent Payments"
@@ -200,6 +221,7 @@
       }
     },
     "institution": {
+      "title": "Institutions",
       "source": {
         "name": {
           "label": "Source Institution Name"
