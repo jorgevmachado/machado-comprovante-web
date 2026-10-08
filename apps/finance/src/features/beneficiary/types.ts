@@ -1,6 +1,5 @@
 import type { TBaseFilter } from '@machado-repo/ui';
 
-import type { BeneficiaryApiData } from '@/src/contracts/finance-api/resources.contracts';
 import type { Beneficiary } from './domain/Beneficiary';
 
 export type { BeneficiaryApiData } from '@/src/contracts/finance-api/resources.contracts';

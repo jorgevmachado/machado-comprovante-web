@@ -1,6 +1,5 @@
 import type { TBaseFilter } from '@machado-repo/ui';
 
-import type { CategoryApiData } from '@/src/contracts/finance-api/resources.contracts';
 import type { Category } from './domain/Category';
 
 export type { CategoryApiData } from '@/src/contracts/finance-api/resources.contracts';

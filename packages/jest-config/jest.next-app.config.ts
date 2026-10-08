@@ -29,6 +29,7 @@ const config: Config = {
     '^@/src/(.*)$': '<rootDir>/src/$1',
     '^@/app/(.*)$': '<rootDir>/app/$1',
     '^@machado-repo/shared$': '<rootDir>/../../packages/shared/src/index.ts',
+    '^@machado-repo/ui$': '<rootDir>/../../packages/ui/src/index.ts',
   },
   modulePathIgnorePatterns: ['<rootDir>/.next/'],
   setupFilesAfterEnv: [setupFile],

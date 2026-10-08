@@ -1,6 +1,5 @@
 import type { TBaseFilter } from '@machado-repo/ui';
 
-import type { PayerApiData } from '@/src/contracts/finance-api/resources.contracts';
 import type { Payer } from './domain/Payer';
 
 export type { PayerApiData } from '@/src/contracts/finance-api/resources.contracts';

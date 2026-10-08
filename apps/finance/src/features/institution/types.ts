@@ -1,6 +1,5 @@
 import type { TBaseFilter } from '@machado-repo/ui';
 
-import type { InstitutionApiData } from '@/src/contracts/finance-api/resources.contracts';
 import type { Institution } from './domain/Institution';
 
 export type { InstitutionApiData } from '@/src/contracts/finance-api/resources.contracts';
