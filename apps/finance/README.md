@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Finance
 
-## Getting Started
+Aplicação web para gerenciar comprovantes, pagamentos, pagadores, beneficiários e categorias. Construída com Next.js 16, React 19 e TypeScript; a API Next.js funciona como BFF para o backend de finanças.
 
-First, run the development server:
+## Desenvolvimento
+
+Use Node.js `24.18.0` (versão em `.nvmrc`) e npm `11.16.0` (versão exigida pelo monorepo). Instale as dependências na raiz:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
+cp apps/finance/.env.example apps/finance/.env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Configure `API_BASE_URL` em `apps/finance/.env.local` para apontar ao backend. Em desenvolvimento, se não estiver definida, o app usa `http://127.0.0.1:8000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Inicie o servidor a partir da raiz:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev --workspace=finance
+```
 
-## Learn More
+Abra [http://localhost:3000](http://localhost:3000).
 
-To learn more about Next.js, take a look at the following resources:
+## Comandos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Execute os comandos a partir da raiz do monorepo:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Comando | Descrição |
+| --- | --- |
+| `npm run dev --workspace=finance` | Inicia o servidor de desenvolvimento |
+| `npm run lint --workspace=finance` | Executa ESLint no Finance |
+| `npm run test:coverage --workspace=finance -- --runInBand` | Executa os testes Jest com cobertura |
+| `npm run build -- --filter=finance...` | Compila Finance e seus packages dependentes |
 
-## Deploy on Vercel
+As features ficam em `src/features/`, as rotas e páginas do App Router em `app/`, as rotas BFF em `app/api/` e os serviços server-side em `src/server/`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Produção
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`API_BASE_URL` é obrigatória em produção e deve ser uma URL absoluta HTTP ou HTTPS. Configure-a no ambiente de build e runtime conforme o deploy.
+
+O build usa `output: "standalone"` e gera a aplicação em `apps/finance/.next/standalone`. Para deployment standalone, inclua também `.next/static` e `public` se existir. O workflow de pull request em `.github/workflows/finance-pull-request.yml` executa lint, testes e build, e prepara o artefato de deploy.
