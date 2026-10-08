@@ -2,7 +2,7 @@ import { VscEdit, VscError, VscGithub, VscSearch, VscTrash } from 'react-icons/v
 
 import type { TIconGroupIcons } from '../types';
 
-export const vscGroup: TIconGroupIcons = {
+export const vscGroup: Partial<TIconGroupIcons> = {
     tv: undefined,
     box: undefined,
     law: undefined,

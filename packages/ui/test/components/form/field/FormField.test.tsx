@@ -120,6 +120,146 @@ jest.mock('../../../../src/components/textarea', () => ({
   ),
 }));
 
+jest.mock('../../../../src/components/select', () => ({
+  __esModule: true,
+  default: ({
+    name,
+    label,
+    value,
+    hidden,
+    disabled,
+    placeholder,
+    isInvalid,
+    errorMessage,
+    options,
+    size,
+    onValueChange,
+  }: {
+    name?: string;
+    label?: string;
+    value?: string;
+    hidden?: boolean;
+    disabled?: boolean;
+    placeholder?: string;
+    isInvalid?: boolean;
+    errorMessage?: string;
+    options?: Array<{
+      label: string;
+      value: string;
+      disabled?: boolean;
+    }>;
+    size?: string;
+    onValueChange?: (
+      value: string,
+      name: string,
+      event: React.ChangeEvent<HTMLSelectElement>,
+    ) => void;
+  }) => (
+    <div data-testid="form-select">
+      <select
+        name={name}
+        value={value}
+        hidden={hidden}
+        disabled={disabled}
+        aria-invalid={isInvalid}
+        data-error-message={errorMessage}
+        data-placeholder={placeholder}
+        data-size={size}
+        onChange={(event) =>
+          onValueChange?.(
+            event.target.value,
+            name ?? '',
+            event,
+          )
+        }
+      >
+        {options?.map((option) => (
+          <option
+            key={option.value}
+            value={option.value}
+            disabled={option.disabled}
+          >
+            {option.label}
+          </option>
+        ))}
+      </select>
+
+      {label && <span>{label}</span>}
+    </div>
+  ),
+}));
+
+jest.mock('../../../../src/components/autocomplete', () => ({
+  __esModule: true,
+  default: ({
+    name,
+    label,
+    value,
+    hidden,
+    disabled,
+    placeholder,
+    isInvalid,
+    errorMessage,
+    options,
+    maxOptions,
+    noResultsText,
+    onValueChange,
+  }: {
+    name?: string;
+    label?: string;
+    value?: string;
+    hidden?: boolean;
+    disabled?: boolean;
+    placeholder?: string;
+    isInvalid?: boolean;
+    errorMessage?: string;
+    options?: Array<{
+      key: string;
+      value: string;
+      label?: string;
+      disabled?: boolean;
+    }>;
+    maxOptions?: number;
+    noResultsText?: string;
+    onValueChange?: (
+      value: string,
+      name: string,
+      event: React.ChangeEvent<HTMLInputElement>,
+    ) => void;
+  }) => (
+    <div data-testid="form-autocomplete">
+      <input
+        name={name}
+        value={value}
+        hidden={hidden}
+        disabled={disabled}
+        placeholder={placeholder}
+        aria-invalid={isInvalid}
+        data-error-message={errorMessage}
+        data-max-options={maxOptions}
+        data-no-results-text={noResultsText}
+        onChange={(event) =>
+          onValueChange?.(
+            event.target.value,
+            name ?? '',
+            event,
+          )
+        }
+      />
+
+      <div data-testid="autocomplete-options">
+        {options?.map((option) => (
+          <span key={option.key}>
+            {option.label ?? option.value}
+          </span>
+        ))}
+      </div>
+
+      {label && <span>{label}</span>}
+    </div>
+  ),
+}));
+
 import { FormField  } from '../../../../src/components/form/field';
 
 describe('<FormField />', () => {
@@ -215,6 +355,146 @@ describe('<FormField />', () => {
     });
   });
 
+  describe('select fields', () => {
+    it('renders a Select for select field', () => {
+      render(
+        <FormField
+          name="institution"
+          type="select"
+          value=""
+          options={[
+            {
+              label: 'Itaú',
+              value: 'itau',
+            },
+            {
+              label: 'Nubank',
+              value: 'nubank',
+            },
+          ]}
+        />,
+      );
+
+      expect(
+        screen.getByTestId('form-select'),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.queryByTestId('form-input'),
+      ).not.toBeInTheDocument();
+
+      expect(
+        screen.queryByTestId('form-textarea'),
+      ).not.toBeInTheDocument();
+
+      expect(
+        screen.queryByTestId('form-autocomplete'),
+      ).not.toBeInTheDocument();
+    });
+
+    it('passes options to Select', () => {
+      render(
+        <FormField
+          name="institution"
+          type="select"
+          value=""
+          options={[
+            {
+              label: 'Itaú',
+              value: 'itau',
+            },
+            {
+              label: 'Nubank',
+              value: 'nubank',
+            },
+          ]}
+        />,
+      );
+
+      expect(
+        screen.getByRole('option', {
+          name: 'Itaú',
+        }),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole('option', {
+          name: 'Nubank',
+        }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('autocomplete fields', () => {
+    it('renders an Autocomplete for autocomplete field', () => {
+      render(
+        <FormField
+          name="institution"
+          type="autocomplete"
+          value=""
+          options={[
+            {
+              key: 'itau',
+              label: 'Itaú',
+              value: 'itau',
+            },
+            {
+              key: 'nubank',
+              label: 'Nubank',
+              value: 'nubank',
+            },
+          ]}
+        />,
+      );
+
+      expect(
+        screen.getByTestId('form-autocomplete'),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.queryByTestId('form-input'),
+      ).not.toBeInTheDocument();
+
+      expect(
+        screen.queryByTestId('form-textarea'),
+      ).not.toBeInTheDocument();
+
+      expect(
+        screen.queryByTestId('form-select'),
+      ).not.toBeInTheDocument();
+    });
+
+    it('passes options to Autocomplete', () => {
+      render(
+        <FormField
+          name="institution"
+          type="autocomplete"
+          value=""
+          options={[
+            {
+              key: 'itau',
+              label: 'Itaú',
+              value: 'itau',
+            },
+            {
+              key: 'nubank',
+              label: 'Nubank',
+              value: 'nubank',
+            },
+          ]}
+        />,
+      );
+
+      expect(
+        screen.getByText('Itaú'),
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByText('Nubank'),
+      ).toBeInTheDocument();
+    });
+  });
+
   describe('common properties', () => {
     it('passes common properties to Input', () => {
       render(
@@ -297,6 +577,69 @@ describe('<FormField />', () => {
       expect(
         screen.getByText('Description'),
       ).toBeInTheDocument();
+    });
+
+    it('passes Select presentation properties', () => {
+      render(
+        <FormField
+          name="institution"
+          type="select"
+          value=""
+          options={[
+            {
+              label: 'Itaú',
+              value: 'itau',
+            },
+          ]}
+          presentation={{
+            size: 'lg',
+          }}
+        />,
+      );
+
+      const select = screen
+      .getByTestId('form-select')
+      .querySelector('select');
+
+      expect(select).toHaveAttribute(
+        'data-size',
+        'lg',
+      );
+    });
+
+    it('passes Autocomplete presentation properties', () => {
+      render(
+        <FormField
+          name="institution"
+          type="autocomplete"
+          value=""
+          options={[
+            {
+              key: 'itau',
+              label: 'Itaú',
+              value: 'itau',
+            },
+          ]}
+          presentation={{
+            maxOptions: 5,
+            noResultsText: 'Nenhuma instituição encontrada',
+          }}
+        />,
+      );
+
+      const input = screen
+      .getByTestId('form-autocomplete')
+      .querySelector('input');
+
+      expect(input).toHaveAttribute(
+        'data-max-options',
+        '5',
+      );
+
+      expect(input).toHaveAttribute(
+        'data-no-results-text',
+        'Nenhuma instituição encontrada',
+      );
     });
   });
 
@@ -416,6 +759,86 @@ describe('<FormField />', () => {
       expect(onValueChange).toHaveBeenCalledWith(
         'Some description',
         'description',
+        expect.any(Object),
+      );
+    });
+
+    it('passes onValueChange to Select', () => {
+      const onValueChange = jest.fn();
+
+      render(
+        <FormField
+          name="institution"
+          type="select"
+          value=""
+          options={[
+            {
+              label: 'Itaú',
+              value: 'itau',
+            },
+            {
+              label: 'Nubank',
+              value: 'nubank',
+            },
+          ]}
+          onValueChange={onValueChange}
+        />,
+      );
+
+      const select = screen
+      .getByTestId('form-select')
+      .querySelector('select');
+
+      fireEvent.change(select!, {
+        target: {
+          value: 'nubank',
+        },
+      });
+
+      expect(onValueChange).toHaveBeenCalledWith(
+        'nubank',
+        'institution',
+        expect.any(Object),
+      );
+    });
+
+    it('passes onValueChange to Autocomplete', () => {
+      const onValueChange = jest.fn();
+
+      render(
+        <FormField
+          name="institution"
+          type="autocomplete"
+          value=""
+          options={[
+            {
+              key: 'itau',
+              label: 'Itaú',
+              value: 'itau',
+            },
+            {
+              key: 'nubank',
+              label: 'Nubank',
+              value: 'nubank',
+            },
+          ]}
+          onValueChange={onValueChange}
+        />,
+      );
+
+      const input = screen
+      .getByTestId('form-autocomplete')
+      .querySelector('input');
+
+      fireEvent.change(input!, {
+        target: {
+          value: 'nubank',
+        },
+      });
+
+      expect(onValueChange).toHaveBeenCalledWith(
+        'nubank',
+        'institution',
         expect.any(Object),
       );
     });

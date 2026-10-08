@@ -2,6 +2,7 @@
   "form": {
     "action": {
       "save": "Save",
+      "send": "Send",
       "close": "Close",
       "edit": "Edit",
       "view": "View",
@@ -15,6 +16,7 @@
       "inactive": "Inactive",
       "submitting": "Submitting"
     },
+    "no_options": "No options found",
     "validation": {
       "required": "This field is required",
       "invalid_type": "Invalid type",
@@ -60,8 +62,11 @@
       }
     },
     "label": {
+      "date": "Date",
       "email": "Email",
       "name": "Name",
+      "select": "Select",
+      "autocomplete": "Autocomplete",
       "active": "Active",
       "inactive": "Inactive",
       "status": "Status",
@@ -75,12 +80,15 @@
       "password_confirmation": "Confirm Password"
     },
     "placeholder": {
+      "date": "Enter a date",
       "email": "Enter your email",
       "name": "Enter your name",
       "fullname": "Enter your full name",
       "password": "Enter your password",
       "description": "Enter a description",
-      "password_confirmation": "Confirm your password"
+      "password_confirmation": "Confirm your password",
+      "select": "Select",
+      "autocomplete": "Autocomplete"
     }
   }
 }

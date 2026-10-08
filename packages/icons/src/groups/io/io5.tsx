@@ -81,7 +81,7 @@ import {
 
 import type { TIconGroupIcons } from '../types';
 
-export const io5Group: TIconGroupIcons = {
+export const io5Group: Partial<TIconGroupIcons> = {
     tv: <IoTv/>,
     box: undefined,
     law: undefined,

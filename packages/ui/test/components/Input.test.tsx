@@ -230,6 +230,20 @@ describe('<Input />', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('This field is required.');
   });
 
+  it('supports hidden labels and invalid label styling', () => {
+    const { container } = render(
+      <Input
+        label="Trainer name"
+        value=""
+        hidden
+        isInvalid
+      />,
+    );
+
+    expect(container.firstChild).toHaveClass('hidden');
+    expect(screen.getByText('Trainer name')).toBeInTheDocument();
+  });
+
   it('does not show clear button when input is readOnly', () => {
     render(
       <Input
@@ -373,6 +387,16 @@ describe('<Input />', () => {
     });
 
     expect(onValueChange).toHaveBeenCalledWith('$12.34', '', expect.any(Object));
+  });
+
+  it('handles clearing a money value without optional callbacks', () => {
+    render(<Input type="money" value="123" />);
+
+    expect(() => {
+      fireEvent.change(screen.getByRole('textbox'), {
+        target: { value: '' },
+      });
+    }).not.toThrow();
   });
 
   it('calls onValueBlur with value, name and event', () => {

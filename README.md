@@ -1,159 +1,70 @@
-# Turborepo starter
+# Machado Comprovante Web
 
-This Turborepo starter is maintained by the Turborepo core team.
+Aplicação web para organizar comprovantes e pagamentos. O repositório é um monorepo Turborepo: a aplicação Finance é construída com Next.js e consome packages compartilhados de UI, internacionalização e lógica TypeScript.
 
-## Using this example
+## Funcionalidades
 
-Run the following command:
+- Cadastro e consulta de comprovantes, pagamentos, pagadores, beneficiários e categorias.
+- Painel financeiro com resumos e gráficos.
+- Acesso autenticado e integração com uma API de finanças separada.
+- Interface multilíngue em português do Brasil, inglês dos Estados Unidos e espanhol.
 
-```sh
-npx create-turbo@latest
+## Tecnologias
+
+- Node.js 24 e npm 11.16.0
+- TypeScript, React 19 e Next.js 16
+- Turborepo e npm workspaces
+- Tailwind CSS, Jest e Testing Library
+
+## Estrutura
+
+| Caminho | Responsabilidade |
+| --- | --- |
+| `apps/finance` | Aplicação Next.js, fluxos de negócio, rotas de API e integração com o backend |
+| `packages/ui` | Componentes React reutilizáveis e estilos |
+| `packages/i18n` | Recursos e infraestrutura de tradução |
+| `packages/theme` | Tokens e configurações visuais |
+| `packages/icons` | Abstração centralizada de ícones |
+| `packages/shared` | Tipos, value objects e utilitários TypeScript independentes de framework |
+| `packages/utils` | Utilitários compartilhados legados |
+| `packages/*-config` | Configurações compartilhadas de ESLint, Jest, Tailwind e TypeScript |
+
+## Começando
+
+Use Node.js `24.18.0` (versão registrada em `.nvmrc`) e npm `11.16.0`, conforme exigido pelo repositório.
+
+```bash
+npm install --global npm@11.16.0
+npm ci
+cp apps/finance/.env.example apps/finance/.env.local
 ```
 
-## What's inside?
+Configure `API_BASE_URL` no arquivo `apps/finance/.env.local` para apontar para uma API de finanças disponível. Em desenvolvimento, a aplicação usa `http://127.0.0.1:8000` quando a variável não está definida.
 
-This Turborepo includes the following packages/apps:
+Inicie o Finance:
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```bash
+npm run dev --workspace=finance
 ```
 
-Without global `turbo`, use your package manager:
+A aplicação ficará disponível em [http://localhost:3000](http://localhost:3000).
 
-```sh
-cd my-turborepo
-npx turbo build
-npm dlx turbo build
-npm exec turbo build
-```
+## Comandos
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+Execute a partir da raiz do repositório:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+| Comando | Descrição |
+| --- | --- |
+| `npm run dev --workspace=finance` | Inicia o servidor de desenvolvimento do Finance |
+| `npm run build -- --filter=finance...` | Compila o Finance e os packages dos quais depende |
+| `npm run lint` | Executa o lint nos workspaces com essa tarefa |
+| `npm test` | Executa os testes dos workspaces com essa tarefa |
+| `npm run check-types` | Executa as verificações de tipos configuradas no Turborepo |
 
-```sh
-turbo build --filter=docs
-```
+Para executar tarefas em um workspace específico, use os filtros do Turborepo, por exemplo: `npm exec turbo run test -- --filter=@machado-repo/ui`.
 
-Without global `turbo`:
+## Configuração e build de produção
 
-```sh
-npx turbo build --filter=docs
-npm exec turbo build --filter=docs
-npm exec turbo build --filter=docs
-```
+`API_BASE_URL` deve ser uma URL absoluta `http://` ou `https://`. É obrigatória em produção; sem ela, o build ou a inicialização em ambiente de produção falha explicitamente. O backend não faz parte deste repositório e precisa estar acessível pela aplicação.
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo dev
-npm exec turbo dev
-npm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-npm exec turbo dev --filter=web
-npm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-npm exec turbo login
-npm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-npm exec turbo link
-npm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+O build do Finance gera uma saída standalone do Next.js em `apps/finance/.next/standalone`. O workflow de pull requests executa lint, testes e build, e publica um artefato de implantação com a saída standalone, arquivos estáticos e, quando presente, a pasta `public`.

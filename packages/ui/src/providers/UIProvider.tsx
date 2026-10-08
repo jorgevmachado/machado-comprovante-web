@@ -3,9 +3,12 @@ import React ,{ useMemo } from 'react';
 
 import { I18nProvider, type TLocalesFiles, mergeLocaleFiles } from '@machado-repo/i18n';
 import {
-  AlertProvider ,BreadcrumbProvider ,
-  datePickerLocales ,filterLocales ,formLocales,
+  AlertProvider ,
+  BreadcrumbProvider ,
+  filterLocales ,
+  formLocales,
 } from '../components';
+import { UIContextProvider } from './ui-context';
 
 type UiProviderProps = {
   locales?: TLocalesFiles;
@@ -21,7 +24,6 @@ export default function UIProvider({
     const listLocales: Array<TLocalesFiles> = [];
     listLocales.push(filterLocales);
     listLocales.push(formLocales);
-    listLocales.push(datePickerLocales);
     if (locales) {
       listLocales.push(locales);
     }
@@ -32,7 +34,9 @@ export default function UIProvider({
     <I18nProvider locales={mergedLocaleFiles}>
       <AlertProvider>
         <BreadcrumbProvider>
-          {children}
+          <UIContextProvider>
+            {children}
+          </UIContextProvider>
         </BreadcrumbProvider>
       </AlertProvider>
     </I18nProvider>

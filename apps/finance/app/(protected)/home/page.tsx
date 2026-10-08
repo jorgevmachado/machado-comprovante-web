@@ -1,3 +1,6 @@
+'use client';
+import { Dashboard } from '@/src/features/payment';
+
 export default function HomeRouterPage() {
-  return <div><h1>Home</h1></div>;
+  return <Dashboard />;
 }

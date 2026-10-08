@@ -85,6 +85,7 @@ describe('Token', () => {
       expect(result.isOk).toBeTruthy();
       expect(result.instance.payload).toEqual({ exp: 1725086400 });
       expect(result.instance.expiration).toBe(1_725_086_400_000);
+      expect(result.instance.isExpired).toBeFalsy();
     });
   });
 

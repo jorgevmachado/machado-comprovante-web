@@ -49,4 +49,6 @@ export type TextTagProps = {
   className?: string;
 };
 
-export type TextProps<T extends TTag = 'p'> = TextOwnProps<T> & Omit<ComponentPropsWithoutRef<T> ,keyof TextOwnProps<T>>;
+export type TextProps<T extends TTag = 'p'> = TextOwnProps<T> & Omit<ComponentPropsWithoutRef<T> ,keyof TextOwnProps<T>> & {
+  currentDepth?: number;
+};

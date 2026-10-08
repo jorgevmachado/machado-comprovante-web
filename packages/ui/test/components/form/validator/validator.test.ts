@@ -520,7 +520,33 @@ describe('FormValidator' ,() => {
         {} ,
       );
     });
+
+    it('does not apply presentation length settings to select fields' ,() => {
+      const tryCreate = jest.fn().mockReturnValue({
+        isOk: true ,
+        isFailure: false ,
+        instance: {} ,
+      });
+      const previousValidator = FORM_FIELD_DEFINITIONS.select.validator;
+
+      FORM_FIELD_DEFINITIONS.select.validator = { tryCreate };
+
+      try {
+        const validator = new FormValidator();
+        validator.validateField({
+          name: 'category',
+          type: 'select',
+          validatorConfig: { customOption: 'kept' },
+          presentation: { minLength: 2, maxLength: 10 },
+        }, 'food');
+
+        expect(tryCreate).toHaveBeenCalledWith('food', {
+          customOption: 'kept',
+        });
+      } finally {
+        FORM_FIELD_DEFINITIONS.select.validator = previousValidator;
+      }
+    });
   });
 
 });
-

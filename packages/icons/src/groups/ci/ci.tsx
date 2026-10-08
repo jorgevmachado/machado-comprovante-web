@@ -12,7 +12,7 @@ import {
 
 import type { TIconGroupIcons } from '../types';
 
-export const ciGroup: TIconGroupIcons = {
+export const ciGroup: Partial<TIconGroupIcons> = {
     tv: undefined,
     box: undefined,
     law: undefined,

@@ -6,6 +6,8 @@ import {
 import { HttpError } from './http-error';
 import { HttpUrl } from './http-url';
 
+export const HTTP_UNAUTHORIZED_EVENT = 'machado:http-unauthorized';
+
 type HttpMethod =
   | 'GET'
   | 'POST'
@@ -117,6 +119,7 @@ export abstract class Http {
     const data: unknown = await Http.parseResponse(response);
 
     if(!response.ok) {
+      Http.notifyUnauthorized(response);
       if(Http.isResponseError(data)) {
         throw new HttpError(
           data.error,
@@ -140,6 +143,24 @@ export abstract class Http {
     }
 
     return data as T;
+  }
+
+  private static notifyUnauthorized(response: Response): void {
+    if (response.status !== 401 || typeof window === 'undefined') {
+      return;
+    }
+
+    try {
+      const responseUrl = new URL(response.url);
+      if (
+        responseUrl.origin === window.location.origin &&
+        responseUrl.pathname.startsWith('/api/')
+      ) {
+        window.dispatchEvent(new Event(HTTP_UNAUTHORIZED_EVENT));
+      }
+    } catch {
+      return;
+    }
   }
 
   private static async parseResponse(response: Response): Promise<unknown> {

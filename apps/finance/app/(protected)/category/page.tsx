@@ -1,3 +1,5 @@
+import { CategoryListPage } from '@/src/features/category';
+
 export default function CategoryRouterPage() {
-  return <div><h1>Category</h1></div>;
+  return <CategoryListPage/>;
 }

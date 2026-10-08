@@ -36,6 +36,10 @@ export class Token extends ValueObject<string, ValueObjectConfig> {
     return this._payload.exp * 1000;
   }
 
+  get isExpired(): boolean {
+    return Date.now() >= this.expiration;
+  }
+
   public static create(value: string, config?: ValueObjectConfig): Token {
     const result = Token.tryCreate(value, config);
     result.validator.throwsIfFailed();

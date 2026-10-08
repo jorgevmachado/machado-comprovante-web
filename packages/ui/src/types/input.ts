@@ -27,3 +27,9 @@ export type BaseInputProps = {
   clearButtonAriaLabel?: string;
   inputWrapperClassName?: string;
 }
+
+export type BaseInputOptions = {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}

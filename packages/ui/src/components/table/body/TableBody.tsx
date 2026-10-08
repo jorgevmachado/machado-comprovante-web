@@ -20,7 +20,7 @@ export default function TableBody<T>({ items, headers, actions, appearance }: Ta
             >
               {header.format
                 ? header.format(item[header.value], item)
-                : String(item[header.value] ?? '')
+                : String(item[header.value] ?? '--')
               }
             </TableCell>
           ))}

@@ -1,3 +1,6 @@
+import { Text } from '../../../primitives';
+import { useTranslationResolver } from '../../../lang';
+
 export type TBreadcrumbItem = {
   href: string;
   label: string;
@@ -7,19 +10,21 @@ export type TBreadcrumbItem = {
 }
 
 export default function BreadcrumbItem({ href, label, clickable, isCurrent, onItemClick }: TBreadcrumbItem) {
+  const { resolve: resolveTranslation } = useTranslationResolver();
+
   if(isCurrent) {
     return (
-      <p className="text-sm text-slate-700 font-semibold" aria-current='page'>
+      <Text as="p" className="text-sm text-slate-700 font-semibold" aria-current="page">
         {label}
-      </p>
+      </Text>
     );
   }
 
   if(!clickable) {
     return (
-      <p className="text-sm text-slate-400 font-normal" aria-current='page'>
+      <Text as="p" className="text-sm text-slate-400 font-normal" aria-current="page">
         {label}
-      </p>
+      </Text>
     );
   }
 
@@ -29,7 +34,7 @@ export default function BreadcrumbItem({ href, label, clickable, isCurrent, onIt
       className="cursor-pointer text-sm font-medium text-slate-400 transition hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
       onClick={() => onItemClick(href)}
     >
-      {label}
+      {resolveTranslation(label)}
     </button>
   )
 }

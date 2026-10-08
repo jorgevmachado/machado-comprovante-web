@@ -1,51 +1,89 @@
-import React, { useCallback } from 'react';
+import React ,{ useCallback } from 'react';
 
-import { useAppTranslation, isTranslationValue, parseTranslationMessage } from '@machado-repo/i18n';
+import {
+  isTranslationValue ,
+  isTranslationWithUnquotedParams ,
+  parseTranslationMessage ,
+  useAppTranslation ,
+} from '@machado-repo/i18n';
 
 type InvalidElement = {
   children?: React.ReactNode;
 }
 
 type UseTranslationResolver = {
-  resolve<T,>(value: T, values?: Record<string, unknown>): T | string;
-  resolveChildren: (child?: React.ReactNode, currentDepth?: number) => React.ReactNode;
+  resolve<T ,>(value: T ,values?: Record<string ,unknown>): T | string;
+  resolveChildren: (child?: React.ReactNode ,currentDepth?: number) => React.ReactNode;
 }
 
 export function useTranslationResolver(): UseTranslationResolver {
   const { t } = useAppTranslation();
 
-  const resolve = useCallback(<T,>(value: T, values?: Record<string, unknown>): T | string => {
-    if(!isTranslationValue(value)) {
+  const normalizeValue = useCallback(<T ,>(value: T): string | T => {
+    if (!isTranslationWithUnquotedParams(value)) {
       return value;
     }
 
-    const translated = parseTranslationMessage(value);
-
-    if(!translated) {
-      return t(value, values);
-    }
-
-    return t(translated.key, { ...translated.params, ...values });
-  }, [t]);
-
-  const resolveChildren = useCallback((child?: React.ReactNode, currentDepth: number = 0): React.ReactNode => {
-    if(typeof child === 'string') {
-      return resolve(child);
-    }
-
-    if(currentDepth <= 0 || !React.isValidElement<InvalidElement>(child)) {
-      return child;
-    }
-
-    return React.cloneElement(
-      child,
-      {},
-      React.Children.map(
-        child.props.children,
-        (nestedChild) => resolveChildren(nestedChild, currentDepth - 1)
-      )
+    const match = value.match(
+      /^([a-zA-Z0-9]+(?:\.[a-zA-Z0-9_-]+)+),\s*\{([\s\S]*)}$/ ,
     );
-  },[resolve])
 
-  return { resolve, resolveChildren };
+    if (!match) {
+      return value;
+    }
+
+    const [,key ,params] = match;
+
+    if (!key || params === undefined) {
+      return value;
+    }
+    const normalizedParams = params.replace(
+      /(\w+)\s*:\s*([^,]+)/g ,
+      (_ ,param ,paramValue) => `${ param }: "${ paramValue.trim() }"` ,
+    );
+
+    return `"${ key }", {${ normalizedParams }}`;
+  } ,[]);
+
+  const resolve = useCallback(<T ,>(value: T ,values?: Record<string ,unknown>): T | string => {
+      const normalizedValue = normalizeValue(value);
+      if (!isTranslationValue(normalizedValue)) {
+        return normalizedValue;
+      }
+
+      const translated = parseTranslationMessage(normalizedValue);
+
+      if (!translated) {
+        return t(normalizedValue ,values);
+      }
+
+      return t(translated.key ,{ ...translated.params ,...values });
+    } ,[normalizeValue ,t]);
+
+  const resolveChildren = useCallback((child?: React.ReactNode ,currentDepth: number = 0 ,values?: Record<string ,unknown>): React.ReactNode => {
+      if (typeof child === 'string') {
+        return resolve(child ,values);
+      }
+
+      if (Array.isArray(child)) {
+        return child.map(
+          (nestedChild) => resolveChildren(nestedChild ,currentDepth ,values));
+      }
+
+      if (currentDepth <= 0 || !React.isValidElement<InvalidElement>(child)) {
+        return child;
+      }
+
+      return React.cloneElement(
+        child ,
+        {} ,
+        React.Children.map(
+          child.props.children ,
+          (nestedChild) => resolveChildren(nestedChild ,currentDepth - 1 ,
+            values),
+        ),
+      );
+    } ,[resolve]);
+
+  return { resolve ,resolveChildren };
 }
