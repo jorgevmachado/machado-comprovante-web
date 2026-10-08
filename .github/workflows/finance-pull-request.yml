@@ -21,17 +21,8 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-
-      - name: Set up the repository npm version
-        run: npm install --global npm@11.16.0 --force
-        working-directory: /tmp
-
-      - name: Install dependencies
-        run: npm ci
+      - name: Set up workspace
+        uses: ./.github/actions/setup-finance
 
       - name: Lint Finance
         run: npm run lint --workspace=finance
@@ -43,17 +34,8 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-
-      - name: Set up the repository npm version
-        run: npm install --global npm@11.16.0 --force
-        working-directory: /tmp
-
-      - name: Install dependencies
-        run: npm ci
+      - name: Set up workspace
+        uses: ./.github/actions/setup-finance
 
       - name: Run Finance unit tests
         run: npm run test:coverage --workspace=finance -- --runInBand
@@ -66,20 +48,11 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-
-      - name: Set up the repository npm version
-        run: npm install --global npm@11.16.0 --force
-        working-directory: /tmp
-
-      - name: Install dependencies
-        run: npm ci
+      - name: Set up workspace
+        uses: ./.github/actions/setup-finance
 
       - name: Build Finance for production
-        run: npm run build --workspace=finance
+        run: npm run build -- --filter=finance...
         env:
           API_BASE_URL: http://127.0.0.1:8000
 
