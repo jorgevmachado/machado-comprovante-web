@@ -12,17 +12,18 @@
     "test:watch": "jest --config jest.config.ts --watch"
   },
   "dependencies": {
-    "next": "16.2.12",
-    "react": "^19",
-    "react-dom": "^19",
+    "@machado-repo/shared": "*",
     "@machado-repo/ui": "*",
-    "@machado-repo/shared": "*"
+    "next": "16.4.0",
+    "react": "^19",
+    "react-dom": "^19"
   },
   "devDependencies": {
     "@machado-repo/eslint-config": "*",
     "@machado-repo/jest-config": "*",
     "@machado-repo/tailwind-config": "*",
     "@machado-repo/typescript-config": "*",
+    "@tailwindcss/postcss": "^4.1.5",
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.3.2",
     "@types/jest": "^30.0.0",
@@ -31,7 +32,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9.39.1",
     "tailwindcss": "^4.1.5",
-    "@tailwindcss/postcss": "^4.1.5",
     "typescript": "5.9.2"
   }
 }

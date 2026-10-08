@@ -30,6 +30,7 @@ const config: Config = {
     '^@/app/(.*)$': '<rootDir>/app/$1',
     '^@machado-repo/shared$': '<rootDir>/../../packages/shared/src/index.ts',
   },
+  modulePathIgnorePatterns: ['<rootDir>/.next/'],
   setupFilesAfterEnv: [setupFile],
 };
 
