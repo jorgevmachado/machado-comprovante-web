@@ -1,7 +1,7 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
 
-import { getServerSession } from '@/app/modules/auth/session';
+import { getServerSession } from '@/src/server/auth';
 
 type PublicLayoutProps = {
   children: React.ReactNode;

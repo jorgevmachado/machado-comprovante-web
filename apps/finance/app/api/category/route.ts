@@ -1,10 +1,13 @@
 import { NextRequest ,NextResponse } from 'next/server';
 
-import { HttpClient ,type TPaginatedListResponse } from '@machado-repo/shared';
-
-import { getServerSession } from '@/app/modules/auth/session';
-
-import type { TCategory } from '@/app/modules/finance/category';
+import { getServerSession } from '@/src/server/auth';
+import { getApiErrorStatusCode } from '@/src/server/auth/api-response';
+import {
+  categoryApiDataToJson,
+} from '@/src/features/category/mappers/category.mapper';
+import { mapListResult, mapResult } from '@/src/shared/result.mapper';
+import { categoryApiService } from '@/src/server/integrations/finance-api/category.service';
+import type { CategoryApiWriteRequest } from '@/src/server/integrations/finance-api/contracts/category.contracts';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const session = await getServerSession();
@@ -15,15 +18,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   try {
     const params = Object.fromEntries(request.nextUrl.searchParams.entries());
-    const response = await HttpClient.get<TPaginatedListResponse<TCategory> | Array<TCategory>>({
-      path: '/finance/category',
-      config: {
-        token: session.token,
-        params
-      },
-    });
+    const response = mapListResult(
+      await categoryApiService.fetchList(session.token, params),
+      categoryApiDataToJson,
+    );
     if(response.isFailure) {
-      return NextResponse.json({ message: response.error }, { status: 422 });
+      return NextResponse.json({ message: response.error }, { status: getApiErrorStatusCode(response) });
     }
     return NextResponse.json(response.instance);
   } catch (error) {
@@ -40,16 +40,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const body = await request.json();
-    const response = await HttpClient.post<TCategory>({
-      path: `/finance/category` ,
-      config: {
-        token: session.token ,
-        body,
-      } ,
-    });
+    const body: CategoryApiWriteRequest = await request.json();
+    const response = mapResult(
+      await categoryApiService.create(session.token, body),
+      categoryApiDataToJson,
+    );
     if (response.isFailure) {
-      return NextResponse.json({ message: response.error } ,{ status: 422 });
+      return NextResponse.json({ message: response.error } ,{ status: getApiErrorStatusCode(response) });
     }
     return NextResponse.json(response.instance);
   } catch (error) {

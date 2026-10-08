@@ -17,11 +17,65 @@ describe('DateFormat', () => {
       expect(result).toBeUndefined();
     });
 
+    test.each([
+      '',
+      '2024-6-15',
+      '2024-06-5',
+      '2024/06/15',
+      ' 2024-06-15',
+      '2024-06-15 ',
+      '2024-00-15',
+      '2024-13-15',
+      '2024-06-00',
+      '2024-06-32',
+      '2023-02-29',
+      '2024-02-30',
+    ])('should reject invalid calendar date %s', (value) => {
+      expect(dateFormat.dateStringToDate(value)).toBeUndefined();
+    });
+
+    test.each([
+      '2024-02-29',
+      '1900-02-28',
+      '0000-01-01',
+      '0099-12-31',
+    ])('should parse valid UTC calendar date %s', (value) => {
+      const result = dateFormat.dateStringToDate(value);
+
+      expect(result?.toISOString()).toBe(`${value}T00:00:00.000Z`);
+    });
+
     test('should return undefined for a undefined date string', () => {
       const result = dateFormat.dateStringToDate(undefined);
       expect(result).toBeUndefined();
     });
   });
+
+  describe('dateTimeStringToDate', () => {
+    test('should convert an ISO date-time string with microseconds to a Date object', () => {
+      const dateTimeString = '2026-10-03T23:19:16.993406Z';
+      const result = dateFormat.dateTimeStringToDate(dateTimeString);
+
+      expect(result).toBeInstanceOf(Date);
+      expect(result?.toISOString()).toBe('2026-10-03T23:19:16.993Z');
+    });
+
+    test('should convert an ISO date-time string with a timezone offset', () => {
+      const result = dateFormat.dateTimeStringToDate('2026-10-03T23:19:16.993+02:00');
+
+      expect(result?.toISOString()).toBe('2026-10-03T21:19:16.993Z');
+    });
+
+    test('should return undefined for an invalid date-time string', () => {
+      expect(dateFormat.dateTimeStringToDate('2026-02-30T23:19:16.993406Z')).toBeUndefined();
+      expect(dateFormat.dateTimeStringToDate('not-a-date')).toBeUndefined();
+    });
+
+    test('should return undefined when the date-time string is absent', () => {
+      expect(dateFormat.dateTimeStringToDate(undefined)).toBeUndefined();
+    });
+  });
+
   describe('dateToDateString', () => {
     test('should convert a valid Date object to a date string', () => {
       const date = new Date('2024-06-15');

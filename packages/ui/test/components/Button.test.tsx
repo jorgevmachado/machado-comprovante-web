@@ -171,4 +171,28 @@ describe('Button', () => {
       appearance: 'outline',
     });
   });
+
+  it('should use theme defaults for nullish appearance props', async () => {
+    const { buildButtonTheme } = await import('@machado-repo/theme');
+
+    render(
+      <Button
+        size={null as never}
+        tone={null as never}
+        appearance={null as never}
+      >
+        Button
+      </Button>,
+    );
+
+    expect(buildButtonTheme).toHaveBeenLastCalledWith({
+      size: 'md',
+      tone: 'solid',
+      iconOnly: false,
+      disabled: false,
+      fullWidth: false,
+      className: '',
+      appearance: 'solid',
+    });
+  });
 });

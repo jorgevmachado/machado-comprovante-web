@@ -5,6 +5,7 @@ export * from './file.vo';
 export * from './fullname.vo';
 export * from './money.vo';
 export * from './name.vo';
+export * from './number.vo';
 export * from './password.vo';
 export * from './string.vo';
 export * from './text.vo';

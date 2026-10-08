@@ -1,11 +1,10 @@
 import { NextRequest ,NextResponse } from 'next/server';
 
-import { HttpClient } from '@machado-repo/shared';
-
-import { getServerSession } from '@/app/modules/auth/session';
-
-import { convertPayerApiResponseToPayer } from '@/app/api/payer/business';
-import { TPayerApiResponse } from '@/app/api/payer/types';
+import { getServerSession } from '@/src/server/auth';
+import { getApiErrorStatusCode } from '@/src/server/auth/api-response';
+import { payerApiDataToJson } from '@/src/features/payer/mappers/payer.mapper';
+import { mapResult } from '@/src/shared/result.mapper';
+import { payerApiService } from '@/src/server/integrations/finance-api/payer.service';
 
 type PayerRouteContext = {
   params: Promise<{ identifier: string }>
@@ -24,17 +23,15 @@ export async function GET(
   try {
     const { identifier } = await context.params;
 
-    const response = await HttpClient.get<TPayerApiResponse>({
-      path: `/finance/payer/${identifier}` ,
-      config: {
-        token: session.token ,
-      } ,
-    });
+    const response = mapResult(
+      await payerApiService.fetchById(session.token, identifier),
+      payerApiDataToJson,
+    );
 
     if (response.isFailure) {
-      return NextResponse.json({ message: response.error } ,{ status: 422 });
+      return NextResponse.json({ message: response.error }, { status: getApiErrorStatusCode(response) });
     }
-    return NextResponse.json(convertPayerApiResponseToPayer(response.instance));
+    return NextResponse.json(response.instance);
 
   } catch (error) {
     const message = error instanceof Error && error.message ?
@@ -59,18 +56,15 @@ export async function PUT(
     const { identifier } = await context.params;
     const body = await request.json();
 
-    const response = await HttpClient.put<TPayerApiResponse>({
-      path: `/finance/payer/${identifier}` ,
-      config: {
-        token: session.token ,
-        body,
-      } ,
-    });
+    const response = mapResult(
+      await payerApiService.update(session.token, identifier, body),
+      payerApiDataToJson,
+    );
 
     if (response.isFailure) {
-      return NextResponse.json({ message: response.error } ,{ status: 422 });
+      return NextResponse.json({ message: response.error }, { status: getApiErrorStatusCode(response) });
     }
-    return NextResponse.json(convertPayerApiResponseToPayer(response.instance));
+    return NextResponse.json(response.instance);
 
   } catch (error) {
     const message = error instanceof Error && error.message ?

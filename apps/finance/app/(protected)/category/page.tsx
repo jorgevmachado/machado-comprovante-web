@@ -1,4 +1,4 @@
-import { CategoryListPage  } from '@/app/modules/finance/category';
+import { CategoryListPage } from '@/src/features/category';
 
 export default function CategoryRouterPage() {
   return <CategoryListPage/>;

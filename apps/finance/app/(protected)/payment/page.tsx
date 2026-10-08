@@ -7,7 +7,7 @@ import {
   PaymentsList ,
   type TPayment ,TPaymentPersist ,
   usePayments ,
-} from '@/app/modules/finance';
+} from '@/src/features/payment';
 
 export default function PaymentRouterPage() {
   const { modal, openModal, closeModal } = useModal();
@@ -50,15 +50,14 @@ export default function PaymentRouterPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-6 text-slate-950 sm:px-6 lg:px-8">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
-        <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
+    <main className="min-h-full flex-1 bg-slate-50 px-4 py-6 text-slate-950 sm:px-6 sm:py-8 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 sm:gap-6">
+        <header className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="min-w-0">
             <Text weight="bold" size="3xl">{'finance.payment.title'}</Text>
-            <Text>{'finance.payment.subtitle'}</Text>
+            <Text className="mt-1 text-slate-600">{'finance.payment.subtitle'}</Text>
           </div>
         </header>
-
 
         <Filters
           filters={[
@@ -72,22 +71,26 @@ export default function PaymentRouterPage() {
           onApply={(nextFilters) => getPayments(nextFilters)}
         />
 
-        <PaymentsList
-          resumed={false}
-          onEdit={handleOpenFormModal}
-          payments={ payments }
-          isLoading={ isLoading}
-        />
-        {modal}
-        {meta && (
-          <Pagination
+        <section aria-live="polite" className="min-w-0">
+          <PaymentsList
+            resumed={false}
+            onEdit={handleOpenFormModal}
+            payments={payments}
             isLoading={isLoading}
-            totalPages={meta.total_pages}
-            currentPage={meta.current_page}
-            onPageChange={(page) => goToPage(page)}
           />
-        )}
 
+          {meta && (
+            <div className="mt-5 sm:mt-6">
+              <Pagination
+                isLoading={isLoading}
+                totalPages={meta.total_pages}
+                currentPage={meta.current_page}
+                onPageChange={(page) => goToPage(page)}
+              />
+            </div>
+          )}
+        </section>
+        {modal}
       </div>
     </main>
   )

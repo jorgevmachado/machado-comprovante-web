@@ -3,14 +3,71 @@ import { INVALID_DATE } from '../constants';
 
 export class DateFormat {
   public dateStringToDate(dateString?: string): Date | undefined {
-    if (!dateString){
+    if (!dateString) {
       return undefined;
     }
-    const [year, month, day] = dateString.split('-').map(Number);
-    if(!year || !month || !day) {
+
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
+    if (!match) {
       return undefined;
     }
-    return new Date(year, month - 1, day);
+
+    const [, year, month, day] = match;
+    const yearNumber = Number(year);
+    const monthNumber = Number(month);
+    const dayNumber = Number(day);
+    const date = new Date(0);
+    date.setUTCHours(0, 0, 0, 0);
+    date.setUTCFullYear(yearNumber, monthNumber - 1, dayNumber);
+
+    if (
+      monthNumber < 1 ||
+      monthNumber > 12 ||
+      date.getUTCFullYear() !== yearNumber ||
+      date.getUTCMonth() !== monthNumber - 1 ||
+      date.getUTCDate() !== dayNumber
+    ) {
+      return undefined;
+    }
+
+    return date;
+  }
+
+  public dateTimeStringToDate(dateTimeString?: string): Date | undefined {
+    if (!dateTimeString) {
+      return undefined;
+    }
+
+    const isoDateTimePattern = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(Z|([+-])(\d{2}):(\d{2}))$/;
+    const match = dateTimeString.match(isoDateTimePattern);
+    if (!match) {
+      return undefined;
+    }
+
+    const [, year, month, day, hour, minute, second, , , offsetHour, offsetMinute] = match;
+    const yearNumber = Number(year);
+    const monthNumber = Number(month);
+    const dayNumber = Number(day);
+    const hourNumber = Number(hour);
+    const minuteNumber = Number(minute);
+    const secondNumber = Number(second);
+    const offsetHourNumber = Number(offsetHour ?? 0);
+    const offsetMinuteNumber = Number(offsetMinute ?? 0);
+    const daysInMonth = new Date(Date.UTC(yearNumber, monthNumber, 0)).getUTCDate();
+
+    if (
+      monthNumber < 1 || monthNumber > 12 ||
+      dayNumber < 1 || dayNumber > daysInMonth ||
+      hourNumber > 23 ||
+      minuteNumber > 59 ||
+      secondNumber > 59 ||
+      offsetHourNumber > 23 ||
+      offsetMinuteNumber > 59
+    ) {
+      return undefined;
+    }
+
+    return new Date(dateTimeString);
   }
 
   public dateToDateString(date?: Date | string): string | undefined {

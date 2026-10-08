@@ -1,17 +1,12 @@
 import { NextRequest ,NextResponse } from 'next/server';
 
+import { getServerSession } from '@/src/server/auth';
+import { getApiErrorStatusCode } from '@/src/server/auth/api-response';
 import {
-  HttpClient ,
-  type TPaginatedListResponse,
-} from '@machado-repo/shared';
-
-import { getServerSession } from '@/app/modules/auth/session';
-
-import { TPayerApiResponse } from '@/app/api/payer/types';
-import {
-  convertInstanceToPayerList ,
-  convertPayerApiResponseToPayer,
-} from '@/app/api/payer/business';
+  payerApiDataToJson,
+} from '@/src/features/payer/mappers/payer.mapper';
+import { mapListResult, mapResult } from '@/src/shared/result.mapper';
+import { payerApiService } from '@/src/server/integrations/finance-api/payer.service';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const session = await getServerSession();
@@ -22,17 +17,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   try {
     const params = Object.fromEntries(request.nextUrl.searchParams.entries());
-    const response = await HttpClient.get<TPaginatedListResponse<TPayerApiResponse> | Array<TPayerApiResponse>>({
-      path: '/finance/payer',
-      config: {
-        token: session.token,
-        params
-      },
-    });
+    const response = mapListResult(
+      await payerApiService.fetchList(session.token, params),
+      payerApiDataToJson,
+    );
     if(response.isFailure) {
-      return NextResponse.json({ message: response.error }, { status: 422 });
+      return NextResponse.json({ message: response.error }, { status: getApiErrorStatusCode(response) });
     }
-    return NextResponse.json(convertInstanceToPayerList(response.instance));
+    return NextResponse.json(response.instance);
   } catch (error) {
     const message = error instanceof Error && error.message ? error.message : 'Could not load list of payers.';
     return NextResponse.json({ message }, { status: 500 });
@@ -48,17 +40,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     const body = await request.json();
-    const response = await HttpClient.post<TPayerApiResponse>({
-      path: `/finance/payer` ,
-      config: {
-        token: session.token ,
-        body,
-      } ,
-    });
+    const response = mapResult(
+      await payerApiService.create(session.token, body),
+      payerApiDataToJson,
+    );
     if (response.isFailure) {
-      return NextResponse.json({ message: response.error } ,{ status: 422 });
+      return NextResponse.json({ message: response.error }, { status: getApiErrorStatusCode(response) });
     }
-    return NextResponse.json(convertPayerApiResponseToPayer(response.instance));
+    return NextResponse.json(response.instance);
   } catch (error) {
     const message = error instanceof Error && error.message ?
       error.message :

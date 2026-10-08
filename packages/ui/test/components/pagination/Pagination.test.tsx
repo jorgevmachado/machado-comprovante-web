@@ -76,6 +76,21 @@ describe('<Pagination />', () => {
     ).toBeInTheDocument();
   });
 
+  it('should render the ellipsis when a previous page entry is missing', () => {
+    const pages = [1, 2, 10];
+    delete pages[1];
+    jest
+      .mocked(
+        require('../../../src/components/pagination/business')
+          .buildVisiblePages,
+      )
+      .mockReturnValueOnce(pages);
+
+    render(<Pagination totalPages={10} currentPage={1} />);
+
+    expect(screen.getByText('...')).toBeInTheDocument();
+  });
+
 
   it('should use default pagination aria label', () => {
     render(

@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import '@machado-repo/ui/styles.css';
 
-import enUS from './locales/en-US.json';
-import esUE from './locales/es-UE.json';
-import ptBR from './locales/pt-BR.json';
+import enUS from '@/src/locales/en-US.json';
+import esUE from '@/src/locales/es-UE.json';
+import ptBR from '@/src/locales/pt-BR.json';
 
 import "./globals.css";
 
 import { LoadingProvider ,UIProvider ,UserProvider } from '@machado-repo/ui';
-import Settings from './modules/settings';
-import { getServerSession } from './modules/auth/session';
-import { getAuthenticatedUserBootstrap } from './modules/auth/server';
+import AppShell from '@/src/app-shell/AppShell';
+import { SessionExpirationHandler } from '@/src/features/auth';
+import { getServerSession, getAuthenticatedUserBootstrap } from '@/src/server/auth';
 import { redirect } from 'next/navigation';
 
 const geistSans = Geist({
@@ -56,9 +56,10 @@ export default async function RootLayout({
         <UIProvider locales={{ "en-US": enUS, "es-UE": esUE, "pt-BR": ptBR }}>
           <LoadingProvider service={{ variant: 'circle', size: 'lg' }} pageRender={{ variant: 'bar', size: 'md', tone: 'warning', progress: true }}>
             <UserProvider user={initialUser}>
-              <Settings isAuthenticated={isAuthenticated}>
+              <AppShell isAuthenticated={isAuthenticated}>
+                <SessionExpirationHandler />
                 {children}
-              </Settings>
+              </AppShell>
             </UserProvider>
           </LoadingProvider>
         </UIProvider>

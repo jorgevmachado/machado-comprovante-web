@@ -1,6 +1,5 @@
-'use client';
-import { InstitutionList } from '@/app/modules/finance/institution';
+import { InstitutionPage } from '@/src/features/institution';
 
 export default function InstitutionSourceRouterPage() {
-  return <InstitutionList type="source"/>;
+  return <InstitutionPage type="source" />;
 }

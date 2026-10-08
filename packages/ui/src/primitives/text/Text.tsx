@@ -26,6 +26,7 @@ const TextBase = <T extends TTag = 'p'>({
   fontFamily ,
   decoration ,
   whitespace ,
+  currentDepth = 3,
   breakStrategy ,
   ...elementProps
 }: TextProps<T>) => {
@@ -86,7 +87,7 @@ const TextBase = <T extends TTag = 'p'>({
       ...elementProps ,
       className: classNameList ,
     } ,
-    resolveTranslation(children, 3) ,
+    resolveTranslation(children, currentDepth) ,
   );
 };
 

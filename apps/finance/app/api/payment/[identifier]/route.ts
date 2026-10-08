@@ -1,50 +1,45 @@
-import { NextRequest ,NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-import { HttpClient, DateVO } from '@machado-repo/shared';
-
-import { getServerSession } from '@/app/modules/auth/session';
-
-import type { TPayment } from '@/app/modules/finance';
+import { getServerSession } from '@/src/server/auth';
+import { getApiErrorStatusCode } from '@/src/server/auth/api-response';
+import {
+  mapPaymentApiResult,
+  paymentPersistJsonToApiRequest,
+} from '@/src/features/payment/mappers/payment.mapper';
+import type { PaymentUpdateApiBody } from '@/src/server/integrations/finance-api/contracts/payment.contracts';
+import { paymentApiService } from '@/src/server/integrations/finance-api/payment.service';
 
 type PaymentRouteContext = {
-  params: Promise<{ identifier: string }>
-}
+  params: Promise<{ identifier: string }>;
+};
 
 export async function PUT(
   request: NextRequest,
-  context: PaymentRouteContext
+  context: PaymentRouteContext,
 ): Promise<NextResponse> {
   const session = await getServerSession();
-
   if (!session.isAuthenticated || !session.token) {
-    return NextResponse.json({ message: 'Unauthorized' } ,{ status: 401 });
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const { identifier } = await context.params;
-    const body = await request.json();
-
-    if(body.payment_date) {
-      body.payment_date = DateVO.format.dateToDateString(body.payment_date);
+    const body = await request.json() as PaymentUpdateApiBody;
+    const result = mapPaymentApiResult(
+      await paymentApiService.update(
+        session.token,
+        identifier,
+        paymentPersistJsonToApiRequest(body),
+      ),
+    );
+    if (result.isFailure) {
+      return NextResponse.json({ message: result.error }, { status: getApiErrorStatusCode(result) });
     }
-
-    const response = await HttpClient.put<TPayment>({
-      path: `/finance/payment/${identifier}` ,
-      config: {
-        token: session.token ,
-        body: body ,
-      } ,
-    });
-
-    if (response.isFailure) {
-      return NextResponse.json({ message: response.error } ,{ status: 422 });
-    }
-    return NextResponse.json(response.instance);
-
+    return NextResponse.json(result.instance);
   } catch (error) {
-    const message = error instanceof Error && error.message ?
-      error.message :
-      'Could not update payment.';
-    return NextResponse.json({ message } ,{ status: 500 });
+    const message = error instanceof Error && error.message
+      ? error.message
+      : 'Could not update payment.';
+    return NextResponse.json({ message }, { status: 500 });
   }
 }

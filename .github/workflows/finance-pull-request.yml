@@ -1,0 +1,107 @@
+name: Finance pull request checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: finance-pr-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Finance lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Set up the repository npm version
+        run: npm install --global npm@11.16.0 --force
+        working-directory: /tmp
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint Finance
+        run: npm run lint --workspace=finance
+
+  test:
+    name: Finance unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Set up the repository npm version
+        run: npm install --global npm@11.16.0 --force
+        working-directory: /tmp
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Finance unit tests
+        run: npm run test:coverage --workspace=finance -- --runInBand
+
+  build:
+    name: Finance production build
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Set up the repository npm version
+        run: npm install --global npm@11.16.0 --force
+        working-directory: /tmp
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Finance for production
+        run: npm run build --workspace=finance
+        env:
+          API_BASE_URL: http://127.0.0.1:8000
+
+      - name: Prepare standalone deployment artifact
+        run: |
+          mkdir -p build-artifact/apps/finance/.next
+          cp -R apps/finance/.next/standalone/. build-artifact/
+          cp -R apps/finance/.next/static build-artifact/apps/finance/.next/static
+          if [ -d apps/finance/public ]; then
+            cp -R apps/finance/public build-artifact/apps/finance/public
+          fi
+
+      - name: Upload standalone deployment artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: finance-standalone
+          path: build-artifact/
+          if-no-files-found: error
+          retention-days: 7

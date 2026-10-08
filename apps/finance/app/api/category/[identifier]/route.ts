@@ -1,10 +1,11 @@
 import { NextRequest ,NextResponse } from 'next/server';
 
-import { HttpClient } from '@machado-repo/shared';
-
-import { getServerSession } from '@/app/modules/auth/session';
-
-import { TCategory } from '@/app/modules/finance/category';
+import { getServerSession } from '@/src/server/auth';
+import { getApiErrorStatusCode } from '@/src/server/auth/api-response';
+import { categoryApiDataToJson } from '@/src/features/category/mappers/category.mapper';
+import { mapResult } from '@/src/shared/result.mapper';
+import { categoryApiService } from '@/src/server/integrations/finance-api/category.service';
+import type { CategoryApiWriteRequest } from '@/src/server/integrations/finance-api/contracts/category.contracts';
 
 type CategoryRouteContext = {
   params: Promise<{ identifier: string }>
@@ -22,16 +23,13 @@ export async function GET(
 
   try {
     const { identifier } = await context.params;
-
-    const response = await HttpClient.get<TCategory>({
-      path: `/finance/category/${identifier}` ,
-      config: {
-        token: session.token ,
-      } ,
-    });
+    const response = mapResult(
+      await categoryApiService.fetchById(session.token, identifier),
+      categoryApiDataToJson,
+    );
 
     if (response.isFailure) {
-      return NextResponse.json({ message: response.error } ,{ status: 422 });
+      return NextResponse.json({ message: response.error }, { status: getApiErrorStatusCode(response) });
     }
     return NextResponse.json(response.instance);
 
@@ -56,18 +54,14 @@ export async function PUT(
 
   try {
     const { identifier } = await context.params;
-    const body = await request.json();
-
-    const response = await HttpClient.put<TCategory>({
-      path: `/finance/category/${identifier}` ,
-      config: {
-        token: session.token ,
-        body,
-      } ,
-    });
+    const body: CategoryApiWriteRequest = await request.json();
+    const response = mapResult(
+      await categoryApiService.update(session.token, identifier, body),
+      categoryApiDataToJson,
+    );
 
     if (response.isFailure) {
-      return NextResponse.json({ message: response.error } ,{ status: 422 });
+      return NextResponse.json({ message: response.error }, { status: getApiErrorStatusCode(response) });
     }
     return NextResponse.json(response.instance);
 

@@ -1,35 +1,29 @@
-import { NextRequest ,NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-import { HttpClient } from '@machado-repo/shared';
-
-import { getServerSession } from '@/app/modules/auth/session';
-import type { TReceiptBatch } from '@/app/modules/finance/receipt';
+import { getServerSession } from '@/src/server/auth';
+import { getApiErrorStatusCode } from '@/src/server/auth/api-response';
+import { mapReceiptBatchApiResult } from '@/src/features/receipt/mappers/receipt.mapper';
+import { receiptApiService } from '@/src/server/integrations/finance-api/receipt.service';
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const session = await getServerSession();
-
   if (!session.isAuthenticated || !session.token) {
-    return NextResponse.json({ message: 'Unauthorized' } ,{ status: 401 });
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
   try {
     const body = await request.formData();
-
-    const response = await HttpClient.post<TReceiptBatch>({
-      path: '/finance/receipt/batch' ,
-      config: {
-        token: session.token ,
-        body ,
-      } ,
-    });
-    if (response.isFailure) {
-      return NextResponse.json({ message: response.error } ,{ status: 422 });
+    const result = mapReceiptBatchApiResult(
+      await receiptApiService.batch(session.token, body),
+    );
+    if (result.isFailure) {
+      return NextResponse.json({ message: result.error }, { status: getApiErrorStatusCode(result) });
     }
-    return NextResponse.json(response.instance);
+    return NextResponse.json(result.instance);
   } catch (error) {
-    const message = error instanceof Error && error.message ?
-      error.message :
-      'Could not batch list of receipts.';
-    return NextResponse.json({ message } ,{ status: 500 });
+    const message = error instanceof Error && error.message
+      ? error.message
+      : 'Could not batch list of receipts.';
+    return NextResponse.json({ message }, { status: 500 });
   }
 }

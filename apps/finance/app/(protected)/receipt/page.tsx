@@ -6,11 +6,11 @@ import { Text } from '@machado-repo/ui';
 import {
   ReceiptBatch ,
   ReceiptInfo ,
-} from '@/app/modules/finance/receipt';
-import useReceipts from '@/app/modules/finance/receipt/hooks/useReceipts';
-import { useCategory } from '@/app/modules/finance/category';
+} from '@/src/features/receipt';
+import useReceipts from '@/src/features/receipt/hooks/useReceipts';
+import { useCategory } from '@/src/features/category';
 
-export default function HomeRouterPage() {
+export default function ReceiptRouterPage() {
 
   const {
     receipts,
@@ -31,21 +31,27 @@ export default function HomeRouterPage() {
   }, [fetchReceipts]);
 
   return (
-    <main className="min-h-screen px-6 py-10">
-      <div className="mx-auto flex max-w-8xl flex-col gap-6">
-        <div className="flex flex-col gap-3">
-          <Text as="h1" className="text-3xl font-bold text-slate-950 sm:text-4xl">
+    <main className="min-h-full flex-1 bg-slate-50 px-4 py-6 text-slate-950 sm:px-6 sm:py-8 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 sm:gap-6">
+        <header className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <Text as="h1" weight="bold" size="3xl">
             {`finance.receipt.title`}
           </Text>
-
-          <Text className="max-w-2xl text-slate-600">
+          <Text className="mt-1 max-w-2xl text-slate-600">
             finance.receipt.subtitle
           </Text>
+        </header>
 
-        </div>
-
-        { receipts.length > 0 && (<ReceiptInfo receipts={ receipts } categories={ categories } onCallback={ handleOnCallback }/>) }
-        <ReceiptBatch onCallback={ handleOnCallback }/>
+        {receipts.length > 0 && (
+          <ReceiptInfo
+            receipts={receipts}
+            categories={categories}
+            onCallback={handleOnCallback}
+          />
+        )}
+        <section className="min-w-0 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+          <ReceiptBatch onCallback={handleOnCallback} />
+        </section>
       </div>
     </main>
   );

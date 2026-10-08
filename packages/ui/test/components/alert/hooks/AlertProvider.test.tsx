@@ -124,6 +124,14 @@ const TestConsumer = () => {
 
       <button
         type="button"
+        data-testid="dismiss-missing-alert"
+        onClick={() => dismissAlert('missing-alert')}
+      >
+        Dismiss missing alert
+      </button>
+
+      <button
+        type="button"
         data-testid="clear-alerts"
         onClick={clearAlerts}
       >
@@ -485,6 +493,16 @@ describe('AlertProvider', () => {
     });
 
     expect(screen.queryByTestId('alert')).not.toBeInTheDocument();
+    expect(screen.getByTestId('alert-count')).toHaveTextContent('0');
+  });
+
+  it('should ignore dismissal when the alert has no scheduled timeout', () => {
+    renderProvider();
+
+    act(() => {
+      screen.getByTestId('dismiss-missing-alert').click();
+    });
+
     expect(screen.getByTestId('alert-count')).toHaveTextContent('0');
   });
 

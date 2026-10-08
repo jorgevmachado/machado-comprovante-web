@@ -192,6 +192,38 @@ describe('<Autocomplete />', () => {
     );
   });
 
+  it('does nothing when the highlighted option is removed before Enter', () => {
+    const onValueChange = jest.fn();
+    const onSelectOption = jest.fn();
+    const { rerender } = render(
+      <Autocomplete
+        name="type"
+        value=""
+        options={[{ key: 'fire', value: 'fire', label: 'Fire' }]}
+        onValueChange={onValueChange}
+        onSelectOption={onSelectOption}
+      />,
+    );
+
+    const input = screen.getByRole('combobox');
+    fireEvent.focus(input);
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+
+    rerender(
+      <Autocomplete
+        name="type"
+        value=""
+        options={[]}
+        onValueChange={onValueChange}
+        onSelectOption={onSelectOption}
+      />,
+    );
+    fireEvent.keyDown(screen.getByRole('combobox'), { key: 'Enter' });
+
+    expect(onValueChange).not.toHaveBeenCalled();
+    expect(onSelectOption).not.toHaveBeenCalled();
+  });
+
   it('renders loading placeholder when loading', () => {
     render(
       <Autocomplete

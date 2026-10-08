@@ -47,10 +47,12 @@ function mockEmptyResponse(status = 204): void {
 function mockErrorResponse(
   body: unknown,
   status = 400,
+  url = 'http://api.test/users',
 ): void {
   mockFetch.mockResolvedValueOnce({
     ok: false,
     status,
+    url,
     text: () => Promise.resolve(JSON.stringify(body)),
   } as Response);
 }

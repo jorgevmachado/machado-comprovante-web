@@ -105,7 +105,7 @@ describe('<Text />', () => {
   });
 
   it('applies srOnly class', () => {
-    render(<Text srOnly>Screen reader only</Text>);
+    render(<Text srOnly currentDepth={3}>Screen reader only</Text>);
 
     expect(screen.getByText('Screen reader only')).toHaveClass('sr-only');
   });

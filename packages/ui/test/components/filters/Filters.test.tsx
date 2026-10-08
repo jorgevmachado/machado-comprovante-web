@@ -384,4 +384,51 @@ describe('<Filters />', () => {
     expect(OFilterVariants.length).toEqual(5);
   });
 
+  it('should render an autocomplete without options as a regular input', () => {
+    render(
+      <Filters
+        filters={[
+          {
+            name: 'type',
+            type: 'autocomplete',
+            value: null as unknown as string,
+          },
+        ]}
+        onApply={jest.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('input')).toHaveValue('');
+    expect(screen.queryByTestId('autocomplete-type')).not.toBeInTheDocument();
+  });
+
+  it('should default values for filters added after the initial render', () => {
+    const onApply = jest.fn();
+    const { rerender } = render(
+      <Filters filters={[]} onApply={onApply} />,
+    );
+
+    rerender(
+      <Filters
+        filters={[
+          {
+            name: 'type',
+            type: 'autocomplete',
+            value: 'fire',
+            options: [{ key: 'fire', value: 'fire' }],
+          },
+          {
+            name: 'search',
+            type: 'text',
+            value: 'Pikachu',
+          },
+        ]}
+        onApply={onApply}
+      />,
+    );
+
+    expect(screen.getByTestId('autocomplete-type')).toHaveValue('');
+    expect(screen.getByTestId('input')).toHaveValue('');
+  });
+
 });

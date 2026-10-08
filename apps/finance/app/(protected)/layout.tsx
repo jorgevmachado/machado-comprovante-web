@@ -1,8 +1,8 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
 
-import { getServerSession } from '@/app/modules/auth/session';
-import { CategoryProvider } from '@/app/modules/finance/category';
+import { getServerSession } from '@/src/server/auth';
+import { CategoryProvider } from '@/src/features/category';
 
 type ProtectedLayoutProps = {
   children: React.ReactNode;
