@@ -2,6 +2,7 @@
   "form": {
     "action": {
       "save": "Guardar",
+      "send": "Enviar",
       "close": "Cerrar",
       "edit": "Editar",
       "view": "Ver",
@@ -15,6 +16,7 @@
       "inactive": "Inactivo",
       "submitting": "Enviando"
     },
+    "no_options": "No se encontraron opciones",
     "validation": {
       "required": "Este campo es obligatorio",
       "invalid_type": "Tipo inválido",
@@ -59,8 +61,11 @@
       }
     },
     "label": {
+      "date": "Fecha",
       "email": "Email",
       "name": "Nombre",
+      "select": "Seleccionar",
+      "autocomplete": "Autocompletar",
       "active": "Activo",
       "inactive": "Inactivo",
       "status": "Estatus",
@@ -74,8 +79,11 @@
       "password_confirmation": "Confirmar contraseña"
     },
     "placeholder": {
+      "date": "Introduce una fecha",
       "email": "Introduce tu email",
       "name": "Introduce tu nombre",
+      "select": "Selecciona una opción",
+      "autocomplete": "Selecciona una opción",
       "fullname": "Introduce tu nombre completo",
       "password": "Introduce tu contraseña",
       "description": "Introduce una descripción",

@@ -3,7 +3,7 @@ import React from 'react';
 import type { TIconGroupIcons } from '../types';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 
-export const bsGroup: TIconGroupIcons = {
+export const bsGroup: Partial<TIconGroupIcons> = {
   tv: undefined,
   box: undefined,
   law: undefined,

@@ -430,4 +430,21 @@ describe('Sidebar', () => {
 
   });
 
+  it('should disable menu items marked as disabled', () => {
+    renderSidebar({
+      items: [
+        {
+          href: '/restricted',
+          label: 'Restricted',
+          icon: 'lock',
+          disabled: true,
+        },
+      ],
+    });
+
+    expect(
+      screen.getByRole('button', { name: 'Restricted' }),
+    ).toBeDisabled();
+  });
+
 });

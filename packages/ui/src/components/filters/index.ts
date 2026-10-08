@@ -6,7 +6,7 @@ import ptBR from './locales/pt-BR.json';
 
 export { default } from './Filters';
 export { OFilterVariants } from './options';
-export type { FiltersProps, TFilter, TFilterOption,  TFilterVariants } from './types';
+export type { FiltersProps, TBaseFilter,TFilter, TFilterOption,  TFilterVariants } from './types';
 export { default as useFilter } from './useFilter';
 
 export const filterLocales:TLocalesFiles = { "en-US": enUS, "es-UE": esUE, "pt-BR": ptBR };

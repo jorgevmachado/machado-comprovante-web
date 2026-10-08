@@ -94,7 +94,7 @@ export default function Filters({
                 />
               ) : (
                 <Input
-                  type="text"
+                  type={type}
                   name={name}
                   value={draftFilters[name] ?? ''}
                   placeholder={t(currentPlaceholder)}

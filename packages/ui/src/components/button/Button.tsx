@@ -5,6 +5,7 @@ import { buildButtonTheme } from '@machado-repo/theme';
 import { Icon } from '../../primitives';
 
 import type { ButtonProps } from './types';
+import { useTranslationResolver } from '../../lang';
 
 
 export default function Button({
@@ -22,6 +23,7 @@ export default function Button({
   loadingText = 'Loading...',
   ...buttonProps
 }: ButtonProps) {
+  const { resolveChildren: resolveTranslation } = useTranslationResolver();
 
   const hasContent = Boolean(children);
   const hasSingleIcon = !hasContent && Boolean(iconLeft || iconRight);
@@ -63,12 +65,12 @@ export default function Button({
             aria-hidden="true"
             className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
           />
-          {hasContent ? loadingText : null}
+          {hasContent ? resolveTranslation(loadingText, 3) : null}
         </>
       ) : (
         <>
           {iconLeft && <Icon icon={iconLeft} aria-hidden="true" className="inline-flex shrink-0"/>}
-          {children && <span>{children}</span>}
+          {children && <span>{resolveTranslation(children, 3)}</span>}
           {iconRight && <Icon icon={iconRight} aria-hidden="true" className="inline-flex shrink-0"/>}
         </>
       )}

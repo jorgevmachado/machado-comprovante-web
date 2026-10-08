@@ -126,12 +126,20 @@ export class FormValidator {
   }
 
   private buildValidatorConfig(field: TFormField): Record<string, unknown> {
-    const presentation = field.presentation;
-
-    return {
+    const config: Record<string, unknown> = {
       ...field.validatorConfig,
-      ...(presentation?.minLength !== undefined && { minLength: presentation.minLength }),
-      ...(presentation?.maxLength !== undefined && { maxLength: presentation.maxLength }),
     }
+
+    if(field.type !== 'select') {
+      const presentation = field.presentation;
+      if(presentation?.minLength !== undefined) {
+        config.minLength = presentation.minLength;
+      }
+      if(presentation?.maxLength !== undefined) {
+        config.maxLength = presentation.maxLength;
+      }
+    }
+
+    return config;
   }
 }

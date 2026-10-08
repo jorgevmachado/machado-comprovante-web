@@ -2,12 +2,26 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { Breadcrumb } from '../../../src';
+import React from 'react';
 
 jest.mock('../../../src/primitives', () => ({
   Icon: ({ icon }: { icon: string }) => (
     <span data-testid={`icon-${icon}`}>
       {icon}
     </span>
+  ),
+  Text: ({
+    children,
+    className,
+    color,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+    color?: string;
+  }) => (
+    <p className={`${color ?? ''} ${className ?? ''}`.trim()} aria-current="page">
+      {children}
+    </p>
   ),
 }));
 

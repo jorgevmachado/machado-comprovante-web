@@ -4,6 +4,7 @@ import type { TIcon } from '@machado-repo/icons';
 import { Icon } from '../../../primitives';
 
 import type { SidebarVariantsTheme } from '../types';
+import { useTranslationResolver } from '../../../lang';
 
 type TMenuItemChildren = {
   href: string;
@@ -13,6 +14,7 @@ type TMenuItemChildren = {
 
 export type TMenuItem = TMenuItemChildren & {
   children?: Array<TMenuItemChildren>;
+  disabled?: boolean;
 }
 
 type MenuItemProps = TMenuItem & {
@@ -31,11 +33,14 @@ export default function MenuItem({
   styles,
   children ,
   pathname ,
+  disabled,
   onItemClick ,
   isCollapsed,
   expandedItems ,
   toggleExpanded,
 }: MenuItemProps) {
+
+  const { resolve } = useTranslationResolver()
 
   const hasChildren = Boolean(children?.length);
 
@@ -52,9 +57,10 @@ export default function MenuItem({
         <button
           type="button"
           onClick={() => onItemClick({ href, icon, label })}
+          disabled={disabled}
           className={ `                    
                     appearance-none
-                    cursor-pointer
+                    ${disabled ? '' : 'cursor-pointer'}
                     flex min-w-0 flex-1 items-center gap-3
                     overflow-hidden whitespace-nowrap
                     rounded-xl border border-transparent
@@ -156,7 +162,7 @@ export default function MenuItem({
                           </span>
 
                   <span className="overflow-hidden text-ellipsis">
-                            {childLabel}
+                            {resolve(childLabel)}
                           </span>
                 </button>
               );

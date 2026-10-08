@@ -2,16 +2,17 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import '@machado-repo/ui/styles.css';
 
-import enUS from './locales/en-US.json';
-import esUE from './locales/es-UE.json';
-import ptBR from './locales/pt-BR.json';
+import enUS from '@/src/locales/en-US.json';
+import esUE from '@/src/locales/es-UE.json';
+import ptBR from '@/src/locales/pt-BR.json';
 
 import "./globals.css";
 
-import { UIProvider } from '@machado-repo/ui';
-import Settings from './modules/settings';
-import { getServerSession } from './modules/auth/session';
-import { getAuthenticatedUserBootstrap } from './modules/auth/server';
+import { LoadingProvider ,UIProvider ,UserProvider } from '@machado-repo/ui';
+import AppShell from '@/src/app-shell/AppShell';
+import { SessionExpirationHandler } from '@/src/features/auth';
+import { getServerSession, getAuthenticatedUserBootstrap } from '@/src/server/auth';
+import { redirect } from 'next/navigation';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,12 +36,14 @@ export default async function RootLayout({
 }>) {
 
   const session = await getServerSession();
-  console.log('# => RootLayout => try => session => ', session)
-  const { initialUser, tokenExpiresAt } = await getAuthenticatedUserBootstrap(
+  const { initialUser } = await getAuthenticatedUserBootstrap(
     session.isAuthenticated,
     session.token
   );
-  console.log('# => RootLayout => try => initialUser => ', initialUser)
+
+  if( session.isAuthenticated && !initialUser) {
+    redirect('/auth/logout');
+  }
 
   const isAuthenticated = session.isAuthenticated && Boolean(initialUser);
 
@@ -51,9 +54,14 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <UIProvider locales={{ "en-US": enUS, "es-UE": esUE, "pt-BR": ptBR }}>
-            <Settings isAuthenticated={isAuthenticated}>
-              {children}
-            </Settings>
+          <LoadingProvider service={{ variant: 'circle', size: 'lg' }} pageRender={{ variant: 'bar', size: 'md', tone: 'warning', progress: true }}>
+            <UserProvider user={initialUser}>
+              <AppShell isAuthenticated={isAuthenticated}>
+                <SessionExpirationHandler />
+                {children}
+              </AppShell>
+            </UserProvider>
+          </LoadingProvider>
         </UIProvider>
       </body>
     </html>

@@ -1,0 +1,42 @@
+name: Set up Finance workspace
+description: Set up Node.js and install the repository dependencies
+
+inputs:
+  node-version:
+    description: Node.js version
+    required: false
+    default: "24"
+  npm-version:
+    description: npm version required by the repository
+    required: false
+    default: "11.16.0"
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Set up the repository npm version
+      shell: bash
+      run: npm install --global npm@${{ inputs.npm-version }} --force
+      working-directory: /tmp
+
+    - name: Resolve npm cache directory
+      id: npm-cache
+      shell: bash
+      run: echo "dir=$(npm config get cache)" >> "$GITHUB_OUTPUT"
+
+    - name: Cache npm packages
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.npm-cache.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ inputs.node-version }}-npm-${{ inputs.npm-version }}-${{ hashFiles('package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-${{ inputs.node-version }}-npm-${{ inputs.npm-version }}-
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci

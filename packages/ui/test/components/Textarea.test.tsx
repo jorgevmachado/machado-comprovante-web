@@ -214,4 +214,41 @@ describe('<Textarea />', () => {
 
     expect(screen.getByRole('textbox')).toHaveValue('a,b');
   });
+
+  it('supports hidden, disabled, narrow, invalid, and minimum-count states', () => {
+    const { container } = render(
+      <Textarea
+        name="description"
+        label="Description"
+        hidden
+        disabled
+        fullWidth={false}
+        isInvalid
+        minLength={2}
+        showCharacterCount
+      />,
+    );
+
+    expect(container.firstChild).toHaveClass('hidden');
+    expect(screen.getByRole('textbox')).toBeDisabled();
+    expect(screen.getByRole('textbox')).toHaveAttribute(
+      'aria-describedby',
+      expect.stringContaining('character-count'),
+    );
+    expect(screen.getByText('Description')).toHaveClass('uppercase');
+    expect(screen.getByText('0')).toBeInTheDocument();
+  });
+
+  it('highlights the character count when the maximum is reached', () => {
+    render(
+      <Textarea
+        name="description"
+        value="abc"
+        maxLength={3}
+        showCharacterCount
+      />,
+    );
+
+    expect(screen.getByText('3 / 3')).toHaveClass('text-red-600');
+  });
 });

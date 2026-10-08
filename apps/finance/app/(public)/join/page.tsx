@@ -1,7 +1,11 @@
-import { JoinPage } from '@/app/modules/auth/pages';
+import { Suspense } from 'react';
+
+import { JoinPage } from '@/src/features/auth';
 
 export default function JoinRouterPage() {
   return (
-    <JoinPage/>
+    <Suspense fallback={null}>
+      <JoinPage/>
+    </Suspense>
   )
 }

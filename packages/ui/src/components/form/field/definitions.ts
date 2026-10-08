@@ -7,14 +7,13 @@ import {
 } from '@machado-repo/shared';
 
 import type { InputProps } from '../../input';
-
 import type { FormValueObject} from '../validator';
 
 import type { TFormFieldType } from './types';
 
 export type FormFieldDefinition = {
   label?: string;
-  component: 'input' | 'textarea';
+  component: 'input' | 'textarea' | 'select' | 'autocomplete';
   inputType?: InputProps['type'];
   validator?: FormValueObject;
   validation?: Record<string, unknown>;
@@ -23,6 +22,16 @@ export type FormFieldDefinition = {
 
 export const FORM_FIELD_DEFINITIONS: Record<TFormFieldType, FormFieldDefinition> = {
   text: { component: 'input', inputType: 'text' },
+  date: {
+    label: 'form.label.date',
+    component: 'input',
+    inputType: 'date',
+    placeholder: 'form.placeholder.date',
+  },
+  money: {
+    component: 'input',
+    inputType: 'money',
+  },
   name: {
     label: 'form.label.name',
     component: 'input',
@@ -74,4 +83,6 @@ export const FORM_FIELD_DEFINITIONS: Record<TFormFieldType, FormFieldDefinition>
       errorMessage: 'form.validation.password.invalid.confirmation_mismatch'
     },
   },
+  select: { component: 'select', label: 'form.label.select', placeholder: 'form.placeholder.select' },
+  autocomplete: { component: 'autocomplete', label: 'form.label.autocomplete', placeholder: 'form.placeholder.autocomplete' },
 };

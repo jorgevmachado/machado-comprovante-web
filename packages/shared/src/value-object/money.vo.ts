@@ -7,8 +7,11 @@ type ConvertToNumberResult = {
   regex: RegExp;
 }
 
+type TNotation = 'standard' | 'scientific' | 'engineering' | 'compact';
+
 export interface MoneyConfig extends ValueObjectConfig {
   locale?: MoneyLocale,
+  notation?: TNotation,
   minimumFractionDigits?: number,
   maximumFractionDigits?: number,
 }
@@ -75,7 +78,6 @@ export class Money extends ValueObject<string | number, MoneyConfig>{
     const locale = config.locale ?? Money.DEFAULT_LOCALE;
     const minimumFractionDigits = config.minimumFractionDigits ?? Money.DEFAULT_MINIMUM_FRACTION_DIGITS;
     const maximumFractionDigits = config.maximumFractionDigits ?? Money.DEFAULT_MAXIMUM_FRACTION_DIGITS;
-
     const currency = Money.CURRENCY_MAP[locale];
 
     if(!currency) {
@@ -85,6 +87,7 @@ export class Money extends ValueObject<string | number, MoneyConfig>{
     .NumberFormat(locale, {
       style: 'currency',
       currency,
+      notation: config.notation,
       minimumFractionDigits,
       maximumFractionDigits
     }).format(value)

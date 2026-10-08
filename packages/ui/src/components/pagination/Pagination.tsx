@@ -46,7 +46,7 @@ export default function Pagination({
     onPageChange(clampPage(page, totalPages));
   };
 
-  const renderPageControl = (page: number, isCurrent = false) => {
+  const renderPageControl = (page: number, isCurrent: boolean) => {
     const disabled = isCurrent || isLoading;
     const controlClassName = buildButtonPaginationTheme(isCurrent, disabled);
     const pageAriaLabel = t('pagination.goToPage', { page });
