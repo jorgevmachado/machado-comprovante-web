@@ -7,7 +7,7 @@ import {
 } from '@/src/features/category/mappers/category.mapper';
 import { mapListResult, mapResult } from '@/src/shared/result.mapper';
 import { categoryApiService } from '@/src/server/integrations/finance-api/category.service';
-import type { CategoryApiWriteRequest } from '@/src/server/integrations/finance-api/contracts/category.contracts';
+import { parseResourceFilterQuery, parseResourceWriteBody, requestValidationResponse } from '@/src/server/validation/request-validation';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const session = await getServerSession();
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const params = Object.fromEntries(request.nextUrl.searchParams.entries());
+    const params = parseResourceFilterQuery(request.nextUrl.searchParams, ['name']);
     const response = mapListResult(
       await categoryApiService.fetchList(session.token, params),
       categoryApiDataToJson,
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const body: CategoryApiWriteRequest = await request.json();
+    const body = await parseResourceWriteBody(request, { description: true });
     const response = mapResult(
       await categoryApiService.create(session.token, body),
       categoryApiDataToJson,
@@ -50,6 +50,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
     return NextResponse.json(response.instance);
   } catch (error) {
+    const validationResponse = requestValidationResponse(error);
+    if (validationResponse) {
+      return validationResponse;
+    }
     const message = error instanceof Error && error.message ?
       error.message :
       'Could not create category.';

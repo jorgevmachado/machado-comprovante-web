@@ -5,6 +5,7 @@ import { getApiErrorStatusCode } from '@/src/server/auth/api-response';
 import { beneficiaryApiDataToJson } from '@/src/features/beneficiary/mappers/beneficiary.mapper';
 import { mapListResult, mapResult } from '@/src/shared/result.mapper';
 import { beneficiaryApiService } from '@/src/server/integrations/finance-api/beneficiary.service';
+import { parseResourceFilterQuery, parseResourceWriteBody, requestValidationResponse } from '@/src/server/validation/request-validation';
 
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -15,7 +16,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const params = Object.fromEntries(request.nextUrl.searchParams.entries());
+    const params = parseResourceFilterQuery(request.nextUrl.searchParams, ['name']);
     const response = mapListResult(
       await beneficiaryApiService.fetchList(session.token, params),
       beneficiaryApiDataToJson,
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const body = await request.json();
+    const body = await parseResourceWriteBody(request);
     const response = mapResult(
       await beneficiaryApiService.create(session.token, body),
       beneficiaryApiDataToJson,
@@ -48,6 +49,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
     return NextResponse.json(response.instance);
   } catch (error) {
+    const validationResponse = requestValidationResponse(error);
+    if (validationResponse) {
+      return validationResponse;
+    }
     const message = error instanceof Error && error.message ?
       error.message :
       'Could not create beneficiary.';

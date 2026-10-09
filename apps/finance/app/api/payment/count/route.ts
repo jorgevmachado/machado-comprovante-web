@@ -7,6 +7,7 @@ import {
   paymentDateQueryToApi,
 } from '@/src/features/payment/mappers/payment.mapper';
 import { paymentApiService } from '@/src/server/integrations/finance-api/payment.service';
+import { parsePaymentDateQuery, requestValidationResponse } from '@/src/server/validation/request-validation';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const session = await getServerSession();
@@ -15,7 +16,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const params = Object.fromEntries(request.nextUrl.searchParams.entries());
+    const params = parsePaymentDateQuery(request.nextUrl.searchParams);
     const result = mapPaymentCountApiResult(
       await paymentApiService.fetchCount(
         session.token,
@@ -27,6 +28,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
     return NextResponse.json(result.instance);
   } catch (error) {
+    const validationResponse = requestValidationResponse(error);
+    if (validationResponse) {
+      return validationResponse;
+    }
     const message = error instanceof Error && error.message
       ? error.message
       : 'Could not load payment count.';

@@ -5,7 +5,7 @@ import { getApiErrorStatusCode } from '@/src/server/auth/api-response';
 import { categoryApiDataToJson } from '@/src/features/category/mappers/category.mapper';
 import { mapResult } from '@/src/shared/result.mapper';
 import { categoryApiService } from '@/src/server/integrations/finance-api/category.service';
-import type { CategoryApiWriteRequest } from '@/src/server/integrations/finance-api/contracts/category.contracts';
+import { parseResourceWriteBody, requestValidationResponse } from '@/src/server/validation/request-validation';
 
 type CategoryRouteContext = {
   params: Promise<{ identifier: string }>
@@ -54,7 +54,7 @@ export async function PUT(
 
   try {
     const { identifier } = await context.params;
-    const body: CategoryApiWriteRequest = await request.json();
+    const body = await parseResourceWriteBody(request, { description: true });
     const response = mapResult(
       await categoryApiService.update(session.token, identifier, body),
       categoryApiDataToJson,
@@ -66,6 +66,10 @@ export async function PUT(
     return NextResponse.json(response.instance);
 
   } catch (error) {
+    const validationResponse = requestValidationResponse(error);
+    if (validationResponse) {
+      return validationResponse;
+    }
     const message = error instanceof Error && error.message ?
       error.message :
       'Could not update category.';

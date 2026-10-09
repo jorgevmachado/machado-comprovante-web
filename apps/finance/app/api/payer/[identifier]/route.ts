@@ -5,6 +5,7 @@ import { getApiErrorStatusCode } from '@/src/server/auth/api-response';
 import { payerApiDataToJson } from '@/src/features/payer/mappers/payer.mapper';
 import { mapResult } from '@/src/shared/result.mapper';
 import { payerApiService } from '@/src/server/integrations/finance-api/payer.service';
+import { parseResourceWriteBody, requestValidationResponse } from '@/src/server/validation/request-validation';
 
 type PayerRouteContext = {
   params: Promise<{ identifier: string }>
@@ -54,7 +55,7 @@ export async function PUT(
 
   try {
     const { identifier } = await context.params;
-    const body = await request.json();
+    const body = await parseResourceWriteBody(request);
 
     const response = mapResult(
       await payerApiService.update(session.token, identifier, body),
@@ -67,6 +68,10 @@ export async function PUT(
     return NextResponse.json(response.instance);
 
   } catch (error) {
+    const validationResponse = requestValidationResponse(error);
+    if (validationResponse) {
+      return validationResponse;
+    }
     const message = error instanceof Error && error.message ?
       error.message :
       'Could not update payer.';

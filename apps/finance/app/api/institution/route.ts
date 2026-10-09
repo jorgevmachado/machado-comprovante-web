@@ -5,6 +5,7 @@ import { getApiErrorStatusCode } from '@/src/server/auth/api-response';
 import { institutionApiDataToJson } from '@/src/features/institution/mappers/institution.mapper';
 import { mapListResult, mapResult } from '@/src/shared/result.mapper';
 import { institutionApiService } from '@/src/server/integrations/finance-api/institution.service';
+import { parseResourceFilterQuery, parseResourceWriteBody, requestValidationResponse } from '@/src/server/validation/request-validation';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const session = await getServerSession();
@@ -14,7 +15,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const params = Object.fromEntries(request.nextUrl.searchParams.entries());
+    const params = parseResourceFilterQuery(
+      request.nextUrl.searchParams,
+      ['name', 'institution_type'],
+    );
     const response = mapListResult(
       await institutionApiService.fetchList(session.token, params),
       institutionApiDataToJson,
@@ -37,7 +41,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const body = await request.json();
+    const body = await parseResourceWriteBody(request);
     const response = mapResult(
       await institutionApiService.create(session.token, body),
       institutionApiDataToJson,
@@ -47,6 +51,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
     return NextResponse.json(response.instance);
   } catch (error) {
+    const validationResponse = requestValidationResponse(error);
+    if (validationResponse) {
+      return validationResponse;
+    }
     const message = error instanceof Error && error.message ?
       error.message :
       'Could not create institution.';

@@ -6,8 +6,8 @@ import {
   mapPaymentDashboardApiResult,
   paymentDashboardParamsToApi,
 } from '@/src/features/payment/mappers/payment.mapper';
-import type { TPaymentDashboardParams } from '@/src/features/payment/types';
 import { paymentApiService } from '@/src/server/integrations/finance-api/payment.service';
+import { parsePaymentDashboardQuery, requestValidationResponse } from '@/src/server/validation/request-validation';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const session = await getServerSession();
@@ -16,12 +16,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const params: Partial<TPaymentDashboardParams> = {
-      start_date: searchParams.get('start_date') ?? undefined,
-      end_date: searchParams.get('end_date') ?? undefined,
-      institution: searchParams.get('institution') ?? undefined,
-    };
+    const params = parsePaymentDashboardQuery(request.nextUrl.searchParams);
     const result = mapPaymentDashboardApiResult(
       await paymentApiService.fetchDashboard(
         session.token,
@@ -33,6 +28,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
     return NextResponse.json(result.instance);
   } catch (error) {
+    const validationResponse = requestValidationResponse(error);
+    if (validationResponse) {
+      return validationResponse;
+    }
     const message = error instanceof Error && error.message
       ? error.message
       : 'Could not load dashboard.';

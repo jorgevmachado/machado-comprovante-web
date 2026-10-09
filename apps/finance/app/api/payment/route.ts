@@ -6,8 +6,8 @@ import {
   mapPaymentApiListResult,
   paymentFilterToApiParams,
 } from '@/src/features/payment/mappers/payment.mapper';
-import type { TPaymentFilter } from '@/src/features/payment/types';
 import { paymentApiService } from '@/src/server/integrations/finance-api/payment.service';
+import { parsePaymentFilterQuery, requestValidationResponse } from '@/src/server/validation/request-validation';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const session = await getServerSession();
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const params = Object.fromEntries(request.nextUrl.searchParams.entries()) as TPaymentFilter;
+    const params = parsePaymentFilterQuery(request.nextUrl.searchParams);
     const result = mapPaymentApiListResult(
       await paymentApiService.fetchList(
         session.token,
@@ -28,6 +28,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
     return NextResponse.json(result.instance);
   } catch (error) {
+    const validationResponse = requestValidationResponse(error);
+    if (validationResponse) {
+      return validationResponse;
+    }
     const message = error instanceof Error && error.message
       ? error.message
       : 'Could not load list of payments.';

@@ -5,6 +5,7 @@ import { getApiErrorStatusCode } from '@/src/server/auth/api-response';
 import { institutionApiDataToJson } from '@/src/features/institution/mappers/institution.mapper';
 import { mapResult } from '@/src/shared/result.mapper';
 import { institutionApiService } from '@/src/server/integrations/finance-api/institution.service';
+import { parseResourceWriteBody, requestValidationResponse } from '@/src/server/validation/request-validation';
 
 type InstitutionRouteContext = {
   params: Promise<{ identifier: string }>
@@ -54,7 +55,7 @@ export async function PUT(
 
   try {
     const { identifier } = await context.params;
-    const body = await request.json();
+    const body = await parseResourceWriteBody(request);
 
     const response = mapResult(
       await institutionApiService.update(session.token, identifier, body),
@@ -67,6 +68,10 @@ export async function PUT(
     return NextResponse.json(response.instance);
 
   } catch (error) {
+    const validationResponse = requestValidationResponse(error);
+    if (validationResponse) {
+      return validationResponse;
+    }
     const message = error instanceof Error && error.message ?
       error.message :
       'Could not update institution.';

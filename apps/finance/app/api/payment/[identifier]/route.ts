@@ -6,8 +6,8 @@ import {
   mapPaymentApiResult,
   paymentPersistJsonToApiRequest,
 } from '@/src/features/payment/mappers/payment.mapper';
-import type { PaymentUpdateApiBody } from '@/src/server/integrations/finance-api/contracts/payment.contracts';
 import { paymentApiService } from '@/src/server/integrations/finance-api/payment.service';
+import { parsePaymentUpdateBody, requestValidationResponse } from '@/src/server/validation/request-validation';
 
 type PaymentRouteContext = {
   params: Promise<{ identifier: string }>;
@@ -24,7 +24,7 @@ export async function PUT(
 
   try {
     const { identifier } = await context.params;
-    const body = await request.json() as PaymentUpdateApiBody;
+    const body = await parsePaymentUpdateBody(request);
     const result = mapPaymentApiResult(
       await paymentApiService.update(
         session.token,
@@ -37,6 +37,10 @@ export async function PUT(
     }
     return NextResponse.json(result.instance);
   } catch (error) {
+    const validationResponse = requestValidationResponse(error);
+    if (validationResponse) {
+      return validationResponse;
+    }
     const message = error instanceof Error && error.message
       ? error.message
       : 'Could not update payment.';

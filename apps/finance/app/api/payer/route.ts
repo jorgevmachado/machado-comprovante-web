@@ -7,6 +7,7 @@ import {
 } from '@/src/features/payer/mappers/payer.mapper';
 import { mapListResult, mapResult } from '@/src/shared/result.mapper';
 import { payerApiService } from '@/src/server/integrations/finance-api/payer.service';
+import { parseResourceFilterQuery, parseResourceWriteBody, requestValidationResponse } from '@/src/server/validation/request-validation';
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const session = await getServerSession();
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const params = Object.fromEntries(request.nextUrl.searchParams.entries());
+    const params = parseResourceFilterQuery(request.nextUrl.searchParams, ['name']);
     const response = mapListResult(
       await payerApiService.fetchList(session.token, params),
       payerApiDataToJson,
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    const body = await request.json();
+    const body = await parseResourceWriteBody(request);
     const response = mapResult(
       await payerApiService.create(session.token, body),
       payerApiDataToJson,
@@ -49,6 +50,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
     return NextResponse.json(response.instance);
   } catch (error) {
+    const validationResponse = requestValidationResponse(error);
+    if (validationResponse) {
+      return validationResponse;
+    }
     const message = error instanceof Error && error.message ?
       error.message :
       'Could not create payer.';

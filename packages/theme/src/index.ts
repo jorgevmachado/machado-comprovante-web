@@ -4,6 +4,7 @@ export * from './button';
 export * from './color';
 export * from './input';
 export * from './loading';
+export * from './navbar';
 export * from './pagination';
 export * from './switch';
 export * from './table';

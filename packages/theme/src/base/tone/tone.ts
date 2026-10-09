@@ -19,7 +19,7 @@ export const OThemeTone = [
   'neutral',
   'primary',
   'secondary',
-];
+] as const;
 
 export type TThemeTone = (typeof OThemeTone)[number];
 
