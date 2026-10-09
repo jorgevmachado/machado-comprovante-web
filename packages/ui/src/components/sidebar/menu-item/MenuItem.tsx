@@ -1,9 +1,11 @@
-import React from 'react';
+import React ,{ useMemo } from 'react';
+
+import type { BuildSidebarThemeResult } from '@machado-repo/theme';
+
 import type { TIcon } from '@machado-repo/icons';
 
 import { Icon } from '../../../primitives';
 
-import type { SidebarVariantsTheme } from '../types';
 import { useTranslationResolver } from '../../../lang';
 
 type TMenuItemChildren = {
@@ -17,20 +19,21 @@ export type TMenuItem = TMenuItemChildren & {
   disabled?: boolean;
 }
 
+export type MenuItemClassNames = Omit<BuildSidebarThemeResult, 'text' | 'aside' | 'buttonLogout'>;
+
 type MenuItemProps = TMenuItem & {
-  styles: SidebarVariantsTheme;
   pathname: string;
   onItemClick: (item: TMenuItem) => void;
   isCollapsed: boolean;
   expandedItems: Record<string ,boolean>;
   toggleExpanded: (href: string) => void;
+  menuItemClassNames: MenuItemClassNames;
 }
 
 export default function MenuItem({
   href ,
   icon ,
   label ,
-  styles,
   children ,
   pathname ,
   disabled,
@@ -38,6 +41,7 @@ export default function MenuItem({
   isCollapsed,
   expandedItems ,
   toggleExpanded,
+  menuItemClassNames,
 }: MenuItemProps) {
 
   const { resolve } = useTranslationResolver()
@@ -51,6 +55,10 @@ export default function MenuItem({
 
   const isExpanded = hasActiveChild || Boolean(expandedItems[href]);
 
+  const buttonItemClassName = useMemo(() => {
+    return `${menuItemClassNames.buttonItem} ${disabled ? '' : 'cursor-pointer'} ${ isActive ? menuItemClassNames.buttonItemActive : '' }`;
+  }, [disabled, isActive, menuItemClassNames.buttonItem, menuItemClassNames.buttonItemActive])
+
   return (
     <div className="flex flex-col gap-1">
       <div className="flex w-full items-stretch gap-1.5">
@@ -58,22 +66,7 @@ export default function MenuItem({
           type="button"
           onClick={() => onItemClick({ href, icon, label })}
           disabled={disabled}
-          className={ `                    
-                    appearance-none
-                    ${disabled ? '' : 'cursor-pointer'}
-                    flex min-w-0 flex-1 items-center gap-3
-                    overflow-hidden whitespace-nowrap
-                    rounded-xl border border-transparent
-                    px-3 py-[11px]
-                    text-[0.92rem]                    
-                    transition-all duration-200
-                    hover:translate-x-px                    
-                    focus-visible:outline-2
-                    focus-visible:outline-yellow-400
-                    ${styles.item}
-                    ${styles.itemHover}
-                    ${ isActive ? styles.itemActive : '' }
-                  ` }
+          className={buttonItemClassName}
           aria-current={pathname === href ? 'page' : undefined}
           title={isCollapsed ? label : undefined}
         >
@@ -88,20 +81,7 @@ export default function MenuItem({
           <button
             type="button"
             onClick={() => toggleExpanded(href)}
-            className={`
-            appearance-none
-                      cursor-pointer
-                      inline-flex 
-                      w-[38px]
-                      items-center 
-                      justify-center
-                      rounded-xl
-                      border 
-                      border-transparent                      
-                      transition-colors                      
-                      focus-visible:outline-2
-                      ${styles.toggle}`
-            }
+            className={menuItemClassNames.buttonChildren}
             aria-label={
               isExpanded
                 ? `Navigation Collapse Section ${ label }`
@@ -113,14 +93,7 @@ export default function MenuItem({
         )}
       </div>
       {hasChildren && children && !isCollapsed && isExpanded && (
-        <div
-          className="
-                    ml-[18px]
-                    flex flex-col gap-1
-                    border-l border-slate-400/30
-                    pl-3
-                  "
-        >
+        <div className={menuItemClassNames.buttonChildContent}>
           {children.map(
             ({
               href: childHref,
@@ -136,20 +109,7 @@ export default function MenuItem({
                   type="button"
                   key={childHref}
                   onClick={() => onItemClick({ href: childHref, icon: childIcon, label: childLabel })}
-                  className={`
-                            appearance-none
-                            cursor-pointer
-                            flex min-h-[34px]
-                            items-center gap-2
-                            rounded-lg
-                            px-2.5 py-2
-                            text-sm
-                            font-semibold                            
-                            transition-colors                            
-                            focus-visible:outline-2
-                            ${styles.child}                            
-                            ${ isChildActive ? styles.childActive : '' }
-                          `}
+                  className={`${menuItemClassNames.buttonChild} ${ isChildActive ? menuItemClassNames.buttonChildActive : '' }`}
                   aria-current={
                     isChildActive ? 'page' : undefined
                   }

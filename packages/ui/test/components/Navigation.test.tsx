@@ -15,11 +15,17 @@ jest.mock('../../src/components/navbar', () => ({
     subtitle,
     onToggleSidebar,
     isSidebarCollapsed,
+    variant,
+    withThemeSwitcher,
+    onVariantChange,
   }: {
     title?: string;
     subtitle?: string;
     onToggleSidebar: () => void;
     isSidebarCollapsed: boolean;
+    variant: 'light' | 'dark';
+    withThemeSwitcher?: boolean;
+    onVariantChange?: (variant: 'light' | 'dark') => void;
   }) => (
     <>
       {title && (
@@ -36,6 +42,18 @@ jest.mock('../../src/components/navbar', () => ({
       >
         Navbar
       </button>
+      {withThemeSwitcher && (
+        <>
+          <output data-testid="navbar-variant">{variant}</output>
+          <button
+            type="button"
+            aria-label="select-light-theme"
+            onClick={() => onVariantChange?.('light')}
+          >
+            Select light theme
+          </button>
+        </>
+      )}
     </>
   ),
 }));
@@ -44,12 +62,15 @@ jest.mock('../../src/components/navbar', () => ({
 jest.mock('../../src/components/sidebar', () => ({
   Sidebar: ({
     isCollapsed,
+    variant,
   }: {
     isCollapsed: boolean;
+    variant: 'light' | 'dark';
   }) => (
     <aside
       data-testid="sidebar"
       data-collapsed={isCollapsed}
+      data-variant={variant}
     >
       Sidebar
     </aside>
@@ -261,6 +282,18 @@ describe('Navigation', () => {
     )
     .toBeInTheDocument();
 
+  });
+
+  it('updates navbar and sidebar variant when ThemeSwitcher changes it', () => {
+    renderNavigation({ withThemeSwitcher: true });
+
+    expect(screen.getByTestId('navbar-variant')).toHaveTextContent('dark');
+    expect(screen.getByTestId('sidebar')).toHaveAttribute('data-variant', 'dark');
+
+    fireEvent.click(screen.getByRole('button', { name: 'select-light-theme' }));
+
+    expect(screen.getByTestId('navbar-variant')).toHaveTextContent('light');
+    expect(screen.getByTestId('sidebar')).toHaveAttribute('data-variant', 'light');
   });
 
   it('should render navbar with title', () => {

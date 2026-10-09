@@ -188,6 +188,72 @@ describe('Navbar', () => {
 
   });
 
+  it('should initialize ThemeSwitcher to match the navbar variant and request a variant change', () => {
+    const onVariantChange = jest.fn();
+    const { rerender } = render(
+      <Navbar
+        {...defaultProps}
+        withThemeSwitcher
+        onVariantChange={onVariantChange}
+      />,
+    );
+
+    const lightOption = screen.getByRole('button', { name: 'Light theme' });
+    const darkOption = screen.getByRole('button', { name: 'Dark theme' });
+
+    expect(lightOption).toHaveAttribute('aria-pressed', 'false');
+    expect(darkOption).toHaveAttribute('aria-pressed', 'true');
+
+    fireEvent.click(lightOption);
+
+    expect(onVariantChange).toHaveBeenCalledWith('light');
+    expect(lightOption).toHaveAttribute('aria-pressed', 'false');
+    expect(darkOption).toHaveAttribute('aria-pressed', 'true');
+
+    rerender(
+      <Navbar
+        {...defaultProps}
+        variant="light"
+        withThemeSwitcher
+        onVariantChange={onVariantChange}
+      />,
+    );
+
+    expect(lightOption).toHaveAttribute('aria-pressed', 'true');
+    expect(darkOption).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('should forward ThemeSwitcher changes through onVariantChange', () => {
+    const onVariantChange = jest.fn();
+
+    render(
+      <Navbar
+        {...defaultProps}
+        withThemeSwitcher
+        onVariantChange={onVariantChange}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Light theme' }));
+
+    expect(onVariantChange).toHaveBeenCalledWith('light');
+  });
+
+  it('should render language and theme selectors side by side', () => {
+    render(
+      <Navbar
+        {...defaultProps}
+        withLanguageSwitch
+        withThemeSwitcher
+      />,
+    );
+
+    const languageSwitcher = screen.getByTestId('language-switcher');
+    const themeGroup = screen.getByRole('group', { name: 'Theme' });
+
+    expect(languageSwitcher.parentElement).toBe(themeGroup.parentElement);
+    expect(languageSwitcher.parentElement).toHaveClass('flex', 'items-center', 'gap-2');
+  });
 
 
   it('should not render LanguageSwitcher by default', () => {

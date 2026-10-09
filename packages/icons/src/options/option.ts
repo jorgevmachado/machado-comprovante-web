@@ -15,6 +15,8 @@ export const OIcon = [
    'dots',
    'edit',
    'lamp',
+   'sun',
+   'moon',
    'plus',
    'star',
    'bolt',

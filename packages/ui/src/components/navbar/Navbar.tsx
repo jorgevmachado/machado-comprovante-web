@@ -5,16 +5,19 @@ import { buildNavbarTheme ,TThemeTone } from '@machado-repo/theme';
 
 import type { TIcon } from '@machado-repo/icons';
 
-import { Icon, LanguageSwitcher, type TLanguageSwitcherVariant } from '../../primitives';
+import { Icon, LanguageSwitcher } from '../../primitives';
+import ThemeSwitcher, { type ThemeMode } from '../theme-switcher';
 
 type NavbarProps = {
   tone?: TThemeTone;
   icon?: React.ReactNode | TIcon;
   title?: string;
-  variant: TLanguageSwitcherVariant;
+  variant: ThemeMode;
   subtitle?: string;
   onToggleSidebar: () => void;
   isAuthenticated: boolean;
+  onVariantChange?: (variant: ThemeMode) => void;
+  withThemeSwitcher?: boolean;
   isSidebarCollapsed: boolean;
   withLanguageSwitch?: boolean;
 };
@@ -27,6 +30,8 @@ export default function Navbar({
   subtitle,
   isAuthenticated,
   onToggleSidebar,
+  onVariantChange,
+  withThemeSwitcher,
   withLanguageSwitch,
   isSidebarCollapsed,
 }: NavbarProps) {
@@ -84,11 +89,18 @@ export default function Navbar({
 
       </div>
 
-      {
-        withLanguageSwitch && (
-          <LanguageSwitcher variant={variant} />
-        )
-      }
+      {(withLanguageSwitch || withThemeSwitcher) && (
+        <div className="flex items-center gap-2">
+          {withLanguageSwitch && <LanguageSwitcher variant={variant} />}
+          {withThemeSwitcher && (
+            <ThemeSwitcher
+              tone={tone}
+              variant={variant}
+              onChange={onVariantChange}
+            />
+          )}
+        </div>
+      )}
 
     </header>
   );

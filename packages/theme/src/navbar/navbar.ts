@@ -1,8 +1,6 @@
-import { TThemeTone } from '../base';
+import type { TThemeTone, TThemeVariant } from '../base';
 import { BuildNavbarThemeResult } from './types';
 import { NAVBAR_APPEARANCE_CLASS_MAP } from './appearance';
-import { TNavbarVariant } from './variant';
-
 
 const normalizeClassString = (value: Array<string>): string => {
   const valueString = value.join(' ');
@@ -90,7 +88,7 @@ const buildNavbarSubtitleTheme = (value: string): string => {
 };
 
 export const buildNavbarTheme = (
-  tone: TThemeTone = 'neutral' ,variant: TNavbarVariant = 'light'): BuildNavbarThemeResult => {
+  tone: TThemeTone = 'neutral' ,variant: TThemeVariant = 'light'): BuildNavbarThemeResult => {
   const appearance = NAVBAR_APPEARANCE_CLASS_MAP[tone][variant]
   return {
     icon: buildNavbarIconTheme(appearance?.icon) ,

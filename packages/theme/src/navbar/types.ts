@@ -1,4 +1,4 @@
-import type { TNavbarVariant } from './variant';
+import type { TThemeVariant } from '../base';
 
 export type TNavbarVariantsTheme = {
   icon: string;
@@ -8,7 +8,7 @@ export type TNavbarVariantsTheme = {
   subtitle: string;
 }
 
-export type TNavbarThemeVariant = Record<TNavbarVariant, TNavbarVariantsTheme>;
+export type TNavbarThemeVariant = Record<TThemeVariant, TNavbarVariantsTheme>;
 
 export type BuildNavbarThemeResult = {
   icon: string;

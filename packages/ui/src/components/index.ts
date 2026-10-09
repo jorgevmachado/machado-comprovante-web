@@ -61,3 +61,4 @@ export { Sidebar ,type TMenuItem } from './sidebar';
 export { default as Switch } from './switch';
 export { default as Table ,type TableProps } from './table';
 export { default as Textarea } from './textarea';
+export { type ThemeMode, default as ThemeSwitcher, type ThemeSwitcherProps } from './theme-switcher';

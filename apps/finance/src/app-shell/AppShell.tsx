@@ -67,6 +67,7 @@ export default function AppShell({
       pathname={pathname}
       onItemClick={(item) => router.push(item.href)}
       isAuthenticated={isAuthenticated}
+      withThemeSwitcher
       withLanguageSwitch
     >
       <>

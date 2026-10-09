@@ -1,13 +1,13 @@
 import {
   buildNavbarTheme ,
-  NAVBAR_APPEARANCE_CLASS_MAP ,ONavbarVariant ,OThemeTone ,
+  NAVBAR_APPEARANCE_CLASS_MAP ,OThemeTone ,OThemeVariant ,
 } from '../../src';
 
 describe('Navbar Theme', () => {
   describe('NAVBAR_APPEARANCE_CLASS_MAP', () => {
     it('should have a class mapping for every navbar appearance option', () => {
       OThemeTone.forEach((tone) => {
-        ONavbarVariant.forEach((variant) => {
+        OThemeVariant.forEach((variant) => {
           const result = NAVBAR_APPEARANCE_CLASS_MAP[tone][variant];
           expect(result).toBeDefined();
           expect(typeof result).toBe('object');

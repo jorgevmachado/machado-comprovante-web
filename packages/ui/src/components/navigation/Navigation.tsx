@@ -1,33 +1,33 @@
 'use client';
 import React ,{ useCallback ,useState, useMemo } from 'react';
 
+import { TThemeTone } from '@machado-repo/theme';
+
 import type { TIcon } from '@machado-repo/icons';
 
 import { useAppTranslation } from '@machado-repo/i18n';
 
-import { type TLanguageSwitcherVariant } from '../../primitives';
+import type { ThemeMode } from '../theme-switcher';
 
 import { Navbar } from '../navbar';
 import { Sidebar, type TMenuItem } from '../sidebar';
 
-type NavigationThemeTone = 'primary' | 'secondary' | 'neutral';
-
-
 type NavigationProps = {
-  tone?: NavigationThemeTone;
+  tone?: TThemeTone;
   menu: Array<TMenuItem>;
   title?: string;
   logout: {
     label: string;
     onClick: () => void;
   };
-  variant: TLanguageSwitcherVariant;
+  variant: ThemeMode;
   iconLogo?: React.ReactNode | TIcon;
   subtitle?: string;
   children: React.ReactNode;
   pathname: string;
   onItemClick: (item: TMenuItem) => void;
   isAuthenticated: boolean;
+  withThemeSwitcher?: boolean;
   withLanguageSwitch?: boolean;
 }
 
@@ -43,10 +43,13 @@ export default function Navigation({
   pathname,
   onItemClick,
   isAuthenticated,
-  withLanguageSwitch
+  withThemeSwitcher,
+  withLanguageSwitch,
 }: NavigationProps) {
   const { t } = useAppTranslation();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
+
+  const [themeMode, setThemeMode] = useState<ThemeMode>(variant);
 
   const isSidebarVisible = isAuthenticated && !isSidebarCollapsed;
 
@@ -104,12 +107,14 @@ export default function Navigation({
         tone={tone}
         icon={iconLogo}
         title={translatedTitle}
-        variant={variant}
+        variant={themeMode}
         subtitle={translatedSubtitle}
         isAuthenticated={isAuthenticated}
-        isSidebarCollapsed={isSidebarCollapsed}
+        onVariantChange={(value) => setThemeMode(value)}
         onToggleSidebar={handleToggleSidebar}
+        withThemeSwitcher={withThemeSwitcher}
         withLanguageSwitch={withLanguageSwitch}
+        isSidebarCollapsed={isSidebarCollapsed}
       />
 
       <div
@@ -127,7 +132,7 @@ export default function Navigation({
           <Sidebar
             tone={tone}
             items={translatedMenu}
-            variant={variant}
+            variant={themeMode}
             isCollapsed={isSidebarCollapsed}
             pathname={pathname}
             logout={translatedLogout}
